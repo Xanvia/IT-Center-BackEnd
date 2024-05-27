@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import databaseConfig from 'config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
+import { ContentsService } from './contents/contents.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
     FeedbacksModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ContentsService],
 })
 export class AppModule {}
