@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFeedbackDto } from './dto/createFeedback.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Feedback } from './feedback.entity';
@@ -19,8 +19,9 @@ export class FeedbacksService {
 
   // delete
   async deleteFeedBackbyID(id: string) {
-    console.log(id);
-    return await this.feedbackRepo.delete({ id: id });
+    const result = await this.feedbackRepo.delete({ id: id });
+    if (result.affected === 0)
+      throw new NotFoundException(`Feedback with id ${id} not found!`);
   }
 
   // get all feedbacks

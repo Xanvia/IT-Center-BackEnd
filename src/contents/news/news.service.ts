@@ -9,5 +9,7 @@ export class NewsService extends ContentsService {
   constructor(@InjectRepository(News) private newsRepo: Repository<News>) {
     super(newsRepo);
   }
+
+  // create news
   async createContent() {}
 }
