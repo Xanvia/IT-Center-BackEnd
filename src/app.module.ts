@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import databaseConfig from 'config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
-import { ContentsService } from './contents/contents.service';
+import { NewsModule } from './contents/news/news.module';
 
 @Module({
   imports: [
@@ -15,8 +15,9 @@ import { ContentsService } from './contents/contents.service';
     }),
     TypeOrmModule.forRoot(databaseConfig()),
     FeedbacksModule,
+    NewsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ContentsService],
+  providers: [AppService],
 })
 export class AppModule {}

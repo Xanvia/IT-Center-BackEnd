@@ -21,7 +21,7 @@ export abstract class Content {
   date: string;
 
   @Column()
-  images: string[];
+  images: string;
 
   @CreateDateColumn()
   createdAt: string;

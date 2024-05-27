@@ -13,17 +13,14 @@ export abstract class ContentsService {
   async findAll(): Promise<Content[]> {
     return await this.contentRepo.find();
   }
-
   // get content by id
   async findbyID(id: string): Promise<Content> {
     return await this.contentRepo.findOne({ where: { id: id } });
   }
-
   // delete by id
   async deleteContentbyID(id: string) {
     return await this.contentRepo.delete({ id: id });
   }
-
   // creating methods
   abstract createContent();
 }
