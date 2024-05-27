@@ -1,9 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
-export class feedback {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Feedback {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   email: string;
@@ -13,4 +18,7 @@ export class feedback {
 
   @Column({ default: false })
   isRead: boolean;
+
+  @CreateDateColumn()
+  createdDate: string;
 }
