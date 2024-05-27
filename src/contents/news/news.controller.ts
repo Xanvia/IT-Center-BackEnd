@@ -1,18 +1,18 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { NewsService } from './news.service';
-import { News } from './news.entity';
+import { Content } from '../content.entity';
 
 @Controller('news')
 export class NewsController {
   constructor(private newsService: NewsService) {}
 
   @Get()
-  findAll(): Promise<News[]> {
+  findAll(): Promise<Content[]> {
     return this.newsService.findAll();
   }
 
   @Get(':id')
-  findbyID(@Param('id') id: string): Promise<News> {
+  findbyID(@Param('id') id: string): Promise<Content> {
     return this.newsService.findbyID(id);
   }
 }

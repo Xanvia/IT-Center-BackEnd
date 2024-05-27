@@ -15,11 +15,11 @@ export abstract class Content {
   @Column()
   description: string;
 
-  @Column({ type: 'date' })
-  date: string;
+  @Column({ type: 'date', nullable: true })
+  date?: string;
 
-  @Column()
-  images: string;
+  @Column({ nullable: true })
+  images?: string;
 
   @CreateDateColumn()
   createdAt: string;
