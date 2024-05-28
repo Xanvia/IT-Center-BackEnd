@@ -6,6 +6,8 @@ import databaseConfig from 'config/database.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { NewsModule } from './contents/news/news.module';
+import { LogsModule } from './contents/logs/logs.module';
+import { ProjectsModule } from './contents/projects/projects.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { NewsModule } from './contents/news/news.module';
     TypeOrmModule.forRoot(databaseConfig()),
     FeedbacksModule,
     NewsModule,
+    LogsModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
