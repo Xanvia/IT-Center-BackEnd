@@ -21,6 +21,4 @@ export abstract class ContentsService {
   async deleteContentbyID(id: string) {
     return await this.contentRepo.delete({ id: id });
   }
-  // creating methods
-  abstract createContent();
 }

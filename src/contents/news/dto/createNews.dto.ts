@@ -1,6 +1,5 @@
 import {
   IsDate,
-  IsMilitaryTime,
   IsNotEmpty,
   IsOptional,
   IsString,

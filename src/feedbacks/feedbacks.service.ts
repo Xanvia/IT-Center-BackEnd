@@ -11,9 +11,7 @@ export class FeedbacksService {
   ) {}
   // create
   async createFeedBack(createFeedBack: CreateFeedbackDto) {
-    const feedback = new Feedback();
-    feedback.email = createFeedBack.email;
-    feedback.description = createFeedBack.description;
+    const feedback = this.feedbackRepo.create({ ...createFeedBack });
     return await this.feedbackRepo.insert(feedback);
   }
 
