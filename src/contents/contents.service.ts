@@ -37,10 +37,7 @@ export abstract class ContentsService {
     if (!existingContent) {
       throw new NotFoundException(`Content with ID '${id}' not found`);
     }
-    const state = await this.contentRepo.update(
-      { id },
-      { ...updateContentDto },
-    );
+    await this.contentRepo.update({ id }, { ...updateContentDto });
     return this.contentRepo.findOne({ where: { id: id } });
   }
 }
