@@ -20,11 +20,11 @@ export class NewsController {
 
   @Post()
   createNews(@Body() createNewsDto: CreateNewsDto) {
-    return this.newsService.createContent(createNewsDto);
+    return this.newsService.createContent<CreateNewsDto>(createNewsDto);
   }
 
   @Put(':id')
   updateNews(@Param('id') id: string, @Body() updateNewsDto: UpdateNewsDto) {
-    return this.newsService.updateContent(id, updateNewsDto);
+    return this.newsService.updateContent<UpdateNewsDto>(id, updateNewsDto);
   }
 }

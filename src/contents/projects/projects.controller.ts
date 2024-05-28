@@ -20,7 +20,9 @@ export class ProjectsController {
 
   @Post()
   createProject(@Body() createProjectsDto: CreateProjectDto) {
-    return this.projectsService.createContent(createProjectsDto);
+    return this.projectsService.createContent<CreateProjectDto>(
+      createProjectsDto,
+    );
   }
 
   @Put(':id')
@@ -28,6 +30,9 @@ export class ProjectsController {
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
   ) {
-    return this.projectsService.updateContent(id, updateProjectDto);
+    return this.projectsService.updateContent<UpdateProjectDto>(
+      id,
+      updateProjectDto,
+    );
   }
 }

@@ -20,11 +20,11 @@ export class LogsController {
 
   @Post()
   createLogs(@Body() createLogsDto: CreateLogsDto) {
-    return this.logsService.createContent(createLogsDto);
+    return this.logsService.createContent<CreateLogsDto>(createLogsDto);
   }
 
   @Put(':id')
   updateLogs(@Param('id') id: string, @Body() updatelogDto: UpdateLogsDto) {
-    return this.logsService.updateContent(id, updatelogDto);
+    return this.logsService.updateContent<UpdateLogsDto>(id, updatelogDto);
   }
 }
