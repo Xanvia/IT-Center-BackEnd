@@ -8,7 +8,7 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { NewsModule } from './contents/news/news.module';
 import { LogsModule } from './contents/logs/logs.module';
 import { ProjectsModule } from './contents/projects/projects.module';
-import { ProjController } from './contents/proj/proj.controller';
+// import { ProjController } from './contents/proj/proj.controller';
 
 @Module({
   imports: [
@@ -22,7 +22,7 @@ import { ProjController } from './contents/proj/proj.controller';
     LogsModule,
     ProjectsModule,
   ],
-  controllers: [AppController, ProjController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
