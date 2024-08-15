@@ -1,16 +1,21 @@
-import { registerAs } from '@nestjs/config';
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+import {
+  TypeOrmModuleAsyncOptions,
+  TypeOrmModuleOptions,
+} from '@nestjs/typeorm';
 
-export default registerAs(
-  'database',
-  (): TypeOrmModuleOptions => ({
+export const databaseConfig: TypeOrmModuleAsyncOptions = {
+  useFactory: async (
+    configService: ConfigService,
+  ): Promise<TypeOrmModuleOptions> => ({
     type: 'mysql',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT, 10),
-    username: process.env.DATABASE_USER,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_DATABASE,
+    host: configService.get<string>('DB_HOST'),
+    port: parseInt(configService.get<string>('DB_PORT'), 10),
+    username: configService.get<string>('DATABASE_USER'),
+    password: configService.get<string>('DATABASE_PASSWORD'),
+    database: configService.get<string>('DATABASE_DATABASE'),
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true,
   }),
-);
+  inject: [ConfigService],
+};
