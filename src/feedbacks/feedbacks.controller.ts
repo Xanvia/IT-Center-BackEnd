@@ -26,7 +26,6 @@ export class FeedbacksController {
     return this.feedbackService.deleteFeedBackbyID(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   getAll(): Promise<Feedback[]> {
     return this.feedbackService.getAll();
