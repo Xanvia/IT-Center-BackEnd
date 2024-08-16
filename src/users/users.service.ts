@@ -28,4 +28,8 @@ export class UsersService {
   async findOne(email: string): Promise<User | undefined> {
     return await this.userRepo.findOne({ where: { email } });
   }
+
+  async updateHashedRefreshToken(userId: string, hashedRefreshToken: string) {
+    return await this.userRepo.update({ id: userId }, { hashedRefreshToken });
+  }
 }

@@ -32,6 +32,7 @@ export class AuthService {
 
     // store token on database
     const hash = await argon2.hash(refresh_token);
+    await this.usersService.updateHashedRefreshToken(user.id, hash);
 
     return {
       id: user.userId,
