@@ -32,4 +32,13 @@ export class AuthService {
       refresh_token,
     };
   }
+
+  async refreshToken(user: any) {
+    const payload = { email: user.email, sub: user.userId };
+    const token = this.jwtService.sign(payload);
+    return {
+      id: user.userId,
+      token,
+    };
+  }
 }
