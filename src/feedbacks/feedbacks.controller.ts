@@ -1,7 +1,16 @@
-import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/createFeedback.dto';
 import { Feedback } from './feedback.entity';
+import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 
 @Controller('feedbacks')
 export class FeedbacksController {
@@ -17,6 +26,7 @@ export class FeedbacksController {
     return this.feedbackService.deleteFeedBackbyID(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll(): Promise<Feedback[]> {
     return this.feedbackService.getAll();
