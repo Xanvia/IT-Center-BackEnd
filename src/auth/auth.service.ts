@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import refreshJwtConfig from 'config/refreshJwt.config';
@@ -14,8 +14,9 @@ export class AuthService {
     private refreshConfig: ConfigType<typeof refreshJwtConfig>,
   ) {}
 
+  // validate user from the database //
   async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.findOne(email);
+    const user = await this.usersService.findByEmail(email);
     if (user && user.hashedPassword === pass) {
       const { hashedPassword, ...result } = user;
       return result;
@@ -23,6 +24,24 @@ export class AuthService {
     return null;
   }
 
+  // validate refresh token from the database //
+  async validateRefreshToken(userid: string, refreshToken: string) {
+    const user = await this.usersService.findOne(userid);
+    if (!user || !user.hashedRefreshToken)
+      throw new UnauthorizedException('Invalid Refresh Token!');
+
+    const refreshTokenMatch = await argon2.verify(
+      user.hashedRefreshToken,
+      refreshToken,
+    );
+
+    if (!refreshTokenMatch)
+      throw new UnauthorizedException('Invalid Refresh Token!');
+
+    return { id: userid };
+  }
+
+  // login function //
   async login(user: any) {
     const payload = { email: user.email, sub: user.userId };
 
@@ -41,14 +60,13 @@ export class AuthService {
     };
   }
 
+  // issue new access token //
   async refreshToken(user: any) {
-    const payload = { email: user.email, sub: user.userId };
+    return this.login(user);
+  }
 
-    // create token
-    const token = this.jwtService.sign(payload);
-    return {
-      id: user.userId,
-      token,
-    };
+  // logout function //
+  async logout(userId: string) {
+    await this.usersService.updateHashedRefreshToken(userId, null);
   }
 }

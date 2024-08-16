@@ -2,6 +2,7 @@ import { Bind, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './gaurds/local-auth/local-auth.guard';
 import { RefreshAuthGuard } from './gaurds/refresh-auth/refresh-auth.guard';
+import { JwtAuthGuard } from './gaurds/jwt-auth/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -17,6 +18,12 @@ export class AuthController {
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
   async refreshToken(@Request() req) {
-    return this.authService.refreshToken(req.user);
+    return this.authService.refreshToken(req.userid);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Request() req) {
+    return this.authService.logout(req.userId);
   }
 }

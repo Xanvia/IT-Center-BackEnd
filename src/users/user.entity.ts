@@ -13,7 +13,7 @@ export class User {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   hashedPassword: string;
 
   @Column()
