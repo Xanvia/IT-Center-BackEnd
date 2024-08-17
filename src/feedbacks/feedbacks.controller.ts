@@ -13,12 +13,12 @@ import { Feedback } from './feedback.entity';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'enums/role.enum';
+import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 
 @Controller('feedbacks')
 export class FeedbacksController {
   constructor(private feedbackService: FeedbacksService) {}
 
-  @Roles(Role.ADMIN)
   @Post()
   createFeedBack(@Body() createFeedBackDto: CreateFeedbackDto) {
     return this.feedbackService.createFeedBack(createFeedBackDto);
@@ -29,6 +29,8 @@ export class FeedbacksController {
     return this.feedbackService.deleteFeedBackbyID(id);
   }
 
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get()
   getAll(): Promise<Feedback[]> {
