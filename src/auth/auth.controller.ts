@@ -4,7 +4,9 @@ import {
   Controller,
   Get,
   Post,
+  Req,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -19,19 +21,27 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post('signin')
   @Bind(Request())
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
 
+  @Post('signup')
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.authService.register(createUserDto);
+  }
+
   @UseGuards(GoogleAuthGuard)
-  @Get('google/login')
+  @Get('google/sign')
   async google() {}
 
   @UseGuards(GoogleAuthGuard)
   @Get('google/callback')
-  async googleCallBack() {}
+  async googleCallback(@Req() req, @Res() res) {
+    const response = await this.authService.login(req.user);
+    res.redirect(`http://localhost:3001?token=${response.access_token}`);
+  }
 
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
@@ -42,11 +52,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   async logout(@Request() req) {
-    return this.authService.logout(req.userId);
-  }
-
-  @Post('register')
-  async register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
+    return this.authService.logout(req.id);
   }
 }

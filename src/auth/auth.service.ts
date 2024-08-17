@@ -7,29 +7,37 @@ import * as argon2 from 'argon2';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { TUser } from 'types/user.type';
 import { TPayload } from 'types/payload.type';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
+    private userService: UsersService,
     private jwtService: JwtService,
     @Inject(refreshJwtConfig.KEY)
     private refreshConfig: ConfigType<typeof refreshJwtConfig>,
   ) {}
 
   // validate user from the database //
-  async validateUser(email: string, pass: string): Promise<TUser | null> {
-    const user = await this.usersService.findByEmail(email);
-    if (user && user.hashedPassword === pass) {
-      const { hashedPassword, ...result } = user;
-      return result;
-    }
-    return null;
+  async validateUser(email: string, password: string) {
+    const user = await this.userService.findByEmail(email);
+    if (!user) throw new UnauthorizedException('User not found!');
+    const isPasswordMatch = await compare(password, user.hashedPassword);
+    if (!isPasswordMatch)
+      throw new UnauthorizedException('Invalid credentials');
+
+    return { id: user.id, role: user.role };
+  }
+  // validate google user from the database //
+  async validateOrCreateGoogleUser(googleUser: CreateUserDto) {
+    const user = await this.userService.findByEmail(googleUser.email);
+    if (user) return user;
+    return await this.userService.create(googleUser);
   }
 
   // validate refresh token from the database //
   async validateRefreshToken(userid: string, refreshToken: string) {
-    const user: TUser = await this.usersService.findOne(userid);
+    const user: TUser = await this.userService.findOne(userid);
     if (!user || !user.hashedRefreshToken)
       throw new UnauthorizedException('Invalid Refresh Token!');
 
@@ -44,6 +52,12 @@ export class AuthService {
     return { id: userid, role: user.role };
   }
 
+  // register function //
+  async register(createuserDto: CreateUserDto) {
+    const user = await this.userService.create(createuserDto);
+    return user;
+  }
+
   // login function //
   async login(user: TUser) {
     const payload: TPayload = { sub: user.id, role: user.role };
@@ -54,7 +68,7 @@ export class AuthService {
 
     // store token on database
     const hash = await argon2.hash(refresh_token);
-    await this.usersService.updateHashedRefreshToken(user.id, hash);
+    await this.userService.updateHashedRefreshToken(user.id, hash);
 
     return {
       id: user.id,
@@ -70,11 +84,6 @@ export class AuthService {
 
   // logout function //
   async logout(userId: string) {
-    await this.usersService.updateHashedRefreshToken(userId, null);
-  }
-
-  // register function //
-  async register(createuserDto: CreateUserDto) {
-    return await this.usersService.create(createuserDto);
+    await this.userService.updateHashedRefreshToken(userId, null);
   }
 }
