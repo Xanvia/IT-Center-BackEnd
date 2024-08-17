@@ -13,10 +13,10 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ nullable: true })
+  @Column()
   hashedPassword: string;
 
-  @Column()
+  @Column({ nullable: true })
   hashedRefreshToken: string;
 
   @CreateDateColumn()

@@ -1,9 +1,15 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import refreshJwtConfig from 'config/refreshJwt.config';
 import { ConfigType } from '@nestjs/config';
 import * as argon2 from 'argon2';
+import { CreateUserDto } from 'src/users/dto/createUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -38,7 +44,7 @@ export class AuthService {
     if (!refreshTokenMatch)
       throw new UnauthorizedException('Invalid Refresh Token!');
 
-    return { id: userid };
+    return { id: userid, email: user.email };
   }
 
   // login function //
@@ -68,5 +74,10 @@ export class AuthService {
   // logout function //
   async logout(userId: string) {
     await this.usersService.updateHashedRefreshToken(userId, null);
+  }
+
+  // register function //
+  async register(createuserDto: CreateUserDto) {
+    return await this.usersService.create(createuserDto);
   }
 }
