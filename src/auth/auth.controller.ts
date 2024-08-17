@@ -2,6 +2,7 @@ import {
   Bind,
   Body,
   Controller,
+  Get,
   Post,
   Request,
   UseGuards,
@@ -11,6 +12,7 @@ import { LocalAuthGuard } from './gaurds/local-auth/local-auth.guard';
 import { RefreshAuthGuard } from './gaurds/refresh-auth/refresh-auth.guard';
 import { JwtAuthGuard } from './gaurds/jwt-auth/jwt-auth.guard';
 import { CreateUserDto } from 'src/users/dto/createUser.dto';
+import { GoogleAuthGuard } from './gaurds/google-auth/google-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,6 +24,14 @@ export class AuthController {
   async login(@Request() req) {
     return this.authService.login(req.user);
   }
+
+  @UseGuards(GoogleAuthGuard)
+  @Get('google/login')
+  async google() {}
+
+  @UseGuards(GoogleAuthGuard)
+  @Get('google/callback')
+  async googleCallBack() {}
 
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
