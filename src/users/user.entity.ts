@@ -1,3 +1,4 @@
+import { Role } from 'enums/role.enum';
 import {
   Column,
   CreateDateColumn,
@@ -12,6 +13,9 @@ export class User {
 
   @Column()
   email: string;
+
+  @Column({ type: 'enum', enum: Role, default: Role.STUDENT })
+  role: Role;
 
   @Column()
   hashedPassword: string;
