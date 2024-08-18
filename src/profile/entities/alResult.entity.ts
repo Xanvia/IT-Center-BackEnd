@@ -5,7 +5,7 @@ import { Education } from './education.entity';
 @Entity()
 export class ALResult {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   subject: string;
