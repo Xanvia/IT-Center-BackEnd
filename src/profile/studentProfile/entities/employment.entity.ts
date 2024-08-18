@@ -18,7 +18,7 @@ export class Employment {
   @Column({ nullable: true })
   officePhone: string;
 
-  @OneToOne(() => StudentProfile, (profile) => profile.education, {
+  @OneToOne(() => StudentProfile, (profile) => profile.employment, {
     cascade: true,
   })
   profile: StudentProfile;

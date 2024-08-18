@@ -11,6 +11,7 @@ import { Education } from './education.entity';
 import { HigherEdu } from './higherEdu.entity';
 import { Employment } from './employment.entity';
 import { Profile } from 'src/profile/entity/profile.entity';
+import { Student } from 'src/users/students/student.entity';
 
 @Entity()
 export class StudentProfile extends Profile {
@@ -48,6 +49,10 @@ export class StudentProfile extends Profile {
   @OneToOne(() => Employment, (employment) => employment.profile)
   @JoinColumn()
   employment: Employment;
+
+  @OneToOne(() => Student, (user) => user.profile)
+  @JoinColumn()
+  user: Student;
 
   @CreateDateColumn()
   createdDate: string;

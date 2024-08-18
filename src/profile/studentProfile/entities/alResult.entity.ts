@@ -14,5 +14,5 @@ export class ALResult {
   grade: Grade;
 
   @ManyToOne(() => Education, (parent) => parent.aLevelResults)
-  user: Education;
+  profile: Education;
 }

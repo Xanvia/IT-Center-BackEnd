@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { StaffProfile } from './profile.entity';
 
 @Entity()
-export class Emails {
+export class Email {
   @PrimaryGeneratedColumn()
   id: string;
 

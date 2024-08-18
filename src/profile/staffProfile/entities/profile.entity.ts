@@ -1,7 +1,8 @@
 import { Profile } from 'src/profile/entity/profile.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
-import { Emails } from './email.entity';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import { Email } from './email.entity';
 import { Telephone } from './telephone.entity';
+import { Staff } from 'src/users/staff/staff.entity';
 
 @Entity()
 export class StaffProfile extends Profile {
@@ -17,15 +18,18 @@ export class StaffProfile extends Profile {
   @Column()
   extNo: string;
 
-  @OneToMany(() => Emails, (item) => item.profile, {
+  @OneToMany(() => Email, (item) => item.profile, {
     cascade: true,
     eager: true,
   })
-  emails: Emails[];
+  emails: Email[];
 
   @OneToMany(() => Telephone, (item) => item.profile, {
     cascade: true,
     eager: true,
   })
   telephones: Telephone[];
+
+  @OneToOne(() => Staff, (user) => user.profile)
+  user: Staff;
 }
