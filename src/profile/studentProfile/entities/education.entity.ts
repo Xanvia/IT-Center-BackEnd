@@ -13,7 +13,7 @@ import { StudentProfile } from './profile.entity';
 
 @Entity()
 export class Education {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'enum', enum: Grade })

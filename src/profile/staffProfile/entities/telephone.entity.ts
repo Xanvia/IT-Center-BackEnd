@@ -3,7 +3,7 @@ import { StaffProfile } from './profile.entity';
 
 @Entity()
 export class Telephone {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()

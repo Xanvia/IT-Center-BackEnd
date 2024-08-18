@@ -4,7 +4,7 @@ import { Education } from './education.entity';
 
 @Entity()
 export class ALResult {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
