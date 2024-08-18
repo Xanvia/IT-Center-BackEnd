@@ -1,10 +1,16 @@
 import {
   Column,
   CreateDateColumn,
+  Entity,
   PrimaryGeneratedColumn,
+  TableInheritance,
   UpdateDateColumn,
 } from 'typeorm';
 
+// appling Single Table Inheritance architecture
+
+@Entity()
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Content {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -1,5 +1,5 @@
-import { Entity } from 'typeorm';
+import { ChildEntity } from 'typeorm';
 import { Content } from '../content.entity';
 
-@Entity()
+@ChildEntity()
 export class Log extends Content {}

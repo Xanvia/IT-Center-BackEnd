@@ -1,7 +1,7 @@
-import { Column, Entity } from 'typeorm';
+import { ChildEntity, Column } from 'typeorm';
 import { Content } from '../content.entity';
 
-@Entity()
+@ChildEntity()
 export class News extends Content {
   @Column({ type: 'time', nullable: true })
   time?: string;
