@@ -3,10 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
+  TableInheritance,
 } from 'typeorm';
 
 @Entity()
+@TableInheritance({ column: { type: 'varchar', name: 'role' } })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -14,8 +17,8 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.STUDENT })
-  role: Role;
+  // @Column({ type: 'enum', enum: Role, default: Role.STUDENT })
+  // role: Role;
 
   @Column()
   hashedPassword: string;
@@ -25,4 +28,7 @@ export class User {
 
   @CreateDateColumn()
   createdDate: string;
+
+  // @OneToMany(() => Notification, (notification) => notification.user)
+  // photos: Notification[]
 }
