@@ -12,18 +12,6 @@ export class UsersService {
     const user = await this.userRepo.create(createUserDto);
     return await this.userRepo.save(user);
   }
-  // private readonly users = [
-  //   {
-  //     userId: 1,
-  //     email: 'john@gmail.com',
-  //     password: 'changeme',
-  //   },
-  //   {
-  //     userId: 2,
-  //     email: 'maria@gmail.com',
-  //     password: 'guess',
-  //   },
-  // ];
 
   async findOne(id: string): Promise<User | undefined> {
     return await this.userRepo.findOne({ where: { id } });
