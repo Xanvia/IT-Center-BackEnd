@@ -7,7 +7,6 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { NewsModule } from './contents/news/news.module';
 import { LogsModule } from './contents/logs/logs.module';
 import { ProjectsModule } from './contents/projects/projects.module';
-// import { ProjController } from './contents/proj/proj.controller';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
