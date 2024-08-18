@@ -6,7 +6,6 @@ import {
   JoinColumn,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Education } from './education.entity';
 import { HigherEdu } from './higherEdu.entity';
@@ -15,9 +14,6 @@ import { Profile } from 'src/profile/entity/profile.entity';
 
 @Entity()
 export class StudentProfile extends Profile {
-  @PrimaryGeneratedColumn()
-  id: string;
-
   @Column({ type: 'enum', enum: Title })
   title: Title;
 
