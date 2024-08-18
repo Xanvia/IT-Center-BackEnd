@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Profile } from './profile.entity';
+import { StudentProfile } from './profile.entity';
 
 @Entity()
 export class HigherEdu {
@@ -15,6 +15,6 @@ export class HigherEdu {
   @Column({ nullable: true })
   institute: string;
 
-  @ManyToOne(() => Profile, (parent) => parent.higherEdu)
-  user: Profile;
+  @ManyToOne(() => StudentProfile, (parent) => parent.higherEdu)
+  user: StudentProfile;
 }

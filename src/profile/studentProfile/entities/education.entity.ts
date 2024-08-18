@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { ALResult } from './alResult.entity';
 import { BadRequestException } from '@nestjs/common';
-import { Profile } from './profile.entity';
+import { StudentProfile } from './profile.entity';
 
 @Entity()
 export class Education {
@@ -31,8 +31,10 @@ export class Education {
   })
   aLevelResults: ALResult[];
 
-  @OneToOne(() => Profile, (profile) => profile.education, { cascade: true })
-  profile: Profile;
+  @OneToOne(() => StudentProfile, (profile) => profile.education, {
+    cascade: true,
+  })
+  profile: StudentProfile;
 
   @BeforeInsert()
   validateResults() {

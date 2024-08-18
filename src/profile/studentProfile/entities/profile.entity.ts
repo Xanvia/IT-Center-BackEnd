@@ -1,6 +1,8 @@
 import { Title } from 'enums/title.enum';
 import {
   Column,
+  CreateDateColumn,
+  Entity,
   JoinColumn,
   OneToMany,
   OneToOne,
@@ -8,8 +10,11 @@ import {
 } from 'typeorm';
 import { Education } from './education.entity';
 import { HigherEdu } from './higherEdu.entity';
+import { Employment } from './employment.entity';
+import { Profile } from 'src/profile/entity/profile.entity';
 
-export abstract class Profile {
+@Entity()
+export class StudentProfile extends Profile {
   @PrimaryGeneratedColumn()
   id: string;
 
@@ -43,4 +48,11 @@ export abstract class Profile {
 
   @Column({ nullable: true })
   otherQualification: string;
+
+  @OneToOne(() => Employment, (employment) => employment.profile)
+  @JoinColumn()
+  employment: Employment;
+
+  @CreateDateColumn()
+  createdDate: string;
 }
