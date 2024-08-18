@@ -1,8 +1,6 @@
 import { ChildEntity, Column } from 'typeorm';
-import { User } from '../user.entity';
+import { Staff } from '../staff/staff.entity';
+import { Role } from 'enums/role.enum';
 
-@ChildEntity()
-export class Admin extends User {
-  @Column()
-  size: string;
-}
+@ChildEntity(Role.ADMIN)
+export class Admin extends Staff {}
