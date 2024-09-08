@@ -2,13 +2,10 @@ import { Profile } from 'src/profile/entity/profile.entity';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { Email } from './email.entity';
 import { Telephone } from './telephone.entity';
-import { Staff } from 'src/users/staff/staff.entity';
+import { Staff } from 'src/users/entities/staff.entity';
 
 @Entity()
 export class StaffProfile extends Profile {
-  @Column()
-  displayName: string;
-
   @Column()
   designation: string;
 

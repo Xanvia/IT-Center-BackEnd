@@ -11,7 +11,7 @@ import { Education } from './education.entity';
 import { HigherEdu } from './higherEdu.entity';
 import { Employment } from './employment.entity';
 import { Profile } from 'src/profile/entity/profile.entity';
-import { Student } from 'src/users/students/student.entity';
+import { Student } from 'src/users/entities/student.entity';
 
 @Entity()
 export class StudentProfile extends Profile {
