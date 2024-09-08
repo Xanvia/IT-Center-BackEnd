@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  TableInheritance,
 } from 'typeorm';
 
 @Entity()
+@TableInheritance({ column: { type: 'enum', enum: Role, name: 'role' } })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -14,8 +16,8 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.STUDENT })
-  role: Role;
+  @Column({ type: 'enum', enum: Role, default: Role.R_USER })
+  public role: Role;
 
   @Column()
   hashedPassword: string;
@@ -23,6 +25,12 @@ export class User {
   @Column({ nullable: true })
   hashedRefreshToken: string;
 
+  @Column({ nullable: true })
+  image: string;
+
   @CreateDateColumn()
   createdDate: string;
 }
+
+// Single Table Inheritance (STI) is used
+// Seperated table are used inOrder to reduce null values
