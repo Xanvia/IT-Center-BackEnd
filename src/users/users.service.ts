@@ -48,7 +48,7 @@ export class UsersService {
       [Role.R_USER]: [Role.STUDENT, Role.STAFF],
       [Role.STUDENT]: [],
       [Role.STAFF]: [Role.ADMIN, Role.S_ADMIN],
-      [Role.ADMIN]: [Role.S_ADMIN],
+      [Role.ADMIN]: [Role.S_ADMIN, Role.STAFF],
       [Role.S_ADMIN]: [],
     };
 
