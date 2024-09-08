@@ -31,3 +31,6 @@ export class User {
   @CreateDateColumn()
   createdDate: string;
 }
+
+// Single Table Inheritance (STI) is used
+// Seperated table are used inOrder to reduce null values
