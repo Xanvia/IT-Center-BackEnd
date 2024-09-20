@@ -54,8 +54,11 @@ export class AuthService {
 
   // register function //
   async register(createuserDto: CreateUserDto) {
-    const user = await this.userService.create(createuserDto);
-    return user;
+    const oldUser = await this.userService.findByEmail(createuserDto.email);
+    if (oldUser) {
+      return new Error('User already exists!');
+    }
+    return await this.userService.create(createuserDto);
   }
 
   // login function //

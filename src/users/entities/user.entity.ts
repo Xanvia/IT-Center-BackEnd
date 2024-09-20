@@ -8,7 +8,9 @@ import {
 } from 'typeorm';
 
 @Entity()
-@TableInheritance({ column: { type: 'enum', enum: Role, name: 'role' } })
+@TableInheritance({
+  column: { type: 'enum', enum: Role, name: 'role' },
+})
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,7 +18,7 @@ export class User {
   @Column()
   email: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.R_USER })
+  @Column({ type: 'enum', enum: Role })
   public role: Role;
 
   @Column()

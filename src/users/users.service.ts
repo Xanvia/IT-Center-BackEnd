@@ -13,7 +13,12 @@ export class UsersService {
   // here the existance will not be checked
   async create(createUserDto: CreateUserDto) {
     const user = await this.userRepo.create(createUserDto);
-    return await this.userRepo.save(user);
+    console.log(user);
+    try {
+      return await this.userRepo.save(user);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // find user with the id
@@ -45,7 +50,7 @@ export class UsersService {
 
     // Define allowed role transitions
     const allowedTransitions: { [key in Role]: Role[] } = {
-      [Role.R_USER]: [Role.STUDENT, Role.STAFF],
+      [Role.USER]: [Role.STUDENT, Role.STAFF],
       [Role.STUDENT]: [],
       [Role.STAFF]: [Role.ADMIN, Role.S_ADMIN],
       [Role.ADMIN]: [Role.S_ADMIN, Role.STAFF],
