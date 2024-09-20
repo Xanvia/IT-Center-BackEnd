@@ -10,7 +10,10 @@ import { ProjectsModule } from './contents/projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
-import { ProfileModule } from './profile/profile.module';
+import { StudentProfileService } from './profile/student-profile/student-profile.service';
+import { StudentProfileController } from './profile/student-profile/student-profile.controller';
+import { StudentProfileModule } from './profile/student-profile/student-profile.module';
+import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
 
 @Module({
   imports: [
@@ -25,9 +28,10 @@ import { ProfileModule } from './profile/profile.module';
     ProjectsModule,
     AuthModule,
     UsersModule,
-    ProfileModule,
+    StudentProfileModule,
+    StaffProfileModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, StudentProfileController],
+  providers: [AppService, StudentProfileService],
 })
 export class AppModule {}
