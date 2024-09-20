@@ -13,14 +13,15 @@ export class UsersService {
   // will be used in auth service to create user
   // here the existance will not be checked
   async create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     createUserDto.hashedPassword = await hashPassword(
       createUserDto.hashedPassword,
     );
     const user = this.userRepo.create(createUserDto);
     console.log(user);
     try {
-      return await this.userRepo.save(user);
+      const newUser = await this.userRepo.save(user);
+      const { hashedPassword, hashedRefreshToken, ...sanitizedUser } = newUser;
+      return sanitizedUser;
     } catch (error) {
       console.log(error);
     }
