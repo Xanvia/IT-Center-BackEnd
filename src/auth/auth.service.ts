@@ -26,7 +26,7 @@ export class AuthService {
     if (!isPasswordMatch)
       throw new UnauthorizedException('Invalid credentials');
 
-    return { id: user.id, role: user.role };
+    return user;
   }
   // validate google user from the database //
   async validateOrCreateGoogleUser(googleUser: CreateUserDto) {
@@ -49,7 +49,7 @@ export class AuthService {
     if (!refreshTokenMatch)
       throw new UnauthorizedException('Invalid Refresh Token!');
 
-    return { id: userid, role: user.role };
+    return user;
   }
 
   // register function //
@@ -73,8 +73,11 @@ export class AuthService {
     const hash = await argon2.hash(refresh_token);
     await this.userService.updateHashedRefreshToken(user.id, hash);
 
+    // Sanitize the user object by returning only safe fields
+    const { hashedPassword, hashedRefreshToken, ...sanitizedUser } = user;
+
     return {
-      id: user.id,
+      user: sanitizedUser,
       access_token,
       refresh_token,
     };

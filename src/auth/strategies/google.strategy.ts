@@ -35,6 +35,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       hashedPassword: generateRandomPassword(),
     });
     // done(null, user);
-    return { id: user.id, role: user.role };
+    return user;
   }
 }
