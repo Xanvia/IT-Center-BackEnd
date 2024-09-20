@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { Role } from 'enums/role.enum';
+import { hashPassword } from 'utils/hashPassword';
 
 @Injectable()
 export class UsersService {
@@ -12,7 +13,11 @@ export class UsersService {
   // will be used in auth service to create user
   // here the existance will not be checked
   async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepo.create(createUserDto);
+    console.log(createUserDto);
+    createUserDto.hashedPassword = await hashPassword(
+      createUserDto.hashedPassword,
+    );
+    const user = this.userRepo.create(createUserDto);
     console.log(user);
     try {
       return await this.userRepo.save(user);
