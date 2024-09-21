@@ -18,6 +18,9 @@ export class User {
   @Column()
   email: string;
 
+  @Column()
+  name: string;
+
   @Column({ type: 'enum', enum: Role })
   public role: Role;
 

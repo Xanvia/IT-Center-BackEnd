@@ -8,7 +8,9 @@ import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { TUser } from 'types/user.type';
 import { TPayload } from 'types/payload.type';
 import { compare } from 'bcrypt';
+import { FieldException } from 'types/exceptions/field.exception';
 
+const EXPIRE_TIME = 15 * 60 * 1000;
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,10 +23,10 @@ export class AuthService {
   // validate user from the database //
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
-    if (!user) throw new UnauthorizedException('User not found!');
+    if (!user) throw new FieldException('User not Found!', 'email');
     const isPasswordMatch = await compare(password, user.hashedPassword);
     if (!isPasswordMatch)
-      throw new UnauthorizedException('Invalid credentials');
+      throw new FieldException('Invalid Credentials!', 'password');
 
     return user;
   }
@@ -56,7 +58,7 @@ export class AuthService {
   async register(createuserDto: CreateUserDto) {
     const oldUser = await this.userService.findByEmail(createuserDto.email);
     if (oldUser) {
-      return new Error('User already exists!');
+      throw new FieldException('User already exists!', 'email');
     }
     return await this.userService.create(createuserDto);
   }
@@ -80,6 +82,7 @@ export class AuthService {
       user: sanitizedUser,
       access_token,
       refresh_token,
+      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
   }
 
