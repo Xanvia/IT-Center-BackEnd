@@ -29,4 +29,5 @@ export class StaffProfile extends Profile {
 
   @OneToOne(() => Staff, (user) => user.profile)
   user: Staff;
+  isApproved: boolean;
 }
