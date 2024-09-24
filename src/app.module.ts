@@ -10,7 +10,9 @@ import { ProjectsModule } from './contents/projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
-import { ProfileModule } from './profile/profile.module';
+import { StaffProfile } from './profile/staff-profile/entities/profile.entity';
+import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
+import { StudentProfileModule } from './profile/student-profile/student-profile.module';
 
 @Module({
   imports: [
@@ -25,7 +27,8 @@ import { ProfileModule } from './profile/profile.module';
     ProjectsModule,
     AuthModule,
     UsersModule,
-    ProfileModule,
+    StaffProfileModule,
+    StudentProfileModule
   ],
   controllers: [AppController],
   providers: [AppService],

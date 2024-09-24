@@ -5,6 +5,7 @@ import { UpdateStaffProfileDto } from './dto/update-staff-profile.dto';
   
 @Controller('staff-profile')
 export class StaffProfileController {
+  
   constructor(private readonly staffProfileService: StaffProfileService) {}
   
   @Get()
