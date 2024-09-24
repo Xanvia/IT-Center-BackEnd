@@ -19,7 +19,7 @@ export class LogsController {
   }
 
   @Post()
-  createLogs(@Body() createLogsDto: CreateLogsDto) {
+  createLog(@Body() createLogsDto: CreateLogsDto) {
     return this.logsService.createContent<CreateLogsDto>(createLogsDto);
   }
 

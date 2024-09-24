@@ -2,8 +2,8 @@ import {
   Controller,
   Post,
   BadRequestException,
-  UploadedFile,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -26,7 +26,7 @@ export class UploadController {
           cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-123456789.png
         },
       }),
-      limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+      limits: { files: 5, fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
           cb(new BadRequestException('Only image files are allowed!'), false);
@@ -36,17 +36,18 @@ export class UploadController {
       },
     }),
   )
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      throw new BadRequestException('File upload failed');
+  async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files uploaded');
     }
 
-    // Save file metadata to the database
-    await this.uploadService.saveFileData(file);
+    const fileData = await Promise.all(
+      files.map((file) => this.uploadService.saveFileData(file)),
+    );
 
     return {
-      message: 'File uploaded successfully',
-      filePath: `/uploads/${file.filename}`,
+      message: 'Files uploaded successfully',
+      fileData,
     };
   }
 }
