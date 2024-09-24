@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StaffProfile } from './entities/profile.entity';
-import { CreateStaffProfileDto } from './dto/create-staffProfile.dto';
+import { CreateStaffProfileDto } from './dto/create-staff-profile.dto';
 import { Email } from './entities/email.entity';
 import { Telephone } from './entities/telephone.entity';
-import { UpdateStaffProfileDto } from './dto/update-staffProfile.dto';
+import { UpdateStaffProfileDto } from './dto/update-staff-profile.dto';
 
 @Injectable()
 export class StaffProfileService {

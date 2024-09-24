@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { StaffProfileController } from './staffProfile.controller';
-import { StaffProfileService } from './staffProfile.service';
+import { StaffProfileController } from './staff-profile.controller';
+import { StaffProfileService } from './staff-profile.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StaffProfile } from './entities/profile.entity';
 import { Telephone } from './entities/telephone.entity';
