@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { ALResult } from './alResult.entity';
 import { BadRequestException } from '@nestjs/common';
-import { StudentProfile } from './profile.entity';
+import { StudentProfile } from './studentProfile.entity';
 
 @Entity()
 export class Education {

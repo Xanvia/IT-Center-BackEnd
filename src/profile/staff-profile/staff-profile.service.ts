@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { StaffProfile } from './entities/profile.entity';
+import { StaffProfile } from './entities/StaffProfile.entity';
 import { CreateStaffProfileDto } from './dto/create-staff-profile.dto';
 import { Email } from './entities/email.entity';
 import { Telephone } from './entities/telephone.entity';

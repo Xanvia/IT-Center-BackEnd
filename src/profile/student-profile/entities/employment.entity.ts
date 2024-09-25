@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
-import { StudentProfile } from './profile.entity';
+import { StudentProfile } from './studentProfile.entity';
 
 @Entity()
 export class Employment {

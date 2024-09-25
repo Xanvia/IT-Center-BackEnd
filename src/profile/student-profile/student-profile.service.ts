@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateStudentProfileDto } from './dto/create-student-profile.dto';
 import { UpdateStudentProfileDto } from './dto/update-student-profile.dto';
-import { StudentProfile } from './entities/profile.entity';
+import { StudentProfile } from './entities/studentProfile.entity';
 import { HigherEdu } from './entities/higherEdu.entity';
 import { Employment } from './entities/employment.entity';
 import { Education } from './entities/education.entity';

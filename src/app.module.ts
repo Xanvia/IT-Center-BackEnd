@@ -10,8 +10,6 @@ import { ProjectsModule } from './contents/projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
-import { StudentProfileService } from './profile/student-profile/student-profile.service';
-import { StudentProfileController } from './profile/student-profile/student-profile.controller';
 import { StudentProfileModule } from './profile/student-profile/student-profile.module';
 import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
 import { UploadModule } from './upload/upload.module';
@@ -39,7 +37,7 @@ import { join } from 'path';
     StaffProfileModule,
     UploadModule,
   ],
-  controllers: [AppController, StudentProfileController],
-  providers: [AppService, StudentProfileService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

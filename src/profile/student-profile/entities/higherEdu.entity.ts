@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { StudentProfile } from './profile.entity';
+import { StudentProfile } from './studentProfile.entity';
 
 @Entity()
 export class HigherEdu {

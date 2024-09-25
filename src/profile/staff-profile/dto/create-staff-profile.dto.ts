@@ -26,11 +26,11 @@ export class CreateStaffProfileDto {
 
   @IsArray()
   @IsEmail({}, { each: true })
-  @MaxLength(2)
+  @ArrayMaxSize(2)
   emails: string[];
 
   @IsArray()
   @Length(7, 15, { each: true }) // telephone numbers are between 7 and 15 digits
-  @ArrayMaxSize(3)
+  @ArrayMaxSize(2)
   telephones: string[];
 }
