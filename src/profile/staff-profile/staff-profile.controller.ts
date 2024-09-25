@@ -20,6 +20,11 @@ export class StaffProfileController {
     return this.staffProfileService.findAll();
   }
 
+  @Get('requests')
+  findAllRequests() {
+    return this.staffProfileService.findAllRequests();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.staffProfileService.findOne(id);

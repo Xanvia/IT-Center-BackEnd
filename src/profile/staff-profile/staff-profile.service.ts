@@ -50,6 +50,15 @@ export class StaffProfileService {
     return this.staffProfileRepository.find();
   }
 
+  // Get all staff profile requests
+  async findAllRequests(): Promise<StaffProfile[]> {
+    return this.staffProfileRepository.find({
+      where: {
+        isApproved: false,
+      },
+    });
+  }
+
   // Get a single staff profile by ID
   async findOne(id: string): Promise<StaffProfile> {
     return this.staffProfileRepository.findOne({ where: { id } });
