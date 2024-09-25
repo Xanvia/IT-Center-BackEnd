@@ -11,11 +11,14 @@ import { Title } from 'enums/title.enum';
 
 export class CreateStaffProfileDto {
   @IsEnum(Title)
-  designation: Title;
+  title: Title;
 
   @IsString()
   @MaxLength(50)
   displayName: string;
+
+  @IsString()
+  designation: string;
 
   @IsString()
   nominal: string;

@@ -1,3 +1,4 @@
+import { Title } from 'enums/title.enum';
 import { Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export abstract class Profile {
@@ -6,4 +7,7 @@ export abstract class Profile {
 
   @Column()
   displayName: string;
+
+  @Column({ type: 'enum', enum: Title })
+  title: Title;
 }
