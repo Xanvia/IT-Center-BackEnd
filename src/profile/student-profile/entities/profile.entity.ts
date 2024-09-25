@@ -1,12 +1,5 @@
 import { Title } from 'enums/title.enum';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Education } from './education.entity';
 import { HigherEdu } from './higherEdu.entity';
 import { Employment } from './employment.entity';
@@ -15,6 +8,7 @@ import { Student } from 'src/users/entities/student.entity';
 
 @Entity()
 export class StudentProfile extends Profile {
+  
   @Column({ type: 'enum', enum: Title })
   title: Title;
 
@@ -33,6 +27,14 @@ export class StudentProfile extends Profile {
   @Column()
   phoneNumber: string;
 
+  @Column({ nullable: true })
+  otherQualification: string;
+
+  @CreateDateColumn()
+  createdDate: string;
+
+  // Table Relationships
+
   @OneToOne(() => Education, (education) => education.profile)
   @JoinColumn()
   education: Education;
@@ -43,9 +45,6 @@ export class StudentProfile extends Profile {
   })
   higherEdu: HigherEdu[];
 
-  @Column({ nullable: true })
-  otherQualification: string;
-
   @OneToOne(() => Employment, (employment) => employment.profile)
   @JoinColumn()
   employment: Employment;
@@ -53,7 +52,4 @@ export class StudentProfile extends Profile {
   @OneToOne(() => Student, (user) => user.profile)
   @JoinColumn()
   user: Student;
-
-  @CreateDateColumn()
-  createdDate: string;
 }

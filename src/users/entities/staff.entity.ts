@@ -1,5 +1,6 @@
 import { ChildEntity, JoinColumn, OneToOne } from 'typeorm';
 import { User } from './user.entity';
+import { StaffProfile } from 'src/profile/staff-profile/entities/profile.entity';
 import { Role } from 'enums/role.enum';
 import { StaffProfile } from 'src/profile/staff-profile/entities/profile.entity';
 
