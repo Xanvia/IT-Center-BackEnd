@@ -1,9 +1,17 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller('user')
 export class UsersController {
-  // @Post('student/register')
-  // async register(@Body() createUserDto: CreateUserDto) {
-  //   return this.authService.register(createUserDto);
-  // }
+  constructor(private userService: UsersService) {}
+
+  @Post(':id')
+  async usertoAdmin(@Param('id') userId: string) {
+    return this.userService.updateUsertoAdmin(userId);
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') userId: string) {
+    return this.userService.deleteUser(userId);
+  }
 }
