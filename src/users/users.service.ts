@@ -12,7 +12,7 @@ export class UsersService {
 
   // will be used in auth service to create user
   // here the existance will not be checked
-  async create(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     createUserDto.hashedPassword = await hashPassword(
       createUserDto.hashedPassword,
     );

@@ -34,7 +34,7 @@ export class AuthService {
   async validateOrCreateGoogleUser(googleUser: CreateUserDto) {
     const user = await this.userService.findByEmail(googleUser.email);
     if (user) return user;
-    return await this.userService.create(googleUser);
+    return await this.userService.createUser(googleUser);
   }
 
   // validate refresh token from the database //
@@ -60,7 +60,7 @@ export class AuthService {
     if (oldUser) {
       throw new FieldException('User already exists!', 'email');
     }
-    return await this.userService.create(createuserDto);
+    return await this.userService.createUser(createuserDto);
   }
 
   // login function //
