@@ -1,5 +1,6 @@
 import {
-  IsDate,
+  IsArray,
+  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -17,10 +18,10 @@ export class CreateLogsDto {
   description: string;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   date?: string;
 
+  @IsArray()
   @IsOptional()
-  @IsString()
   images?: string[];
 }

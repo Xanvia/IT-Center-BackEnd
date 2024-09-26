@@ -10,7 +10,6 @@ import {
 import { ContentImage } from './contentImage.entity';
 
 // appling Single Table Inheritance architecture
-
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class Content {

@@ -22,5 +22,5 @@ export class CreateProjectDto {
 
   @IsOptional()
   @IsString()
-  images?: string;
+  images?: string[];
 }
