@@ -1,5 +1,6 @@
 import {
-  IsDate,
+  IsArray,
+  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -17,10 +18,10 @@ export class CreateProjectDto {
   description: string;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   date?: string;
 
   @IsOptional()
-  @IsString()
+  @IsArray()
   images?: string[];
 }
