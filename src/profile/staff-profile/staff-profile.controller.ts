@@ -15,12 +15,12 @@ import { UpdateStaffProfileDto } from './dto/update-staff-profile.dto';
 export class StaffProfileController {
   constructor(private readonly staffProfileService: StaffProfileService) {}
 
-  @Get()
+  @Get() // http://localhost:30001/staff-profile
   findAll() {
     return this.staffProfileService.findAll();
   }
 
-  @Get('requests')
+  @Get('requests') // http://localhost:30001/staff-profile/requests
   findAllRequests() {
     return this.staffProfileService.findAllRequests();
   }
