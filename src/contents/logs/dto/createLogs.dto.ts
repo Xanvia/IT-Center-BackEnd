@@ -22,5 +22,5 @@ export class CreateLogsDto {
 
   @IsOptional()
   @IsString()
-  images?: string;
+  images?: string[];
 }

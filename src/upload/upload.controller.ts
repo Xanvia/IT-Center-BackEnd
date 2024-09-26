@@ -6,7 +6,7 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 
@@ -16,7 +16,7 @@ export class UploadController {
 
   @Post()
   @UseInterceptors(
-    FileInterceptor('image', {
+    FilesInterceptor('image', 5, {
       storage: diskStorage({
         destination: './uploads',
         filename: (req, file, cb) => {
@@ -26,7 +26,7 @@ export class UploadController {
           cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-123456789.png
         },
       }),
-      limits: { files: 5, fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+      limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
       fileFilter: (req, file, cb) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
           cb(new BadRequestException('Only image files are allowed!'), false);
@@ -45,9 +45,11 @@ export class UploadController {
       files.map((file) => this.uploadService.saveFileData(file)),
     );
 
+    const paths = fileData.map((item) => item.path);
+
     return {
       message: 'Files uploaded successfully',
-      fileData,
+      paths,
     };
   }
 }

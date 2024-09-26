@@ -2,10 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   TableInheritance,
   UpdateDateColumn,
 } from 'typeorm';
+import { ContentImage } from './contentImage.entity';
 
 // appling Single Table Inheritance architecture
 
@@ -15,17 +17,20 @@ export class Content {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar' })
   title: string;
 
   @Column()
   description: string;
 
   @Column({ type: 'date', nullable: true })
-  date?: string;
+  date?: Date;
 
-  @Column({ nullable: true })
-  images?: string;
+  @OneToMany(() => ContentImage, (item) => item.profile, {
+    cascade: true,
+    eager: true,
+  })
+  images: ContentImage[];
 
   @CreateDateColumn()
   createdAt: string;
