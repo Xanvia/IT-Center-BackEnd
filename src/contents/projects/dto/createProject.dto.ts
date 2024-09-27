@@ -21,7 +21,7 @@ export class CreateProjectDto {
   @IsDateString()
   date?: string;
 
-  @IsOptional()
   @IsArray()
+  @IsOptional()
   images?: string[];
 }
