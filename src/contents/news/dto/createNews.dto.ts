@@ -23,7 +23,7 @@ export class CreateNewsDto {
 
   @IsOptional()
   @IsString()
-  images?: string;
+  images?: string[];
 
   @IsOptional()
   @Matches(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {

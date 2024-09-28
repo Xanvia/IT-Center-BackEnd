@@ -4,6 +4,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import googleAuthConfig from 'config/googleAuth.config';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { AuthService } from '../auth.service';
+import { generateRandomPassword } from 'utils/generatePassword';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
@@ -31,9 +32,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       email: profile.emails[0].value,
       name: profile.displayName,
       avatarUrl: profile.photos[0].value,
-      hashedPassword: '',
+      hashedPassword: generateRandomPassword(),
     });
     // done(null, user);
-    return { id: user.id, role: user.role };
+    return user;
   }
 }

@@ -1,14 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { StaffProfile } from './profile.entity';
+import { StaffProfile } from './StaffProfile.entity';
 
 @Entity()
-export class Email {
+export class Telephone {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  email: string;
+  phoneNumber: string;
 
-  @ManyToOne(() => StaffProfile, (parent) => parent.emails)
+  @ManyToOne(() => StaffProfile, (parent) => parent.telephones)
   profile: StaffProfile;
 }

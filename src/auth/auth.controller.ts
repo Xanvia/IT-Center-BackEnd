@@ -40,7 +40,9 @@ export class AuthController {
   @Get('google/callback')
   async googleCallback(@Req() req, @Res() res) {
     const response = await this.authService.login(req.user);
-    res.redirect(`http://localhost:3001?token=${response.access_token}`);
+    res.redirect(
+      `http://localhost:3000/dashboard/?token=${response.refresh_token}`,
+    );
   }
 
   @UseGuards(RefreshAuthGuard)

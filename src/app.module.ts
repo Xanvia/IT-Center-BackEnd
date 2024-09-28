@@ -10,7 +10,11 @@ import { ProjectsModule } from './contents/projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
-import { ProfileModule } from './profile/profile.module';
+import { StudentProfileModule } from './profile/student-profile/student-profile.module';
+import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
+import { UploadModule } from './upload/upload.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -19,13 +23,19 @@ import { ProfileModule } from './profile/profile.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync(databaseConfig),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
     FeedbacksModule,
     NewsModule,
     LogsModule,
     ProjectsModule,
     AuthModule,
     UsersModule,
-    ProfileModule,
+    StudentProfileModule,
+    StaffProfileModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

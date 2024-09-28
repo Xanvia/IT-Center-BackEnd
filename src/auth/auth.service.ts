@@ -8,7 +8,9 @@ import { CreateUserDto } from 'src/users/dto/createUser.dto';
 import { TUser } from 'types/user.type';
 import { TPayload } from 'types/payload.type';
 import { compare } from 'bcrypt';
+import { FieldException } from 'types/exceptions/field.exception';
 
+const EXPIRE_TIME = 15 * 60 * 1000;
 @Injectable()
 export class AuthService {
   constructor(
@@ -21,18 +23,18 @@ export class AuthService {
   // validate user from the database //
   async validateUser(email: string, password: string) {
     const user = await this.userService.findByEmail(email);
-    if (!user) throw new UnauthorizedException('User not found!');
+    if (!user) throw new FieldException('User not Found!', 'email');
     const isPasswordMatch = await compare(password, user.hashedPassword);
     if (!isPasswordMatch)
-      throw new UnauthorizedException('Invalid credentials');
+      throw new FieldException('Invalid Credentials!', 'password');
 
-    return { id: user.id, role: user.role };
+    return user;
   }
   // validate google user from the database //
   async validateOrCreateGoogleUser(googleUser: CreateUserDto) {
     const user = await this.userService.findByEmail(googleUser.email);
     if (user) return user;
-    return await this.userService.create(googleUser);
+    return await this.userService.createUser(googleUser);
   }
 
   // validate refresh token from the database //
@@ -49,13 +51,16 @@ export class AuthService {
     if (!refreshTokenMatch)
       throw new UnauthorizedException('Invalid Refresh Token!');
 
-    return { id: userid, role: user.role };
+    return user;
   }
 
   // register function //
   async register(createuserDto: CreateUserDto) {
-    const user = await this.userService.create(createuserDto);
-    return user;
+    const oldUser = await this.userService.findByEmail(createuserDto.email);
+    if (oldUser) {
+      throw new FieldException('User already exists!', 'email');
+    }
+    return await this.userService.createUser(createuserDto);
   }
 
   // login function //
@@ -70,10 +75,14 @@ export class AuthService {
     const hash = await argon2.hash(refresh_token);
     await this.userService.updateHashedRefreshToken(user.id, hash);
 
+    // Sanitize the user object by returning only safe fields
+    const { hashedPassword, hashedRefreshToken, ...sanitizedUser } = user;
+
     return {
-      id: user.id,
+      user: sanitizedUser,
       access_token,
       refresh_token,
+      expiresIn: new Date().setTime(new Date().getTime() + EXPIRE_TIME),
     };
   }
 

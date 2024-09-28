@@ -2,6 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Content } from './content.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ContentImage } from './contentImage.entity';
+
+interface CreateContentDto {
+  images?: string[];
+}
 
 @Injectable()
 export abstract class ContentsService {
@@ -23,8 +28,19 @@ export abstract class ContentsService {
   }
 
   // create Content
-  async createContent<createDto>(createContentsDto: createDto) {
-    const newItem = this.contentRepo.create({ ...createContentsDto });
+  async createContent<createDto extends CreateContentDto>(
+    createContentsDto: createDto,
+  ) {
+    const { images, ...rest } = createContentsDto;
+    const newItem = this.contentRepo.create({ ...rest });
+
+    if (images && images.length) {
+      newItem.images = images.map((image) => {
+        const newImage = new ContentImage();
+        newImage.path = image;
+        return newImage;
+      });
+    }
 
     return await this.contentRepo.save(newItem);
   }
