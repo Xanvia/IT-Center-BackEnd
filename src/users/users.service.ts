@@ -7,12 +7,15 @@ import { Role } from 'enums/role.enum';
 import { hashPassword } from 'utils/hashPassword';
 import { Admin } from './entities/admin.entity';
 import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.entity';
+import { StudentProfile } from 'src/profile/student-profile/entities/studentProfile.entity';
+import { Student } from './entities/student.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Admin) private adminRepo: Repository<Admin>,
+    @InjectRepository(Admin) private studentRepo: Repository<Student>,
     @InjectRepository(StaffProfile)
     private staffProfileRepo: Repository<StaffProfile>,
   ) {}
@@ -55,19 +58,18 @@ export class UsersService {
   }
 
   // Update a user's role with validation for allowed transitions
-  async updateUsertoAdmin(userId: string): Promise<User> {
+  async updateUsertoStudent(
+    userId: string,
+    profile: StudentProfile,
+  ): Promise<Student> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) {
       throw new BadRequestException('User not found');
     }
     const { id, createdDate, role, ...data } = user;
-    const admin = this.adminRepo.create(data);
-    console.log('here');
-    const profile = await this.staffProfileRepo.findOne({
-      where: { id: '8d5d9ab6-6394-4378-a9f2-fab7f0922de3' },
-    });
-    admin.profile = profile;
+    const student = this.studentRepo.create(data);
+    student.profile = profile;
 
-    return await this.userRepo.save(admin);
+    return await this.studentRepo.save(student);
   }
 }

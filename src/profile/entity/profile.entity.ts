@@ -10,7 +10,4 @@ export abstract class Profile {
 
   @Column({ type: 'enum', enum: Title })
   title: Title;
-
-  @Column({ default: false })
-  isApproved: boolean;
 }

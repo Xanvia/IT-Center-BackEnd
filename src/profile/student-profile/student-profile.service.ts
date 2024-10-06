@@ -8,6 +8,8 @@ import { HigherEdu } from './entities/higherEdu.entity';
 import { Employment } from './entities/employment.entity';
 import { Education } from './entities/education.entity';
 import { ALResult } from './entities/alResult.entity';
+import { UsersService } from 'src/users/users.service';
+import { Student } from 'src/users/entities/student.entity';
 
 @Injectable()
 export class StudentProfileService {
@@ -26,12 +28,14 @@ export class StudentProfileService {
 
     @InjectRepository(ALResult)
     private alResultRepository: Repository<ALResult>,
+    private userService: UsersService,
   ) {}
 
   // Create a new student profile with all nested entities
   async create(
     createStudentProfileDto: CreateStudentProfileDto,
-  ): Promise<StudentProfile> {
+    userId: string,
+  ): Promise<Student> {
     const {
       title,
       fullName,
@@ -74,7 +78,10 @@ export class StudentProfileService {
       await this.employmentRepository.save(employmentEntity);
 
     // Save student profile with all relations
-    return this.studentProfileRepository.save(studentProfile);
+    const profile = await this.studentProfileRepository.save(studentProfile);
+
+    // convert user to student
+    return this.userService.updateUsertoStudent(userId, profile);
   }
 
   // Get all student profiles

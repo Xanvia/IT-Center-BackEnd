@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   BadRequestException,
   UploadedFile,
+  Req,
 } from '@nestjs/common';
 import { StudentProfileService } from './student-profile.service';
 import { CreateStudentProfileDto } from './dto/create-student-profile.dto';
@@ -32,8 +33,8 @@ export class StudentProfileController {
   }
 
   @Post()
-  create(@Body() createStudentProfileDto: CreateStudentProfileDto) {
-    return this.studentProfileService.create(createStudentProfileDto);
+  create(@Req() req, @Body() createStudentProfileDto: CreateStudentProfileDto) {
+    return this.studentProfileService.create(createStudentProfileDto, req.user);
   }
 
   @Patch(':id')
