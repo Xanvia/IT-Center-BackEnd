@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ReservedDate } from './reserved-date.entity';
+import { OneToMany } from 'typeorm';
 
 @Entity()
 export class Reservation {
@@ -32,6 +34,6 @@ export class Reservation {
   @Column('decimal')
   fees: number;
 
-  @Column('simple-array')
-  reservedDates: string[];
+  @OneToMany(() => ReservedDate, (reservedDate) => reservedDate.reservation)
+  reservedDates: ReservedDate[];
 }
