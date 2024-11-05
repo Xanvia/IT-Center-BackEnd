@@ -9,6 +9,12 @@ export class ReservedDate {
   @Column()
   date: string;
 
+  @Column()
+  startTime: string;
+
+  @Column()
+  endTime: string;
+
   @ManyToOne(() => Reservation, (reservation) => reservation.reservedDates)
   reservation: Reservation;
 }
