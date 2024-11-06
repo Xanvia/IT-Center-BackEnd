@@ -13,6 +13,7 @@ import { databaseConfig } from 'config/database.config';
 import { StudentProfileModule } from './profile/student-profile/student-profile.module';
 import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { CoursesModule } from './courses/courses.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     StudentProfileModule,
     StaffProfileModule,
     ReservationsModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
