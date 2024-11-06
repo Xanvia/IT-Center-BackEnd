@@ -5,10 +5,10 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private userService: UsersService) {}
 
-  @Post(':id')
-  async usertoAdmin(@Param('id') userId: string) {
-    return this.userService.updateUsertoAdmin(userId);
-  }
+  // @Post(':id')
+  // async usertoAdmin(@Param('id') userId: string) {
+  //   return this.userService.updateUsertoAdmin(userId);
+  // }
 
   @Delete(':id')
   async deleteUser(@Param('id') userId: string) {
