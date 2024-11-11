@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { ReservedDate } from './reserved-date.entity';
 import { OneToMany } from 'typeorm';
+import { ReserveRecord } from 'src/reserve-records/entities/reserve-record.entity';
 
 @Entity()
 export class Reservation {
@@ -40,6 +40,6 @@ export class Reservation {
   @Column('decimal')
   feeRatePerHour: number;
 
-  @OneToMany(() => ReservedDate, (reservedDate) => reservedDate.reservation)
-  reservedDates: ReservedDate[];
+  @OneToMany(() => ReserveRecord, (record) => record.reservation)
+  records: ReserveRecord[];
 }

@@ -14,6 +14,7 @@ import { StudentProfileModule } from './profile/student-profile/student-profile.
 import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
 import { ReservationsModule } from './reservations/reservations.module';
 import { CoursesModule } from './courses/courses.module';
+import { ReserveRecordsModule } from './reserve-records/reserve-records.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { CoursesModule } from './courses/courses.module';
     StaffProfileModule,
     ReservationsModule,
     CoursesModule,
+    ReserveRecordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
