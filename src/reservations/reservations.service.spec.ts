@@ -5,10 +5,21 @@ import { Reservation } from './entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { CreateReservationDto } from './dto/create-reservation.dto';
+
 const mockReservation = {
   id: '1',
   name: 'Test Reservation',
-  date: new Date(),
+  description: 'Test Description',
+  images: ['image1.jpg', 'image2.jpg'],
+  seatLimit: 10,
+  noOfComputers: 5,
+  availableSoftwares: 'Software1, Software2',
+  Equipment: 'Projector',
+  isAC: true,
+  specialities: 'Speciality1',
+  location: 'Test Location',
+  feeRatePerHour: 100.0,
+  reservedDates: [],
 };
 
 const mockReservationRepository = {
@@ -46,7 +57,19 @@ describe('ReservationsService', () => {
   });
 
   it('should create a reservation', async () => {
-    const createReservationDto = { name: 'Test Reservation', date: new Date() };
+    const createReservationDto: CreateReservationDto = {
+      name: 'Test Reservation',
+      description: 'Test Description',
+      images: ['image1.jpg', 'image2.jpg'],
+      seatLimit: 10,
+      noOfComputers: 5,
+      availableSoftwares: 'Software1, Software2',
+      Equipment: 'Projector',
+      isAC: true,
+      specialities: 'Speciality1',
+      location: 'Test Location',
+      feeRatePerHour: 100.0,
+    };
     expect(await service.create(createReservationDto)).toEqual(mockReservation);
     expect(repository.create).toHaveBeenCalledWith(createReservationDto);
     expect(repository.save).toHaveBeenCalledWith(createReservationDto);
@@ -96,7 +119,9 @@ describe('ReservationsService', () => {
   });
 
   it('should throw an error if reservation to delete not found', async () => {
-    jest.spyOn(repository, 'delete').mockResolvedValueOnce({ affected: 0 });
+    jest
+      .spyOn(repository, 'delete')
+      .mockResolvedValueOnce({ affected: 0, raw: {} });
     await expect(service.remove(2)).rejects.toThrow(NotFoundException);
   });
 });

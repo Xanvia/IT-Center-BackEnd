@@ -19,11 +19,11 @@ export class Reservation {
   @Column()
   seatLimit: number;
 
-  @Column()
-  noOfComputers: number;
+  @Column({ nullable: true })
+  noOfComputers?: number;
 
-  @Column()
-  availableSoftwares: string;
+  @Column({ nullable: true })
+  availableSoftwares?: string;
 
   @Column()
   Equipment: string;

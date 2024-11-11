@@ -25,14 +25,19 @@ export class CreateReservationDto {
   @IsNumber()
   seatLimit: number;
 
-  @IsNotEmpty()
   @IsNumber()
+  @IsOptional()
   noOfComputers: number;
 
   @IsNotEmpty()
   @IsString()
   @IsOptional()
-  machineDetails: string;
+  availableSoftwares: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsOptional()
+  Equipment: string;
 
   @IsNotEmpty()
   @IsBoolean()
@@ -40,10 +45,13 @@ export class CreateReservationDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsOptional()
   specialities: string;
 
   @IsNotEmpty()
+  @IsString()
+  location: string;
+
+  @IsNotEmpty()
   @IsDecimal()
-  fees: number;
+  feeRatePerHour: number;
 }

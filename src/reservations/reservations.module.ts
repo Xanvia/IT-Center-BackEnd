@@ -7,7 +7,7 @@ import { Reservation } from './entities/reservation.entity';
 import { ReservedDate } from './entities/reserved-date.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reservation, ReservedDate])],
+  imports: [TypeOrmModule.forFeature([Reservation])],
   controllers: [ReservationsController],
   providers: [ReservationsService],
 })
