@@ -23,7 +23,10 @@ export class Reservation {
   noOfComputers: number;
 
   @Column()
-  machineDetails: string;
+  availableSoftwares: string;
+
+  @Column()
+  Equipment: string;
 
   @Column()
   isAC: boolean;
@@ -31,8 +34,11 @@ export class Reservation {
   @Column()
   specialities: string;
 
+  @Column()
+  location: string;
+
   @Column('decimal')
-  fees: number;
+  feeRatePerHour: number;
 
   @OneToMany(() => ReservedDate, (reservedDate) => reservedDate.reservation)
   reservedDates: ReservedDate[];

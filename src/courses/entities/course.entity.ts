@@ -15,6 +15,9 @@ export class Course {
   @Column()
   duration: string;
 
+  @Column()
+  registrationDeadline: string;
+
   @Column('decimal')
   fees: number;
 
