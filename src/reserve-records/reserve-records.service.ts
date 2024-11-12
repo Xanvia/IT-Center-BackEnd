@@ -45,7 +45,10 @@ export class ReserveRecordsService {
     id: string,
     updateReserveRecordDto: UpdateReserveRecordDto,
   ): Promise<UpdateResult> {
-    if (this.reserveRecordRepository.findOne({ where: { id } })) {
+    const record = await this.reserveRecordRepository.findOne({
+      where: { id },
+    });
+    if (!record) {
       throw new Error('Record not found');
     }
 
