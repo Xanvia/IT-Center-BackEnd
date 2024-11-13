@@ -5,7 +5,7 @@ import { StudentProfile } from 'src/profile/student-profile/entities/studentProf
 
 @ChildEntity(Role.STUDENT)
 export class Student extends User {
-  @OneToOne(() => StudentProfile, (profile) => profile.user)
+  @OneToOne(() => StudentProfile, (profile) => profile.user, { cascade: true })
   @JoinColumn()
   profile: StudentProfile;
 }

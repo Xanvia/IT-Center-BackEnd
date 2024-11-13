@@ -4,7 +4,6 @@ import { ReservationsController } from './reservations.controller';
 import { Type } from 'class-transformer';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
-import { ReservedDate } from './entities/reserved-date.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Reservation])],

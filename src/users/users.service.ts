@@ -9,6 +9,7 @@ import { Admin } from './entities/admin.entity';
 import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.entity';
 import { StudentProfile } from 'src/profile/student-profile/entities/studentProfile.entity';
 import { Student } from './entities/student.entity';
+import { CreateStudentProfileDto } from 'src/profile/student-profile/dto/create-student-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,7 @@ export class UsersService {
     @InjectRepository(Admin) private adminRepo: Repository<Admin>,
     @InjectRepository(Admin) private studentRepo: Repository<Student>,
     @InjectRepository(StaffProfile)
-    private staffProfileRepo: Repository<StaffProfile>,
+    private studentProfileRepo: Repository<StudentProfile>,
   ) {}
 
   // will be used in auth service to create user
@@ -27,7 +28,6 @@ export class UsersService {
       createUserDto.hashedPassword,
     );
     const user = this.userRepo.create(createUserDto);
-    console.log(user);
     try {
       const newUser = await this.userRepo.save(user);
       const { hashedPassword, hashedRefreshToken, ...sanitizedUser } = newUser;
@@ -35,6 +35,11 @@ export class UsersService {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  // find all users
+  async getUsers(): Promise<User[]> {
+    return await this.userRepo.find();
   }
 
   // find user with the id
@@ -60,7 +65,7 @@ export class UsersService {
   // Update a user's role with validation for allowed transitions
   async updateUsertoStudent(
     userId: string,
-    profile: StudentProfile,
+    profile: CreateStudentProfileDto,
   ): Promise<Student> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) {
@@ -68,7 +73,8 @@ export class UsersService {
     }
     const { id, createdDate, role, ...data } = user;
     const student = this.studentRepo.create(data);
-    student.profile = profile;
+    const profileData = this.studentProfileRepo.create(profile);
+    student.profile = profileData;
 
     return await this.studentRepo.save(student);
   }

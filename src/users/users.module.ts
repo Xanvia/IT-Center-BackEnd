@@ -8,6 +8,7 @@ import { Staff } from './entities/staff.entity';
 import { Student } from './entities/student.entity';
 import { SuperAdmin } from './entities/superAdmin.entity';
 import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.entity';
+import { StudentProfile } from 'src/profile/student-profile/entities/studentProfile.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.en
       Student,
       SuperAdmin,
       StaffProfile,
+      StudentProfile,
     ]),
   ],
   providers: [UsersService],
