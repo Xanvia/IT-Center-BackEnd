@@ -38,7 +38,10 @@ export class StudentProfile extends Profile {
 
   // Table Relationships
 
-  @OneToOne(() => Education, (education) => education.profile)
+  @OneToOne(() => Education, (education) => education.profile, {
+    cascade: true,
+    eager: true,
+  })
   @JoinColumn()
   education: Education;
 

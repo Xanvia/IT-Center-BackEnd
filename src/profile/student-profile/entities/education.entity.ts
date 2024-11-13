@@ -31,10 +31,7 @@ export class Education {
   })
   aLevelResults: ALResult[];
 
-  @OneToOne(() => StudentProfile, (profile) => profile.education, {
-    cascade: true,
-    eager: true,
-  })
+  @OneToOne(() => StudentProfile, (profile) => profile.education)
   profile: StudentProfile;
 
   @BeforeInsert()

@@ -1,5 +1,14 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID, Length, IsDate, ValidateNested } from "class-validator";
-import { Title } from "enums/title.enum";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Length,
+  IsDate,
+  ValidateNested,
+} from 'class-validator';
+import { Title } from 'enums/title.enum';
 import { Type } from 'class-transformer';
 import { Grade } from 'enums/grade.enum';
 
@@ -15,7 +24,7 @@ class ALResultDto {
 
 // Education DTO
 class EducationDto {
-@IsEnum({Grade})
+  @IsEnum(Grade)
   englishOL: Grade;
 
   @IsEnum(Grade)
@@ -67,6 +76,10 @@ class EmploymentDto {
 export class CreateStudentProfileDto {
   @IsEnum(Title)
   title: Title;
+
+  @IsString()
+  @IsOptional()
+  displayName: string;
 
   @IsString()
   @IsNotEmpty()

@@ -6,10 +6,9 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { Role } from 'enums/role.enum';
 import { hashPassword } from 'utils/hashPassword';
 import { Admin } from './entities/admin.entity';
-import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.entity';
-import { StudentProfile } from 'src/profile/student-profile/entities/studentProfile.entity';
 import { Student } from './entities/student.entity';
 import { CreateStudentProfileDto } from 'src/profile/student-profile/dto/create-student-profile.dto';
+import { StudentProfileService } from 'src/profile/student-profile/student-profile.service';
 
 @Injectable()
 export class UsersService {
@@ -17,8 +16,7 @@ export class UsersService {
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Admin) private adminRepo: Repository<Admin>,
     @InjectRepository(Admin) private studentRepo: Repository<Student>,
-    @InjectRepository(StaffProfile)
-    private studentProfileRepo: Repository<StudentProfile>,
+    private studentProfileService: StudentProfileService,
   ) {}
 
   // will be used in auth service to create user
@@ -73,8 +71,9 @@ export class UsersService {
     }
     const { id, createdDate, role, ...data } = user;
     const student = this.studentRepo.create(data);
-    const profileData = this.studentProfileRepo.create(profile);
-    student.profile = profileData;
+    profile.displayName = data.name;
+    const profileData = await this.studentProfileService.create(profile);
+    if (!student.profile) student.profile = profileData;
 
     return await this.studentRepo.save(student);
   }

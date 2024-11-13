@@ -33,8 +33,8 @@ export class StudentProfileController {
   }
 
   @Post()
-  create(@Req() req, @Body() createStudentProfileDto: CreateStudentProfileDto) {
-    return this.studentProfileService.create(createStudentProfileDto, req.user);
+  create(@Body() createStudentProfileDto: CreateStudentProfileDto) {
+    return this.studentProfileService.create(createStudentProfileDto);
   }
 
   @Patch(':id')

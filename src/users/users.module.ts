@@ -8,19 +8,12 @@ import { Staff } from './entities/staff.entity';
 import { Student } from './entities/student.entity';
 import { SuperAdmin } from './entities/superAdmin.entity';
 import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.entity';
-import { StudentProfile } from 'src/profile/student-profile/entities/studentProfile.entity';
+import { StudentProfileModule } from 'src/profile/student-profile/student-profile.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      User,
-      Admin,
-      Staff,
-      Student,
-      SuperAdmin,
-      StaffProfile,
-      StudentProfile,
-    ]),
+    TypeOrmModule.forFeature([User, Admin, Staff, Student, SuperAdmin]),
+    StudentProfileModule,
   ],
   providers: [UsersService],
   exports: [UsersService],

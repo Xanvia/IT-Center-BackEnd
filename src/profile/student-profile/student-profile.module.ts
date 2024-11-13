@@ -7,11 +7,9 @@ import { ALResult } from './entities/alResult.entity';
 import { Education } from './entities/education.entity';
 import { Employment } from './entities/employment.entity';
 import { HigherEdu } from './entities/higherEdu.entity';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    UsersModule,
     TypeOrmModule.forFeature([
       StudentProfile,
       ALResult,
@@ -23,5 +21,6 @@ import { UsersModule } from 'src/users/users.module';
   ],
   controllers: [StudentProfileController],
   providers: [StudentProfileService],
+  exports: [StudentProfileService],
 })
 export class StudentProfileModule {}
