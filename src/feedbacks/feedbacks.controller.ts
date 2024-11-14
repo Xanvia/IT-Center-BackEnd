@@ -14,6 +14,7 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'enums/role.enum';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
+import { ADMIN } from 'types/user.type';
 
 @Controller('feedbacks')
 export class FeedbacksController {
@@ -29,7 +30,7 @@ export class FeedbacksController {
     return this.feedbackService.deleteFeedBackbyID(id);
   }
 
-  @Roles(Role.ADMIN)
+  @Roles(ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get()
