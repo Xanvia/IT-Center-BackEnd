@@ -15,12 +15,11 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Admin) private adminRepo: Repository<Admin>,
-    @InjectRepository(Admin) private studentRepo: Repository<Student>,
+    @InjectRepository(Student) private studentRepo: Repository<Student>,
     private studentProfileService: StudentProfileService,
   ) {}
 
   // will be used in auth service to create user
-  // here the existance will not be checked
   async createUser(createUserDto: CreateUserDto) {
     createUserDto.hashedPassword = await hashPassword(
       createUserDto.hashedPassword,
@@ -35,14 +34,24 @@ export class UsersService {
     }
   }
 
+  // find user with the id
+  async findOne(id: string): Promise<User | undefined> {
+    return await this.userRepo.findOne({ where: { id } });
+  }
+
   // find all users
   async getUsers(): Promise<User[]> {
     return await this.userRepo.find();
   }
 
-  // find user with the id
-  async findOne(id: string): Promise<User | undefined> {
-    return await this.userRepo.findOne({ where: { id } });
+  // find all students
+  async getStudents(): Promise<Student[]> {
+    return await this.studentRepo.find();
+  }
+
+  // find all admins
+  async getAdmins(): Promise<Admin[]> {
+    return await this.adminRepo.find();
   }
 
   // find user by the email
@@ -69,11 +78,12 @@ export class UsersService {
     if (!user) {
       throw new BadRequestException('User not found');
     }
+
     const { id, createdDate, role, ...data } = user;
     const student = this.studentRepo.create(data);
     profile.displayName = data.name;
     const profileData = await this.studentProfileService.create(profile);
-    if (!student.profile) student.profile = profileData;
+    student.profile = profileData;
 
     return await this.studentRepo.save(student);
   }
