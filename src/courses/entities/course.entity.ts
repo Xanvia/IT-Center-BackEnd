@@ -1,5 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { CourseImage } from './courseImage.entity';
+import { RegistrationRecord } from 'src/registration-records/entities/registration-record.entity';
 
 @Entity()
 export class Course {
@@ -41,4 +48,9 @@ export class Course {
 
   @Column({ type: 'date' })
   endingDate: Date;
+
+  @OneToMany(() => RegistrationRecord, (record) => record.course, {
+    onUpdate: 'CASCADE',
+  })
+  registrationRecords: RegistrationRecord[];
 }

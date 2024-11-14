@@ -16,6 +16,7 @@ import { ReservationsModule } from './reservations/reservations.module';
 import { CoursesModule } from './courses/courses.module';
 import { ReserveRecordsModule } from './reserve-records/reserve-records.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { RegistrationRecordsModule } from './registration-records/registration-records.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     CoursesModule,
     ReserveRecordsModule,
     NotificationsModule,
+    RegistrationRecordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
