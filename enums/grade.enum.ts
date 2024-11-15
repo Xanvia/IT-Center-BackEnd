@@ -1,10 +1,10 @@
 export enum Grade {
-  A,
-  B,
-  C,
-  D,
-  S,
-  E,
-  F,
-  NA,
+  A = 'A',
+  B = 'B',
+  C = 'C',
+  D = 'D',
+  E = 'E',
+  F = 'F',
+  S = 'S',
+  NA = 'NA',
 }
