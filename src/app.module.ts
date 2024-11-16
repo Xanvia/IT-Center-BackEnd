@@ -15,6 +15,7 @@ import { StaffProfileModule } from './profile/staff-profile/staff-profile.module
 import { UploadModule } from './upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { CourseModule } from './course/course.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { join } from 'path';
     StudentProfileModule,
     StaffProfileModule,
     UploadModule,
+    CourseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
