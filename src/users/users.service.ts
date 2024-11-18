@@ -79,12 +79,20 @@ export class UsersService {
       throw new BadRequestException('User not found');
     }
 
-    const { id, createdDate, role, ...data } = user;
-    const student = this.studentRepo.create(data);
-    profile.displayName = data.name;
-    const profileData = await this.studentProfileService.create(profile);
-    student.profile = profileData;
+    try {
+      const { id, createdDate, role, ...data } = user;
+      const student = this.studentRepo.create(data);
+      profile.displayName = data.name;
+      const profileData = await this.studentProfileService.create(profile);
+      student.studentProfile = profileData;
 
-    return await this.studentRepo.save(student);
+      const newOne = this.studentRepo.save(student);
+      if (newOne) {
+        await this.userRepo.delete({ id: userId });
+        return newOne;
+      }
+    } catch (error) {
+      throw new BadRequestException('Failed to update user to student');
+    }
   }
 }

@@ -1,4 +1,3 @@
-import { Title } from 'enums/title.enum';
 import {
   Column,
   CreateDateColumn,
@@ -45,17 +44,20 @@ export class StudentProfile extends Profile {
   @JoinColumn()
   education: Education;
 
-  @OneToMany(() => HigherEdu, (item) => item.user, {
+  @OneToMany(() => HigherEdu, (item) => item.profile, {
     cascade: true,
     eager: true,
   })
   higherEdu: HigherEdu[];
 
-  @OneToOne(() => Employment, (employment) => employment.profile)
+  @OneToOne(() => Employment, (employment) => employment.profile, {
+    cascade: true,
+    eager: true,
+  })
   @JoinColumn()
   employment: Employment;
 
-  @OneToOne(() => Student, (user) => user.profile)
+  @OneToOne(() => Student, (user) => user.studentProfile)
   @JoinColumn()
   user: Student;
 }

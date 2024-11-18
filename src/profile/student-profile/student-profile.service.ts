@@ -29,9 +29,6 @@ export class StudentProfileService {
 
     @InjectRepository(Education)
     private educationRepository: Repository<Education>,
-
-    @InjectRepository(ALResult)
-    private alResultRepository: Repository<ALResult>,
   ) {}
 
   // Create a new student profile with all nested entities
@@ -65,8 +62,9 @@ export class StudentProfileService {
     });
 
     // Create Education
-    studentProfile.education = this.educationRepository.create(education);
+    const edu = this.educationRepository.create(education);
 
+    studentProfile.education = await this.educationRepository.save(edu);
     // Create Higher Education (if any)
     studentProfile.higherEdu = higherEdu.map((edu) =>
       this.higherEduRepository.create(edu),

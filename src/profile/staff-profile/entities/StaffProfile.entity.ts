@@ -27,7 +27,7 @@ export class StaffProfile extends Profile {
   })
   telephones: Telephone[];
 
-  @OneToOne(() => Staff, (user) => user.profile)
+  @OneToOne(() => Staff, (user) => user.staffProfile)
   user: Staff;
   isApproved: boolean;
 }

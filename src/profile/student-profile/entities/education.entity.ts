@@ -25,7 +25,7 @@ export class Education {
   @Column({ type: 'enum', enum: Grade })
   scienceOL: Grade;
 
-  @OneToMany(() => ALResult, (result) => result.profile, {
+  @OneToMany(() => ALResult, (result) => result.education, {
     cascade: true,
     eager: true,
   })
