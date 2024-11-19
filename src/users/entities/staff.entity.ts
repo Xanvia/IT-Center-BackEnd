@@ -7,5 +7,5 @@ import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.en
 export class Staff extends User {
   @OneToOne(() => StaffProfile, (profile) => profile.user)
   @JoinColumn()
-  profile: StaffProfile;
+  staffProfile: StaffProfile;
 }

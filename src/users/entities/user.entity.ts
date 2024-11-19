@@ -1,8 +1,11 @@
 import { Role } from 'enums/role.enum';
+import { Notification } from 'src/notifications/entities/notification.entity';
+import { ReserveRecord } from 'src/reserve-records/entities/reserve-record.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   TableInheritance,
 } from 'typeorm';
@@ -35,6 +38,16 @@ export class User {
 
   @CreateDateColumn()
   createdDate: string;
+
+  @OneToMany(() => ReserveRecord, (record) => record.user, {
+    onUpdate: 'CASCADE',
+  })
+  reserveRecords: ReserveRecord[];
+
+  @OneToMany(() => Notification, (record) => record.user, {
+    cascade: true,
+  })
+  notifications: Notification[];
 }
 
 // Single Table Inheritance (STI) is used

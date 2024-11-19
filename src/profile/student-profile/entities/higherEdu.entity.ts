@@ -16,5 +16,5 @@ export class HigherEdu {
   institute: string;
 
   @ManyToOne(() => StudentProfile, (parent) => parent.higherEdu)
-  user: StudentProfile;
+  profile: StudentProfile;
 }

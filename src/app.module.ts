@@ -12,6 +12,11 @@ import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
 import { StudentProfileModule } from './profile/student-profile/student-profile.module';
 import { StaffProfileModule } from './profile/staff-profile/staff-profile.module';
+import { ReservationsModule } from './reservations/reservations.module';
+import { CoursesModule } from './courses/courses.module';
+import { ReserveRecordsModule } from './reserve-records/reserve-records.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { RegistrationRecordsModule } from './registration-records/registration-records.module';
 
 @Module({
   imports: [
@@ -29,6 +34,11 @@ import { StaffProfileModule } from './profile/staff-profile/staff-profile.module
     UsersModule,
     StudentProfileModule,
     StaffProfileModule,
+    ReservationsModule,
+    CoursesModule,
+    ReserveRecordsModule,
+    NotificationsModule,
+    RegistrationRecordsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
