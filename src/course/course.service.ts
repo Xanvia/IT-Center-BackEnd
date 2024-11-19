@@ -16,6 +16,7 @@ export class CourseService {
     private readonly enrollmentRepository: Repository<Enrollment>,
   ) {}
 
+  // Create a new course
   async createCourse(createCourseDto: CreateCourseDto): Promise<Course> {
     const course = this.courseRepository.create(createCourseDto);
     return this.courseRepository.save(course);
