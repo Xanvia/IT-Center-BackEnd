@@ -10,5 +10,6 @@ import { Email } from './entities/email.entity';
   imports: [TypeOrmModule.forFeature([StaffProfile, Telephone, Email])],
   controllers: [StaffProfileController],
   providers: [StaffProfileService],
+  exports: [StaffProfileService],
 })
 export class StaffProfileModule {}

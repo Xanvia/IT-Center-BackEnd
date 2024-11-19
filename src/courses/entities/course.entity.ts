@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { CourseImage } from './courseImage.entity';
 import { RegistrationRecord } from 'src/registration-records/entities/registration-record.entity';
+import { IsOptional } from 'class-validator';
 
 @Entity()
 export class Course {
@@ -32,6 +33,7 @@ export class Course {
   audience: string;
 
   @Column()
+  @IsOptional()
   instructor: string;
 
   @ManyToOne(() => CourseImage, (image) => image.course)
@@ -40,7 +42,7 @@ export class Course {
   @Column()
   studentLimit: number;
 
-  @Column()
+  @Column({ default: 0 })
   registered: number;
 
   @Column({ type: 'date' })

@@ -9,6 +9,7 @@ import { Admin } from './entities/admin.entity';
 import { Student } from './entities/student.entity';
 import { CreateStudentProfileDto } from 'src/profile/student-profile/dto/create-student-profile.dto';
 import { StudentProfileService } from 'src/profile/student-profile/student-profile.service';
+import { StaffProfileService } from 'src/profile/staff-profile/staff-profile.service';
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,7 @@ export class UsersService {
     @InjectRepository(Admin) private adminRepo: Repository<Admin>,
     @InjectRepository(Student) private studentRepo: Repository<Student>,
     private studentProfileService: StudentProfileService,
+    private staffProfileService: StaffProfileService,
   ) {}
 
   // will be used in auth service to create user
@@ -69,7 +71,7 @@ export class UsersService {
     return await this.userRepo.delete(id);
   }
 
-  // Update a user's role with validation for allowed transitions
+  // Update a user to student
   async updateUsertoStudent(
     userId: string,
     profile: CreateStudentProfileDto,
@@ -96,3 +98,9 @@ export class UsersService {
     }
   }
 }
+
+// Update a user to staff
+
+// Update a user to admin
+
+// Update a staff to admin
