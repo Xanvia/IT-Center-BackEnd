@@ -8,6 +8,9 @@ export class ReserveRecord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column()
+  eventName: string;
+
   @Column({ type: 'date' })
   date: string;
 
