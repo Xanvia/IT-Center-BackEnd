@@ -32,7 +32,7 @@ export class Course {
   @Column()
   audience: string;
 
-  @Column()
+  @Column({ nullable: true })
   @IsOptional()
   instructor: string;
 

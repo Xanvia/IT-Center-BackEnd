@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsNumber, IsDate, IsDecimal, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsOptional, IsNumber, IsDate } from 'class-validator';
 
 export class CreateCourseDto {
   @IsString()
@@ -13,7 +14,7 @@ export class CreateCourseDto {
   @IsString()
   registrationDeadline: string;
 
-  @IsDecimal()
+  @IsNumber()
   fees: number;
 
   @IsString()
@@ -24,7 +25,7 @@ export class CreateCourseDto {
   instructor?: string;
 
   @IsOptional()
-  @IsUUID('all', { each: true })
+  @IsString({ each: true })
   images?: string[];
 
   @IsNumber()
@@ -34,9 +35,11 @@ export class CreateCourseDto {
   @IsNumber()
   registered?: number;
 
+  @Type(() => Date)
   @IsDate()
   startingDate: Date;
 
+  @Type(() => Date)
   @IsDate()
   endingDate: Date;
 }
