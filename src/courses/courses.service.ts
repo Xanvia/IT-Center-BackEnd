@@ -12,6 +12,8 @@ export class CoursesService {
   constructor(
     @InjectRepository(Course)
     private courseRepo: Repository<Course>,
+    @InjectRepository(CourseImage)
+    private courseImageRepo: Repository<CourseImage>,
   ) {}
 
   /*
@@ -21,19 +23,20 @@ export class CoursesService {
   */
 
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
-    const { images, ...courseData } = createCourseDto;
-    
-    // Convert image IDs to CourseImage entities
-    const courseImages = images
-      ? images.map((id) => ({ id } as CourseImage))
-      : [];
-    
-    const course = this.courseRepo.create({
-      ...courseData,
-      images: courseImages,
-    });
-    
-    return await this.courseRepo.save(course);
+    try {
+      const { images, ...courseData } = createCourseDto;
+
+      const course = this.courseRepo.create(courseData);
+      const courseImages = await this.courseImageRepo.create(
+        images.map((path) => ({ path })),
+      );
+
+      course.images = courseImages;
+
+      return await this.courseRepo.save(course);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async findAll(): Promise<Course[]> {
@@ -61,23 +64,23 @@ export class CoursesService {
 
   async update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course> {
     const { images, ...updateData } = updateCourseDto;
-  
+
     // Convert image IDs to CourseImage entities
     const courseImages = images
-      ? images.map((id) => ({ id } as CourseImage))
+      ? images.map((id) => ({ id }) as CourseImage)
       : undefined;
-  
+
     // Update the course
     await this.courseRepo.update(id, {
       ...updateData,
       ...(courseImages && { images: courseImages }),
     });
-  
+
     const updatedCourse = await this.courseRepo.findOneBy({ id });
     if (!updatedCourse) {
       throw new NotFoundException(`Course with id ${id} not found!`);
     }
-  
+
     return updatedCourse;
   }
 

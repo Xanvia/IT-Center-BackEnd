@@ -36,7 +36,10 @@ export class Course {
   @IsOptional()
   instructor: string;
 
-  @ManyToOne(() => CourseImage, (image) => image.course)
+  @OneToMany(() => CourseImage, (image) => image.course, {
+    cascade: true,
+    eager: true,
+  })
   images: CourseImage[];
 
   @Column()
