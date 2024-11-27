@@ -37,14 +37,14 @@ export class CreateReservationDto {
   @IsNotEmpty()
   @IsString()
   @IsOptional()
-  Equipment: string;
+  equipment: string;
 
   @IsNotEmpty()
   @IsBoolean()
   isAC: boolean;
 
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   specialities: string;
 
   @IsNotEmpty()

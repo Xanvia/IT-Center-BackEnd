@@ -31,7 +31,7 @@ export class Reservation {
   @Column()
   isAC: boolean;
 
-  @Column()
+  @Column({ nullable: true })
   specialities: string;
 
   @Column()
