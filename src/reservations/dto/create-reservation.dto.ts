@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -36,7 +37,6 @@ export class CreateReservationDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsOptional()
   equipment: string;
 
   @IsNotEmpty()
@@ -51,7 +51,8 @@ export class CreateReservationDto {
   @IsString()
   location: string;
 
+  @Type(() => Number)
   @IsNotEmpty()
-  @IsDecimal()
+  @IsNumber()
   feeRatePerHour: number;
 }

@@ -26,7 +26,7 @@ export class Reservation {
   availableSoftwares?: string;
 
   @Column()
-  Equipment: string;
+  equipment: string;
 
   @Column()
   isAC: boolean;
