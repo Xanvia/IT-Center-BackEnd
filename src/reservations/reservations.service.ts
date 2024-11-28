@@ -32,16 +32,9 @@ export class ReservationsService {
     return reservation;
   }
 
-  async update(
-    id: string,
-    updateReservationDto: UpdateReservationDto,
-  ): Promise<Reservation> {
-    await this.reservationRepo.update(id, updateReservationDto);
-    const updatedReservation = await this.reservationRepo.findOneBy({ id });
-    if (!updatedReservation) {
-      throw new NotFoundException(`Reservation with id ${id} not found!`);
-    }
-    return updatedReservation;
+  async update(id: string, updateReservationDto: UpdateReservationDto) {
+    const updateData = { ...updateReservationDto };
+    return await this.reservationRepo.update(id, updateData);
   }
 
   async remove(id: number): Promise<void> {
