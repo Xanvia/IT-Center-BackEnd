@@ -18,6 +18,9 @@ export class Course {
   courseName: string;
 
   @Column()
+  courseCode: string;
+
+  @Column()
   description: string;
 
   @Column()
