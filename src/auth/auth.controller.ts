@@ -41,7 +41,7 @@ export class AuthController {
   async googleCallback(@Req() req, @Res() res) {
     const response = await this.authService.login(req.user);
     res.redirect(
-      `http://localhost:3000/dashboard/?token=${response.refresh_token}`,
+      `http://localhost:3000/auth/redirect?token=${response.refresh_token}`,
     );
   }
 
