@@ -14,7 +14,6 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { URequrst } from 'types/request.type';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Role } from 'enums/role.enum';
 import { ADMIN, S_ADMIN, USER } from 'types/user.type';
 
 @Controller('user')
