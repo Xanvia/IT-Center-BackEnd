@@ -48,10 +48,10 @@ export class Course {
   @Column({ default: 0 })
   registered: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   startingDate: Date;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   endingDate: Date;
 
   @OneToMany(() => RegistrationRecord, (record) => record.course, {
