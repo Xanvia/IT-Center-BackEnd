@@ -97,6 +97,11 @@ export class UsersService {
       throw new BadRequestException('Failed to update user to student');
     }
   }
+
+  // Update a user profile image
+  async updateProfileImage(userId: string, role: string, imageUrl: string) {
+    return await this.userRepo.update({ id: userId }, { image: imageUrl });
+  }
 }
 
 // Update a user to staff

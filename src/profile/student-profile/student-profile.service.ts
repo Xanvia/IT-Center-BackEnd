@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,8 +11,6 @@ import { StudentProfile } from './entities/studentProfile.entity';
 import { HigherEdu } from './entities/higherEdu.entity';
 import { Employment } from './entities/employment.entity';
 import { Education } from './entities/education.entity';
-import { ALResult } from './entities/alResult.entity';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 @Injectable()
 export class StudentProfileService {
