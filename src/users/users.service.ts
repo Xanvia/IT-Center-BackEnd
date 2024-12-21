@@ -9,9 +9,7 @@ import { Admin } from './entities/admin.entity';
 import { Student } from './entities/student.entity';
 import { CreateStudentProfileDto } from 'src/profile/student-profile/dto/create-student-profile.dto';
 import { StudentProfileService } from 'src/profile/student-profile/student-profile.service';
-import { StaffProfileService } from 'src/profile/staff-profile/staff-profile.service';
 import { Staff } from './entities/staff.entity';
-import { S_ADMIN } from 'types/user.type';
 import { SuperAdmin } from './entities/superAdmin.entity';
 
 @Injectable()
@@ -24,7 +22,6 @@ export class UsersService {
     @InjectRepository(Staff) private staffRepo: Repository<Staff>,
 
     private studentProfileService: StudentProfileService,
-    private staffProfileService: StaffProfileService,
   ) {}
 
   // will be used in auth service to create user

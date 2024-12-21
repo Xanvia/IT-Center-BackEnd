@@ -9,7 +9,7 @@ export class StaffProfile extends Profile {
   @Column()
   designation: string;
 
-  @Column()
+  @Column({ nullable: true })
   nominal: string;
 
   @Column()
@@ -29,5 +29,10 @@ export class StaffProfile extends Profile {
 
   @OneToOne(() => Staff, (user) => user.staffProfile)
   user: Staff;
+
+  @Column({ default: false })
   isApproved: boolean;
+
+  @Column()
+  requestBy: string;
 }

@@ -6,10 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { StaffProfileService } from './staff-profile.service';
 import { CreateStaffProfileDto } from './dto/create-staff-profile.dto';
 import { UpdateStaffProfileDto } from './dto/update-staff-profile.dto';
+import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 
 @Controller('staff-profile')
 export class StaffProfileController {
@@ -30,9 +34,10 @@ export class StaffProfileController {
     return this.staffProfileService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createStaffProfileDto: CreateStaffProfileDto) {
-    return this.staffProfileService.create(createStaffProfileDto);
+  create(@Body() createStaffProfileDto: CreateStaffProfileDto, @Req() req) {
+    return this.staffProfileService.create(createStaffProfileDto, req.user.id);
   }
 
   @Patch(':id')

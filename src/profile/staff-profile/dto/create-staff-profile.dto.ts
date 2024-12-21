@@ -6,6 +6,7 @@ import {
   Length,
   IsEnum,
   ArrayMaxSize,
+  IsOptional,
 } from 'class-validator';
 import { Title } from 'enums/title.enum';
 
@@ -21,6 +22,7 @@ export class CreateStaffProfileDto {
   designation: string;
 
   @IsString()
+  @IsOptional()
   nominal: string;
 
   @IsString()
