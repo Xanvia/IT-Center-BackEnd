@@ -10,13 +10,19 @@ import { Student } from './entities/student.entity';
 import { CreateStudentProfileDto } from 'src/profile/student-profile/dto/create-student-profile.dto';
 import { StudentProfileService } from 'src/profile/student-profile/student-profile.service';
 import { StaffProfileService } from 'src/profile/staff-profile/staff-profile.service';
+import { Staff } from './entities/staff.entity';
+import { S_ADMIN } from 'types/user.type';
+import { SuperAdmin } from './entities/superAdmin.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(Admin) private adminRepo: Repository<Admin>,
+    @InjectRepository(SuperAdmin) private sAdminRepo: Repository<SuperAdmin>,
     @InjectRepository(Student) private studentRepo: Repository<Student>,
+    @InjectRepository(Staff) private staffRepo: Repository<Staff>,
+
     private studentProfileService: StudentProfileService,
     private staffProfileService: StaffProfileService,
   ) {}
@@ -99,8 +105,26 @@ export class UsersService {
   }
 
   // Update a user profile image
-  async updateProfileImage(userId: string, role: string, imageUrl: string) {
-    return await this.userRepo.update({ id: userId }, { image: imageUrl });
+  async updateProfileImage(userId: string, role: Role, imageUrl: string) {
+    return await this.GetUserRepo(role).update(
+      { id: userId },
+      { image: imageUrl },
+    );
+  }
+
+  GetUserRepo(role: Role) {
+    switch (role) {
+      case Role.ADMIN:
+        return this.adminRepo;
+      case Role.STUDENT:
+        return this.studentRepo;
+      case Role.STAFF:
+        return this.staffRepo;
+      case Role.S_ADMIN:
+        return this.sAdminRepo;
+      default:
+        return this.userRepo;
+    }
   }
 }
 
