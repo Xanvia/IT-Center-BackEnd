@@ -41,6 +41,7 @@ export class Student extends User {
 
   @OneToMany(() => RegistrationRecord, (record) => record.student, {
     onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
   })
   registrationRecords: RegistrationRecord[];
 }

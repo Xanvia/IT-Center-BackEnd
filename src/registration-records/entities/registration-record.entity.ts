@@ -12,7 +12,9 @@ export class RegistrationRecord {
   @ManyToOne(() => Student, (student) => student.registrationRecords)
   student: Student;
 
-  @ManyToOne(() => Course, (course) => course.registrationRecords)
+  @ManyToOne(() => Course, (course) => course.registrationRecords, {
+    onDelete: 'SET NULL',
+  })
   course: Course;
 
   @Column({ type: 'date' })

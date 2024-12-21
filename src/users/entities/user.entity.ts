@@ -41,11 +41,13 @@ export class User {
 
   @OneToMany(() => ReserveRecord, (record) => record.user, {
     onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
   })
   reserveRecords: ReserveRecord[];
 
   @OneToMany(() => Notification, (record) => record.user, {
     cascade: true,
+    onDelete: 'CASCADE',
   })
   notifications: Notification[];
 }

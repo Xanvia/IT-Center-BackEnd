@@ -27,7 +27,7 @@ export class StaffProfile extends Profile {
   })
   telephones: Telephone[];
 
-  @OneToOne(() => Staff, (user) => user.staffProfile)
+  @OneToOne(() => Staff, (user) => user.staffProfile, { onDelete: 'CASCADE' })
   user: Staff;
 
   @Column({ default: false })

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
@@ -84,10 +84,11 @@ export class CoursesService {
     return updatedCourse;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<DeleteResult> {
     const result = await this.courseRepo.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Course with id ${id} not found!`);
     }
+    return result;
   }
 }

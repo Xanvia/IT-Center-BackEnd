@@ -9,6 +9,8 @@ export class Telephone {
   @Column()
   phoneNumber: string;
 
-  @ManyToOne(() => StaffProfile, (parent) => parent.telephones)
+  @ManyToOne(() => StaffProfile, (parent) => parent.telephones, {
+    onDelete: 'CASCADE',
+  })
   profile: StaffProfile;
 }

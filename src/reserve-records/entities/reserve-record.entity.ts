@@ -23,10 +23,14 @@ export class ReserveRecord {
   @Column()
   status: ReservationStatus;
 
-  @ManyToOne(() => Reservation, (reservation) => reservation.records)
+  @ManyToOne(() => Reservation, (reservation) => reservation.records, {
+    onDelete: 'SET NULL',
+  })
   reservation: Reservation;
 
-  @ManyToOne(() => User, (user) => user.reserveRecords)
+  @ManyToOne(() => User, (user) => user.reserveRecords, {
+    onDelete: 'SET NULL',
+  })
   user: User;
 }
 
