@@ -9,7 +9,9 @@ export class RegistrationRecord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Student, (student) => student.registrationRecords)
+  @ManyToOne(() => Student, (student) => student.registrationRecords, {
+    onDelete: 'SET NULL',
+  })
   student: Student;
 
   @ManyToOne(() => Course, (course) => course.registrationRecords, {
@@ -21,7 +23,7 @@ export class RegistrationRecord {
   registrationDate: Date;
 
   @Column({ type: 'enum', enum: Status, default: Status.NOTPAID })
-  status: boolean;
+  status: Status;
 
   @Column({ type: 'enum', enum: Grade, default: Grade.NA })
   result: Grade;
