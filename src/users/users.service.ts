@@ -11,6 +11,7 @@ import { CreateStudentProfileDto } from 'src/profile/student-profile/dto/create-
 import { StudentProfileService } from 'src/profile/student-profile/student-profile.service';
 import { Staff } from './entities/staff.entity';
 import { SuperAdmin } from './entities/superAdmin.entity';
+import { StaffProfileService } from 'src/profile/staff-profile/staff-profile.service';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,7 @@ export class UsersService {
     @InjectDataSource() private dataSource: DataSource,
 
     private studentProfileService: StudentProfileService,
+    private staffProfileService: StaffProfileService,
   ) {}
 
   // will be used in auth service to create user
@@ -88,20 +90,26 @@ export class UsersService {
     try {
       const { id, createdDate, role, ...data } = user;
       const student = this.studentRepo.create(data);
-      console.log(student);
       student.studentId = await Student.getNextStudentId(this.dataSource);
 
       profile.displayName = data.name;
       const profileData = await this.studentProfileService.create(profile);
       student.studentProfile = profileData;
 
-      const newOne = this.studentRepo.save(student);
+      const newOne = await this.studentRepo.save(student);
       if (newOne) {
         await this.userRepo.delete({ id: userId });
+        // delete password and refresh token
+        delete newOne.hashedPassword;
+        delete newOne.hashedRefreshToken;
+
         return newOne;
       }
     } catch (error) {
-      throw new BadRequestException('Failed to update user to student');
+      throw new BadRequestException(
+        'Failed to update user to student',
+        error.message,
+      );
     }
   }
 
@@ -127,9 +135,41 @@ export class UsersService {
         return this.userRepo;
     }
   }
-}
 
-// Update a user to staff
+  // Update a user to Staff
+  async updateUsertoStaff(userEmail: string) {
+    const user = await this.userRepo.findOne({ where: { email: userEmail } });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const profile = await this.staffProfileService.findByEmail(userEmail);
+    if (!profile) {
+      throw new BadRequestException('Profile not found');
+    }
+
+    try {
+      const { id, createdDate, role, ...data } = user;
+      const staff = this.staffRepo.create(data);
+      staff.staffProfile = profile;
+
+      const newOne = await this.staffRepo.save(staff);
+      if (newOne) {
+        await this.userRepo.delete({ email: userEmail });
+        // delete password and refresh token
+        delete newOne.hashedPassword;
+        delete newOne.hashedRefreshToken;
+
+        return newOne;
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        'Failed to update user to staff',
+        error.message,
+      );
+    }
+  }
+}
 
 // Update a user to admin
 

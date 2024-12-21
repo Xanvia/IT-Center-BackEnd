@@ -26,7 +26,7 @@ export class Student extends User {
       .limit(1)
       .getRawOne();
 
-    if (result.studentId === null) {
+    if (result === undefined || result.studentId === null) {
       return 'ITC0001';
     }
 

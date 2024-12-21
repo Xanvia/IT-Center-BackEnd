@@ -6,7 +6,6 @@ import { CreateStaffProfileDto } from './dto/create-staff-profile.dto';
 import { Email } from './entities/email.entity';
 import { Telephone } from './entities/telephone.entity';
 import { UpdateStaffProfileDto } from './dto/update-staff-profile.dto';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class StaffProfileService {
@@ -19,8 +18,6 @@ export class StaffProfileService {
 
     @InjectRepository(Telephone)
     private telephoneRepository: Repository<Telephone>,
-
-    private readonly userService: UsersService,
   ) {}
 
   // Create a new staff profile
@@ -29,10 +26,7 @@ export class StaffProfileService {
     id: string,
   ): Promise<StaffProfile> {
     const { emails, telephones, ...profileData } = createProfileDto;
-    const requestBy = await this.userService.findOne(id);
-
     const newProfile = this.staffProfileRepository.create(profileData);
-    newProfile.requestBy = requestBy.email;
 
     if (emails && emails.length) {
       newProfile.emails = emails.map((email) => {
@@ -64,6 +58,12 @@ export class StaffProfileService {
       where: {
         isApproved: false,
       },
+    });
+  }
+
+  async findByEmail(email: string): Promise<StaffProfile> {
+    return this.staffProfileRepository.findOne({
+      where: { requestBy: email },
     });
   }
 

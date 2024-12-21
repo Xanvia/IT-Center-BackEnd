@@ -5,13 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StaffProfile } from './entities/StaffProfile.entity';
 import { Telephone } from './entities/telephone.entity';
 import { Email } from './entities/email.entity';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    TypeOrmModule.forFeature([StaffProfile, Telephone, Email]),
-  ],
+  imports: [TypeOrmModule.forFeature([StaffProfile, Telephone, Email])],
   controllers: [StaffProfileController],
   providers: [StaffProfileService],
   exports: [StaffProfileService],
