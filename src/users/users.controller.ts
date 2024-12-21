@@ -48,6 +48,14 @@ export class UsersController {
     return this.userService.getStudents();
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/staff')
+  async getStaff() {
+    return this.userService.getStaff();
+  }
+
   @Roles(S_ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
@@ -64,9 +72,12 @@ export class UsersController {
     return this.userService.updateUsertoStudent(req.user.id, profile);
   }
 
-  @Delete(':id')
-  async deleteUser(@Param('id') userId: string) {
-    return this.userService.deleteUser(userId);
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/staff')
+  async usertoStaff(@Body() req) {
+    return this.userService.updateUsertoStaff(req.requestBy);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -108,5 +119,18 @@ export class UsersController {
       message: 'Files uploaded successfully',
       path: file.path,
     };
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') userId: string) {
+    return this.userService.deleteUser(userId);
+  }
+
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Delete('/staff/:id')
+  async deleteStaff(@Param('id') userId: string) {
+    return this.userService.deleteStaff(userId);
   }
 }

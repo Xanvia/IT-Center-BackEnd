@@ -57,6 +57,11 @@ export class UsersService {
     return await this.studentRepo.find();
   }
 
+  // find all staff
+  async getStaff(): Promise<Staff[]> {
+    return await this.staffRepo.find();
+  }
+
   // find all admins
   async getAdmins(): Promise<Admin[]> {
     return await this.adminRepo.find();
@@ -151,6 +156,7 @@ export class UsersService {
     try {
       const { id, createdDate, role, ...data } = user;
       const staff = this.staffRepo.create(data);
+      profile.isApproved = true;
       staff.staffProfile = profile;
 
       const newOne = await this.staffRepo.save(staff);
@@ -169,8 +175,9 @@ export class UsersService {
       );
     }
   }
+
+  // deletea staff
+  async deleteStaff(id: string): Promise<DeleteResult> {
+    return await this.staffRepo.delete(id);
+  }
 }
-
-// Update a user to admin
-
-// Update a staff to admin

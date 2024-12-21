@@ -24,7 +24,7 @@ export class StaffProfileController {
     return this.staffProfileService.findAll();
   }
 
-  @Get('requests') // http://localhost:30001/staff-profile/requests
+  @Get('requests') // http://localhost:3001/staff-profile/requests
   findAllRequests() {
     return this.staffProfileService.findAllRequests();
   }
