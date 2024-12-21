@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateStudentProfileDto } from './dto/create-student-profile.dto';
@@ -7,7 +11,6 @@ import { StudentProfile } from './entities/studentProfile.entity';
 import { HigherEdu } from './entities/higherEdu.entity';
 import { Employment } from './entities/employment.entity';
 import { Education } from './entities/education.entity';
-import { ALResult } from './entities/alResult.entity';
 
 @Injectable()
 export class StudentProfileService {
@@ -23,9 +26,6 @@ export class StudentProfileService {
 
     @InjectRepository(Education)
     private educationRepository: Repository<Education>,
-
-    @InjectRepository(ALResult)
-    private alResultRepository: Repository<ALResult>,
   ) {}
 
   // Create a new student profile with all nested entities
@@ -34,6 +34,7 @@ export class StudentProfileService {
   ): Promise<StudentProfile> {
     const {
       title,
+      displayName,
       fullName,
       nameWithIntials,
       dateOfBirth,
@@ -48,6 +49,7 @@ export class StudentProfileService {
     // Create student profile
     const studentProfile = this.studentProfileRepository.create({
       title,
+      displayName,
       fullName,
       nameWithIntials,
       dateOfBirth,
@@ -57,24 +59,25 @@ export class StudentProfileService {
     });
 
     // Create Education
-    const educationEntity = this.educationRepository.create(education);
-    studentProfile.education =
-      await this.educationRepository.save(educationEntity);
+    const edu = this.educationRepository.create(education);
 
+    studentProfile.education = await this.educationRepository.save(edu);
     // Create Higher Education (if any)
-    const higherEduEntities = await Promise.all(
-      higherEdu.map((edu) => this.higherEduRepository.create(edu)),
+    studentProfile.higherEdu = higherEdu.map((edu) =>
+      this.higherEduRepository.create(edu),
     );
-    studentProfile.higherEdu =
-      await this.higherEduRepository.save(higherEduEntities);
 
     // Create Employment (if any)
-    const employmentEntity = this.employmentRepository.create(employment);
-    studentProfile.employment =
-      await this.employmentRepository.save(employmentEntity);
+    studentProfile.employment = this.employmentRepository.create(employment);
 
     // Save student profile with all relations
-    return this.studentProfileRepository.save(studentProfile);
+    try {
+      return await this.studentProfileRepository.save(studentProfile);
+    } catch (error) {
+      throw new ConflictException(
+        `Error creating student profile: ${error.message}`,
+      );
+    }
   }
 
   // Get all student profiles

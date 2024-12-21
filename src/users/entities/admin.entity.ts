@@ -1,4 +1,4 @@
-import { ChildEntity, Column } from 'typeorm';
+import { ChildEntity } from 'typeorm';
 import { Staff } from './staff.entity';
 import { Role } from 'enums/role.enum';
 

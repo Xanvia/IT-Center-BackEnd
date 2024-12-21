@@ -1,0 +1,6 @@
+export enum Status {
+  PENDING = 'PENDING',
+  NOTPAID = 'NOT-PAID',
+  REJECTED = 'REJECTED',
+  ENROLLED = 'ENROLLED',
+}

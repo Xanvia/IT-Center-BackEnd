@@ -21,5 +21,6 @@ import { HigherEdu } from './entities/higherEdu.entity';
   ],
   controllers: [StudentProfileController],
   providers: [StudentProfileService],
+  exports: [StudentProfileService],
 })
 export class StudentProfileModule {}

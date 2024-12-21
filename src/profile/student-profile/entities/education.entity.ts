@@ -25,16 +25,13 @@ export class Education {
   @Column({ type: 'enum', enum: Grade })
   scienceOL: Grade;
 
-  @OneToMany(() => ALResult, (result) => result.profile, {
+  @OneToMany(() => ALResult, (result) => result.education, {
     cascade: true,
     eager: true,
   })
   aLevelResults: ALResult[];
 
-  @OneToOne(() => StudentProfile, (profile) => profile.education, {
-    cascade: true,
-    eager: true,
-  })
+  @OneToOne(() => StudentProfile, (profile) => profile.education)
   profile: StudentProfile;
 
   @BeforeInsert()
