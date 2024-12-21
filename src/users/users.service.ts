@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DataSource, DeleteResult, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { Role } from 'enums/role.enum';
 import { hashPassword } from 'utils/hashPassword';
@@ -20,6 +20,7 @@ export class UsersService {
     @InjectRepository(SuperAdmin) private sAdminRepo: Repository<SuperAdmin>,
     @InjectRepository(Student) private studentRepo: Repository<Student>,
     @InjectRepository(Staff) private staffRepo: Repository<Staff>,
+    @InjectDataSource() private dataSource: DataSource,
 
     private studentProfileService: StudentProfileService,
   ) {}
@@ -87,6 +88,9 @@ export class UsersService {
     try {
       const { id, createdDate, role, ...data } = user;
       const student = this.studentRepo.create(data);
+      console.log(student);
+      student.studentId = await Student.getNextStudentId(this.dataSource);
+
       profile.displayName = data.name;
       const profileData = await this.studentProfileService.create(profile);
       student.studentProfile = profileData;

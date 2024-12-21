@@ -58,6 +58,5 @@ export class StudentProfile extends Profile {
   employment: Employment;
 
   @OneToOne(() => Student, (user) => user.studentProfile)
-  @JoinColumn()
   user: Student;
 }
