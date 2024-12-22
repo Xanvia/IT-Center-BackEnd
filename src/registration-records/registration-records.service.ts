@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
 import { Repository } from 'typeorm';
@@ -52,7 +52,7 @@ export class RegistrationRecordsService {
         'course.id as courseId',
         'course.courseName as courseName',
         'JSON_ARRAYAGG(JSON_OBJECT(' +
-          '"id", student.id, ' +
+          '"id", record.id, ' +
           '"name", student.name, ' +
           "'email', student.email, " +
           '"profileImage", student.image, ' +
@@ -64,15 +64,38 @@ export class RegistrationRecordsService {
       .getRawMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} registrationRecord`;
+  findOne(id: string) {
+    return this.repo.findOne({ where: { id } });
   }
 
-  update(id: number, updateRegistrationRecordDto: UpdateRegistrationRecordDto) {
-    return `This action updates a #${id} registrationRecord`;
+  update(id: string, updateRegistrationRecordDto: UpdateRegistrationRecordDto) {
+    try {
+      this.repo.update(id, updateRegistrationRecordDto);
+      return 'Record updated successfully';
+    } catch (err) {
+      throw new Error('Error while updating the record');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} registrationRecord`;
+  // update every record with status PENDING to status NOTPAID
+  async updateAllPendingRecords() {
+    try {
+      await this.repo.update(
+        { status: Status.PENDING },
+        { status: Status.NOTPAID },
+      );
+      return 'Records updated successfully';
+    } catch (err) {
+      throw new Error('Error while updating the records');
+    }
+  }
+
+  remove(id: string) {
+    try {
+      this.repo.delete(id);
+      return 'Record deleted successfully';
+    } catch (err) {
+      throw new Error('Error while deleting the record');
+    }
   }
 }

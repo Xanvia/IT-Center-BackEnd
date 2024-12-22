@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { RegistrationRecordsService } from './registration-records.service';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
@@ -34,7 +35,7 @@ export class RegistrationRecordsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.registrationRecordsService.findOne(+id);
+    return this.registrationRecordsService.findOne(id);
   }
 
   @Patch(':id')
@@ -43,13 +44,18 @@ export class RegistrationRecordsController {
     @Body() updateRegistrationRecordDto: UpdateRegistrationRecordDto,
   ) {
     return this.registrationRecordsService.update(
-      +id,
+      id,
       updateRegistrationRecordDto,
     );
   }
 
+  @Put()
+  updateStatus() {
+    return this.registrationRecordsService.updateAllPendingRecords();
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.registrationRecordsService.remove(+id);
+    return this.registrationRecordsService.remove(id);
   }
 }
