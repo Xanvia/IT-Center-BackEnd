@@ -36,7 +36,6 @@ export class Course {
   @OneToMany(() => CourseImage, (image) => image.course, {
     cascade: true,
     onDelete: 'CASCADE',
-    eager: true,
   })
   images: CourseImage[];
 

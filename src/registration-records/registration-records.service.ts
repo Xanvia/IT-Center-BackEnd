@@ -6,6 +6,7 @@ import { RegistrationRecord } from './entities/registration-record.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CoursesService } from 'src/courses/courses.service';
+import { Status } from 'enums/registration.enum';
 
 @Injectable()
 export class RegistrationRecordsService {
@@ -38,8 +39,29 @@ export class RegistrationRecordsService {
     return await this.repo.save(registrationRecord);
   }
 
-  findAll() {
-    return `This action returns all registrationRecords`;
+  async findAll() {
+    return await this.repo.find();
+  }
+
+  async getAllRecordsCourseWise() {
+    return await this.repo
+      .createQueryBuilder('record')
+      .leftJoinAndSelect('record.course', 'course')
+      .leftJoinAndSelect('record.student', 'student')
+      .select([
+        'course.id as courseId',
+        'course.courseName as courseName',
+        'JSON_ARRAYAGG(JSON_OBJECT(' +
+          '"id", student.id, ' +
+          '"name", student.name, ' +
+          "'email', student.email, " +
+          '"profileImage", student.image, ' +
+          '"grade", record.result, ' +
+          '"status", record.status' +
+          ')) as students',
+      ])
+      .groupBy('course.id')
+      .getRawMany();
   }
 
   findOne(id: number) {

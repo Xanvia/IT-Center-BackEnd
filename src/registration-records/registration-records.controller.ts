@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RegistrationRecordsService } from './registration-records.service';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
 
 @Controller('registration-records')
 export class RegistrationRecordsController {
-  constructor(private readonly registrationRecordsService: RegistrationRecordsService) {}
+  constructor(
+    private readonly registrationRecordsService: RegistrationRecordsService,
+  ) {}
 
   @Post()
   create(@Body() createRegistrationRecordDto: CreateRegistrationRecordDto) {
@@ -17,14 +27,25 @@ export class RegistrationRecordsController {
     return this.registrationRecordsService.findAll();
   }
 
+  @Get('requests')
+  findAllRequests() {
+    return this.registrationRecordsService.getAllRecordsCourseWise();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.registrationRecordsService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRegistrationRecordDto: UpdateRegistrationRecordDto) {
-    return this.registrationRecordsService.update(+id, updateRegistrationRecordDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateRegistrationRecordDto: UpdateRegistrationRecordDto,
+  ) {
+    return this.registrationRecordsService.update(
+      +id,
+      updateRegistrationRecordDto,
+    );
   }
 
   @Delete(':id')

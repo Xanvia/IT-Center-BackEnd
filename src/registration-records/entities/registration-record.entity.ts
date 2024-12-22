@@ -22,7 +22,7 @@ export class RegistrationRecord {
   @Column({ type: 'date' })
   registrationDate: Date;
 
-  @Column({ type: 'enum', enum: Status, default: Status.NOTPAID })
+  @Column({ type: 'enum', enum: Status, default: Status.PENDING })
   status: Status;
 
   @Column({ type: 'enum', enum: Grade, default: Grade.NA })
