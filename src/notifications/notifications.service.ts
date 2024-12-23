@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
@@ -65,19 +64,36 @@ export class NotificationsService {
     }
   }
 
-  findAll() {
-    return `This action returns all notifications`;
+  findAllforUser(userId: string) {
+    return this.notificationRepo.find({
+      where: { user: { id: userId } },
+      order: { createdDate: 'DESC' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  findAllnewNotifications(userId: string) {
+    return this.notificationRepo.find({
+      where: { user: { id: userId }, isRead: false },
+      order: { createdDate: 'DESC' },
+    });
   }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
+  setNotificationAsRead(notificationId: string) {
+    return this.notificationRepo.update(notificationId, { isRead: true });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  setAllNotificationAsRead(userId: string) {
+    return this.notificationRepo.update(
+      { user: { id: userId } },
+      { isRead: true },
+    );
+  }
+
+  deleteNotification(notificationId: string) {
+    return this.notificationRepo.delete(notificationId);
+  }
+
+  deleteAllNotification(userId: string) {
+    return this.notificationRepo.delete({ user: { id: userId } });
   }
 }

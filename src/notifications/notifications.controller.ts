@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
+import { URequrst } from 'types/request.type';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -32,26 +35,32 @@ export class NotificationsController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.notificationsService.findAll();
+  findAll(@Req() req: URequrst) {
+    return this.notificationsService.findAllforUser(req.user.id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notificationsService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('read')
+  findAllReads(@Req() req: URequrst) {
+    return this.notificationsService.findAllnewNotifications(req.user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateNotificationDto: UpdateNotificationDto,
-  ) {
-    return this.notificationsService.update(+id, updateNotificationDto);
+  setRead(@Param('id') id: string) {
+    return this.notificationsService.setNotificationAsRead(id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  updateAllRead(@Req() req: URequrst) {
+    return this.notificationsService.setAllNotificationAsRead(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.notificationsService.remove(+id);
+    return this.notificationsService.deleteNotification(id);
   }
 }
