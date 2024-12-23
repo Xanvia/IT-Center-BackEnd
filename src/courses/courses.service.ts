@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
@@ -16,12 +16,6 @@ export class CoursesService {
     private courseImageRepo: Repository<CourseImage>,
   ) {}
 
-  /*
-  async create(createCourseDto: CreateCourseDto): Promise<Course> {
-  const course = this.courseRepo.create(createCourseDto);
-  return await this.courseRepo.save(course);
-  */
-
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     try {
       const { images, ...courseData } = createCourseDto;
@@ -35,7 +29,7 @@ export class CoursesService {
 
       return await this.courseRepo.save(course);
     } catch (error) {
-      throw new Error(error);
+      throw new ConflictException(error.message);
     }
   }
 
@@ -50,17 +44,6 @@ export class CoursesService {
     }
     return course;
   }
-
-  /*
-  async update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course> {
-    await this.courseRepo.update(id, updateCourseDto);
-    const updatedCourse = await this.courseRepo.findOneBy({ id });
-    if (!updatedCourse) {
-      throw new NotFoundException(`Course with id ${id} not found!`);
-    }
-    return updatedCourse;
-  }
-  */
 
   async update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course> {
     const { images, ...updateData } = updateCourseDto;

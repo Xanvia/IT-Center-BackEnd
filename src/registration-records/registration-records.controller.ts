@@ -7,10 +7,14 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { RegistrationRecordsService } from './registration-records.service';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 
 @Controller('registration-records')
 export class RegistrationRecordsController {
@@ -26,6 +30,12 @@ export class RegistrationRecordsController {
   @Get()
   findAll() {
     return this.registrationRecordsService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  findAllforUser(@Req() req) {
+    return this.registrationRecordsService.findAllforUser(req.user.id);
   }
 
   @Get('requests')

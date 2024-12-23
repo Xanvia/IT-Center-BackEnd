@@ -43,6 +43,15 @@ export class RegistrationRecordsService {
     return await this.repo.find();
   }
 
+  async findAllforUser(userId: string) {
+    return await this.repo
+      .createQueryBuilder('record')
+      .leftJoin('record.course', 'course')
+      .addSelect(['course.id', 'course.courseName'])
+      .where('record.student.id = :userId', { userId })
+      .getMany();
+  }
+
   async getAllRecordsCourseWise() {
     return await this.repo
       .createQueryBuilder('record')
