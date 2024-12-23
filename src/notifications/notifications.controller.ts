@@ -42,8 +42,8 @@ export class NotificationsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('read')
-  findAllReads(@Req() req: URequrst) {
+  @Get('unread')
+  findAllUnReads(@Req() req: URequrst) {
     return this.notificationsService.findAllnewNotifications(req.user.id);
   }
 
@@ -54,6 +54,7 @@ export class NotificationsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Patch('all/:id')
   updateAllRead(@Req() req: URequrst) {
     return this.notificationsService.setAllNotificationAsRead(req.user.id);
   }
