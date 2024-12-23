@@ -17,7 +17,7 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { URequrst } from 'types/request.type';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { ADMIN, S_ADMIN, USER } from 'types/user.type';
+import { ADMIN, S_ADMIN, STUDENT, USER } from 'types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -46,6 +46,14 @@ export class UsersController {
   @Get('/student')
   async getStudents() {
     return this.userService.getStudents();
+  }
+
+  @Roles(STUDENT)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/student/me')
+  async getMyStudentInfo(@Req() req: URequrst) {
+    return this.userService.getMyStudentInfo(req.user.id);
   }
 
   @Roles(ADMIN)

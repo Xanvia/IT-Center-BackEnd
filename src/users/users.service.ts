@@ -57,6 +57,25 @@ export class UsersService {
     return await this.studentRepo.find();
   }
 
+  // find student by the id
+  async getMyStudentInfo(userId: string): Promise<Student | undefined> {
+    // get student data with limited profile data
+    return await this.studentRepo
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.studentProfile', 'profile')
+      .select([
+        'student.name',
+        'student.email',
+        'student.image',
+        'student.studentId',
+        'profile.dateOfBirth',
+        'profile.phoneNumber',
+        'profile.address',
+      ])
+      .where('student.id = :userId', { userId })
+      .getOne();
+  }
+
   // find all staff
   async getStaff(): Promise<Staff[]> {
     return await this.staffRepo.find();
