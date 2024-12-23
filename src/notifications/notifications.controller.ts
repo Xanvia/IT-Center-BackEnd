@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Put,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -54,7 +55,7 @@ export class NotificationsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch('all/:id')
+  @Put('all')
   updateAllRead(@Req() req: URequrst) {
     return this.notificationsService.setAllNotificationAsRead(req.user.id);
   }

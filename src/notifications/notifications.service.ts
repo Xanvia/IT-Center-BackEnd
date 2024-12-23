@@ -64,36 +64,66 @@ export class NotificationsService {
     }
   }
 
-  findAllforUser(userId: string) {
-    return this.notificationRepo.find({
-      where: { user: { id: userId } },
-      order: { createdDate: 'DESC' },
-    });
+  async findAllforUser(userId: string) {
+    try {
+      return await this.notificationRepo.find({
+        where: { user: { id: userId } },
+        order: { createdDate: 'DESC' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve notifications');
+    }
   }
 
-  findAllnewNotifications(userId: string) {
-    return this.notificationRepo.find({
-      where: { user: { id: userId }, isRead: false },
-      order: { createdDate: 'DESC' },
-    });
+  async findAllnewNotifications(userId: string) {
+    try {
+      return await this.notificationRepo.find({
+        where: { user: { id: userId }, isRead: false },
+        order: { createdDate: 'DESC' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve new notifications');
+    }
   }
 
-  setNotificationAsRead(notificationId: string) {
-    return this.notificationRepo.update(notificationId, { isRead: true });
+  async setNotificationAsRead(notificationId: string) {
+    try {
+      return await this.notificationRepo.update(notificationId, {
+        isRead: true,
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to set notification as read');
+    }
   }
 
-  setAllNotificationAsRead(userId: string) {
-    return this.notificationRepo.update(
-      { user: { id: userId } },
-      { isRead: true },
-    );
+  async setAllNotificationAsRead(userId: string) {
+    try {
+      const result = await this.notificationRepo.update(
+        { user: { id: userId }, isRead: false },
+        { isRead: true },
+      );
+      if (result.affected === 0) {
+        throw new BadRequestException('No notifications found for this user');
+      }
+      return result;
+    } catch (error) {
+      throw new BadRequestException('Failed to update notifications');
+    }
   }
 
-  deleteNotification(notificationId: string) {
-    return this.notificationRepo.delete(notificationId);
+  async deleteNotification(notificationId: string) {
+    try {
+      return await this.notificationRepo.delete(notificationId);
+    } catch (error) {
+      throw new BadRequestException('Failed to delete notification');
+    }
   }
 
-  deleteAllNotification(userId: string) {
-    return this.notificationRepo.delete({ user: { id: userId } });
+  async deleteAllNotification(userId: string) {
+    try {
+      return await this.notificationRepo.delete({ user: { id: userId } });
+    } catch (error) {
+      throw new BadRequestException('Failed to delete all notifications');
+    }
   }
 }
