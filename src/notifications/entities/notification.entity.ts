@@ -1,3 +1,4 @@
+import { Sender } from 'enums/sender.enum';
 import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
@@ -11,6 +12,9 @@ import {
 export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'enum', enum: Sender })
+  sender: Sender;
 
   @Column()
   content: string;

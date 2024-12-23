@@ -47,6 +47,11 @@ export class UsersService {
     return await this.userRepo.findOne({ where: { id } });
   }
 
+  // find user by the email
+  async findByEmail(email: string): Promise<User | undefined> {
+    return await this.userRepo.findOne({ where: { email } });
+  }
+
   // find all users
   async getUsers(): Promise<User[]> {
     return await this.userRepo.find();
@@ -55,6 +60,16 @@ export class UsersService {
   // find all students
   async getStudents(): Promise<Student[]> {
     return await this.studentRepo.find();
+  }
+
+  // find all staff
+  async getStaff(): Promise<Staff[]> {
+    return await this.staffRepo.find();
+  }
+
+  // find all admins
+  async getAdmins(): Promise<Admin[]> {
+    return await this.adminRepo.find();
   }
 
   // find student by the id
@@ -74,21 +89,6 @@ export class UsersService {
       ])
       .where('student.id = :userId', { userId })
       .getOne();
-  }
-
-  // find all staff
-  async getStaff(): Promise<Staff[]> {
-    return await this.staffRepo.find();
-  }
-
-  // find all admins
-  async getAdmins(): Promise<Admin[]> {
-    return await this.adminRepo.find();
-  }
-
-  // find user by the email
-  async findByEmail(email: string): Promise<User | undefined> {
-    return await this.userRepo.findOne({ where: { email } });
   }
 
   // will be used in auth service to update user's refresh token
