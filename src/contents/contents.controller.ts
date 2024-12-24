@@ -16,7 +16,7 @@ import { ContentsService } from './contents.service';
 import { Content } from './entities/content.entity';
 import { CreateContentDto } from './dto/createContent.dto';
 import { UpdateContentDto } from './dto/updateContent.dto';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { extname } from 'path';
