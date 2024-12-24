@@ -3,8 +3,8 @@ import { Content } from './entities/content.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentImage } from './entities/contentImage.entity';
-import { CreateContentDto } from './entities/dto/createContent.dto';
-import { UpdateContentDto } from './entities/dto/updateContent.dto';
+import { CreateContentDto } from './dto/createContent.dto';
+import { UpdateContentDto } from './dto/updateContent.dto';
 import { Log } from './entities/log.entity';
 import { Project } from './entities/project.entity';
 import { News } from './entities/news.entity';
@@ -40,10 +40,17 @@ export class ContentsService {
     return await this.contentRepo.delete({ id: id });
   }
 
-  // create Content
-  async createContent(createContentsDto: CreateContentDto) {
+  // create Log
+  async createContent(createContentsDto: CreateContentDto, type: string) {
     const { images, ...rest } = createContentsDto;
-    const newItem = this.contentRepo.create({ ...rest });
+    var newItem = null;
+    if (type === 'log') {
+      newItem = this.logRepo.create({ ...rest });
+    } else if (type === 'project') {
+      newItem = this.projectRepo.create({ ...rest });
+    } else if (type === 'news') {
+      newItem = this.newsRepo.create({ ...rest });
+    }
 
     if (images && images.length) {
       newItem.images = images.map((image) => {

@@ -1,8 +1,16 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ContentsService } from './contents.service';
 import { Content } from './entities/content.entity';
-import { CreateContentDto } from './entities/dto/createContent.dto';
-import { UpdateContentDto } from './entities/dto/updateContent.dto';
+import { CreateContentDto } from './dto/createContent.dto';
+import { UpdateContentDto } from './dto/updateContent.dto';
 
 @Controller('contents')
 export class ContentsController {
@@ -28,9 +36,19 @@ export class ContentsController {
     return this.contentService.findbyID(id);
   }
 
-  @Post()
+  @Post('log')
   createLog(@Body() createcontentDto: CreateContentDto) {
-    return this.contentService.createContent(createcontentDto);
+    return this.contentService.createContent(createcontentDto, 'log');
+  }
+
+  @Post('project')
+  createProject(@Body() createcontentDto: CreateContentDto) {
+    return this.contentService.createContent(createcontentDto, 'project');
+  }
+
+  @Post('news')
+  createNews(@Body() createcontentDto: CreateContentDto) {
+    return this.contentService.createContent(createcontentDto, 'news');
   }
 
   @Put(':id')
@@ -39,5 +57,10 @@ export class ContentsController {
     @Body() updateContentDto: UpdateContentDto,
   ) {
     return this.contentService.updateContent(id, updateContentDto);
+  }
+
+  @Delete(':id')
+  deleteContent(@Param('id') id: string) {
+    return this.contentService.deleteContentbyID(id);
   }
 }

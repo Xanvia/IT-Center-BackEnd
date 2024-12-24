@@ -1,5 +1,5 @@
 import {
-  IsDate,
+  IsArray,
   IsOptional,
   IsString,
   Matches,
@@ -15,11 +15,10 @@ export class CreateContentDto {
   description: string;
 
   @IsOptional()
-  @IsDate()
-  date?: string;
+  date?: Date;
 
   @IsOptional()
-  @IsString()
+  @IsArray()
   images?: string[];
 
   @IsOptional()
