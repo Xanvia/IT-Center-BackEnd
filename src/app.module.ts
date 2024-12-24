@@ -4,9 +4,6 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
-import { NewsModule } from './contents/news/news.module';
-import { LogsModule } from './contents/logs/logs.module';
-import { ProjectsModule } from './contents/projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { databaseConfig } from 'config/database.config';
@@ -17,6 +14,7 @@ import { CoursesModule } from './courses/courses.module';
 import { ReserveRecordsModule } from './reserve-records/reserve-records.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RegistrationRecordsModule } from './registration-records/registration-records.module';
+import { ContentsModule } from './contents/contents.module';
 
 @Module({
   imports: [
@@ -27,9 +25,6 @@ import { RegistrationRecordsModule } from './registration-records/registration-r
     TypeOrmModule.forRootAsync(databaseConfig),
 
     FeedbacksModule,
-    NewsModule,
-    LogsModule,
-    ProjectsModule,
     AuthModule,
     UsersModule,
     StudentProfileModule,
@@ -39,6 +34,7 @@ import { RegistrationRecordsModule } from './registration-records/registration-r
     ReserveRecordsModule,
     NotificationsModule,
     RegistrationRecordsModule,
+    ContentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

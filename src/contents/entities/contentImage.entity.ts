@@ -9,6 +9,6 @@ export class ContentImage {
   @Column()
   path: string;
 
-  @ManyToOne(() => Content, (parent) => parent.images)
+  @ManyToOne(() => Content, (parent) => parent.images, { onDelete: 'CASCADE' })
   profile: Content;
 }
