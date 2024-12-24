@@ -3,21 +3,34 @@ import { Content } from './entities/content.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ContentImage } from './entities/contentImage.entity';
-
-interface CreateContentDto {
-  images?: string[];
-}
+import { CreateContentDto } from './entities/dto/createContent.dto';
+import { UpdateContentDto } from './entities/dto/updateContent.dto';
+import { Log } from './entities/log.entity';
+import { Project } from './entities/project.entity';
+import { News } from './entities/news.entity';
 
 @Injectable()
 export class ContentsService {
   constructor(
     @InjectRepository(Content) private contentRepo: Repository<Content>,
+    @InjectRepository(Log) private logRepo: Repository<Log>,
+    @InjectRepository(Project) private projectRepo: Repository<Project>,
+    @InjectRepository(News) private newsRepo: Repository<News>,
   ) {}
 
   // get all content
-  async findAll(): Promise<Content[]> {
-    return await this.contentRepo.find();
+  async findAllLogs(): Promise<Content[]> {
+    return await this.logRepo.find();
   }
+
+  async findAllProjects(): Promise<Content[]> {
+    return await this.projectRepo.find();
+  }
+
+  async findAllNews(): Promise<Content[]> {
+    return await this.newsRepo.find();
+  }
+
   // get content by id
   async findbyID(id: string): Promise<Content> {
     return await this.contentRepo.findOne({ where: { id: id } });
@@ -28,9 +41,7 @@ export class ContentsService {
   }
 
   // create Content
-  async createContent<createDto extends CreateContentDto>(
-    createContentsDto: createDto,
-  ) {
+  async createContent(createContentsDto: CreateContentDto) {
     const { images, ...rest } = createContentsDto;
     const newItem = this.contentRepo.create({ ...rest });
 
@@ -46,14 +57,15 @@ export class ContentsService {
   }
 
   // update Content
-  async updateContent<updateDto>(id: string, updateContentDto: updateDto) {
+  async updateContent(id: string, updateContentDto: UpdateContentDto) {
     const existingContent = await this.contentRepo.findOne({
       where: { id: id },
     });
     if (!existingContent) {
       throw new NotFoundException(`Content with ID '${id}' not found`);
     }
-    await this.contentRepo.update({ id }, { ...updateContentDto });
-    return this.contentRepo.findOne({ where: { id: id } });
+
+    const { images, ...rest } = updateContentDto;
+    const updatedContent = this.contentRepo.merge(existingContent, { ...rest });
   }
 }
