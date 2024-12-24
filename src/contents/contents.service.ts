@@ -1,15 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Content } from './content.entity';
+import { Content } from './entities/content.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ContentImage } from './contentImage.entity';
+import { ContentImage } from './entities/contentImage.entity';
 
 interface CreateContentDto {
   images?: string[];
 }
 
 @Injectable()
-export abstract class ContentsService {
+export class ContentsService {
   constructor(
     @InjectRepository(Content) private contentRepo: Repository<Content>,
   ) {}
