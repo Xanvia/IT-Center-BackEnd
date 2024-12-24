@@ -42,9 +42,9 @@ export class UsersController {
     return this.userService.findOne(req.user.id);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('/student')
   async getStudents() {
     return this.userService.getStudents();
