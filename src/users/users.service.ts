@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DataSource, DeleteResult, Repository } from 'typeorm';
@@ -12,6 +16,7 @@ import { StudentProfileService } from 'src/profile/student-profile/student-profi
 import { Staff } from './entities/staff.entity';
 import { SuperAdmin } from './entities/superAdmin.entity';
 import { StaffProfileService } from 'src/profile/staff-profile/staff-profile.service';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -138,26 +143,28 @@ export class UsersService {
   }
 
   // Update a user profile image
-  async updateProfileImage(userId: string, role: Role, imageUrl: string) {
-    return await this.GetUserRepo(role).update(
-      { id: userId },
-      { image: imageUrl },
-    );
+  async updateProfileImage(userId: string, imageUrl: string) {
+    return await this.userRepo.update({ id: userId }, { image: imageUrl });
   }
 
-  GetUserRepo(role: Role) {
-    switch (role) {
-      case Role.ADMIN:
-        return this.adminRepo;
-      case Role.STUDENT:
-        return this.studentRepo;
-      case Role.STAFF:
-        return this.staffRepo;
-      case Role.S_ADMIN:
-        return this.sAdminRepo;
-      default:
-        return this.userRepo;
+  // change user passowrd
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    // check previous password is correct
+    const user = await this.findOne(userId);
+    if (!user) throw new NotFoundException('User not found');
+    const isPasswordMatch = await compare(currentPassword, user.hashedPassword);
+
+    if (!isPasswordMatch) {
+      throw new BadRequestException('Invalid password');
     }
+
+    const hashedPassword = await hashPassword(newPassword);
+    user.hashedPassword = hashedPassword;
+    return await this.userRepo.save(user);
   }
 
   // Update a user to Staff

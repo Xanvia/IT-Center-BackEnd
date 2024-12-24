@@ -117,7 +117,6 @@ export class UsersController {
     }
     const res = await this.userService.updateProfileImage(
       req.user.id,
-      req.user.role,
       file.path,
     );
     if (!res.affected) {
