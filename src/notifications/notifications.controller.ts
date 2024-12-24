@@ -36,6 +36,13 @@ export class NotificationsController {
     );
   }
 
+  @Post('allTeachers')
+  createForAllTeachers(@Body() createNotificationDto: CreateNotificationDto) {
+    return this.notificationsService.createForAllTeachers(
+      createNotificationDto,
+    );
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Req() req: URequrst) {

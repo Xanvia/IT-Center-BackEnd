@@ -64,6 +64,24 @@ export class NotificationsService {
     }
   }
 
+  async createForAllTeachers(createNotificationDto: CreateNotificationDto) {
+    try {
+      delete createNotificationDto.userId;
+      const users = await this.userService.getStaff();
+
+      users.forEach(async (user) => {
+        const notification = this.notificationRepo.create({
+          user,
+          ...createNotificationDto,
+        });
+        await this.notificationRepo.save(notification);
+      });
+      return 'Notifications send for all teachers';
+    } catch (error) {
+      throw new BadRequestException('Something went wrong');
+    }
+  }
+
   async findAllforUser(userId: string) {
     try {
       return await this.notificationRepo.find({
