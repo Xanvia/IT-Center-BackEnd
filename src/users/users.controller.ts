@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -21,6 +22,7 @@ import { ADMIN, S_ADMIN, STUDENT, USER } from 'types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Controller('user')
 export class UsersController {
@@ -126,6 +128,18 @@ export class UsersController {
       message: 'Files uploaded successfully',
       path: file.path,
     };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('password')
+  async changePassword(@Req() req, @Body() body) {
+    return this.userService.changePassword(req.user.id, body.current, body.new);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put()
+  async updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updateProfile(req.user.id, updateUserDto);
   }
 
   @Delete(':id')

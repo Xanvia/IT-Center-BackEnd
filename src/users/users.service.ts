@@ -17,6 +17,7 @@ import { Staff } from './entities/staff.entity';
 import { SuperAdmin } from './entities/superAdmin.entity';
 import { StaffProfileService } from 'src/profile/staff-profile/staff-profile.service';
 import { compare } from 'bcrypt';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UsersService {
@@ -167,6 +168,11 @@ export class UsersService {
     return await this.userRepo.save(user);
   }
 
+  // update user profile
+  async updateProfile(userId: string, updateUserDto: UpdateUserDto) {
+    return await this.userRepo.update({ id: userId }, updateUserDto);
+  }
+
   // Update a user to Staff
   async updateUsertoStaff(userEmail: string) {
     const user = await this.userRepo.findOne({ where: { email: userEmail } });
@@ -205,5 +211,10 @@ export class UsersService {
   // deletea staff
   async deleteStaff(id: string): Promise<DeleteResult> {
     return await this.staffRepo.delete(id);
+  }
+
+  // delete an account
+  async deleteAccount(userId: string): Promise<DeleteResult> {
+    return await this.userRepo.delete(userId);
   }
 }
