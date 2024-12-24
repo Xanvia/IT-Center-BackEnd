@@ -67,5 +67,15 @@ export class ContentsService {
 
     const { images, ...rest } = updateContentDto;
     const updatedContent = this.contentRepo.merge(existingContent, { ...rest });
+
+    if (images && images.length) {
+      updatedContent.images = images.map((image) => {
+        const newImage = new ContentImage();
+        newImage.path = image;
+        return newImage;
+      });
+    }
+
+    return await this.contentRepo.save(updatedContent);
   }
 }
