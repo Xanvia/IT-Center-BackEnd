@@ -29,7 +29,6 @@ export class CreateReservationDto {
   @IsOptional()
   noOfComputers: number;
 
-  @IsNotEmpty()
   @IsString()
   @IsOptional()
   availableSoftwares: string;
