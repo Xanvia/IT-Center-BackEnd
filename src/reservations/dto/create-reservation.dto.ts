@@ -42,6 +42,10 @@ export class CreateReservationDto {
   @IsBoolean()
   isAC: boolean;
 
+  @IsString()
+  @IsOptional()
+  bestCase: string;
+
   @IsNotEmpty()
   @IsString()
   location: string;

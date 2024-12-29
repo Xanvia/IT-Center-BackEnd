@@ -31,6 +31,9 @@ export class Reservation {
   @Column()
   isAC: boolean;
 
+  @Column({ nullable: true })
+  bestCase: string;
+
   @Column()
   location: string;
 
