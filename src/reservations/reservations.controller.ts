@@ -3,12 +3,12 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
   BadRequestException,
   UploadedFiles,
+  Put,
 } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
@@ -36,7 +36,7 @@ export class ReservationsController {
     return this.reservationsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateReservationDto: UpdateReservationDto,
@@ -46,7 +46,7 @@ export class ReservationsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.reservationsService.remove(+id);
+    return this.reservationsService.remove(id);
   }
 
   @Post('upload')
