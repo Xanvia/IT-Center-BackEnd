@@ -31,9 +31,6 @@ export class Reservation {
   @Column()
   isAC: boolean;
 
-  @Column({ nullable: true })
-  specialities: string;
-
   @Column()
   location: string;
 

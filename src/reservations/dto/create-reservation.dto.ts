@@ -4,7 +4,6 @@ import {
   IsString,
   IsArray,
   IsBoolean,
-  IsDecimal,
   IsNumber,
   IsOptional,
 } from 'class-validator';
@@ -42,10 +41,6 @@ export class CreateReservationDto {
   @IsNotEmpty()
   @IsBoolean()
   isAC: boolean;
-
-  @IsString()
-  @IsOptional()
-  specialities: string;
 
   @IsNotEmpty()
   @IsString()
