@@ -21,7 +21,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN, S_ADMIN, STUDENT, USER } from 'types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import path, { extname } from 'path';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Controller('user')
@@ -95,7 +95,9 @@ export class UsersController {
   @UseInterceptors(
     FileInterceptor('user', {
       storage: diskStorage({
-        destination: './uploads/users',
+        destination: (req, file, cb) => {
+          cb(null, path.join(__dirname, '..', '..', 'uploads', 'users'));
+        },
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
