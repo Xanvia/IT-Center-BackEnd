@@ -1,13 +1,13 @@
 export enum ReservationStatus {
-  PENDING = 'Pending',
-  PAYMENT = 'Payment',
-  CONFIRMED = 'Confirmed',
-  REJECTED = 'Rejected',
-  DONE = 'Done',
+  PENDING = 'PENDING',
+  PAYMENT = 'PAYMENT',
+  CONFIRMED = 'CONFIRMED',
+  REJECTED = 'REJECTED',
+  DONE = 'DONE',
 }
 
 export enum TimeSlot {
-  MORNING = 'Morning',
-  AFTERNOON = 'Afternoon',
-  FULLDAY = 'FullDay',
+  MORNING = 'MORNING',
+  AFTERNOON = 'AFTERNOON',
+  FULLDAY = 'FULLDAY',
 }

@@ -1,7 +1,15 @@
 import { ReservationStatus, TimeSlot } from 'enums/reservation.enum';
 import { Reservation } from 'src/reservations/entities/reservation.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  AfterLoad,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
 
 @Entity()
 export class ReserveRecord {
@@ -29,6 +37,9 @@ export class ReserveRecord {
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({ nullable: true })
+  phoneNumber: string;
 
   @ManyToOne(() => Reservation, (reservation) => reservation.records, {
     onDelete: 'SET NULL',

@@ -11,6 +11,7 @@ import { ReserveRecord } from './entities/reserve-record.entity';
 import { ReservationStatus } from 'enums/reservation.enum';
 import { ReservationsService } from 'src/reservations/reservations.service';
 import { UsersService } from 'src/users/users.service';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class ReserveRecordsService {
@@ -20,6 +21,25 @@ export class ReserveRecordsService {
     private reservationService: ReservationsService,
     private userService: UsersService,
   ) {}
+
+  @Cron('0 17 * * *') // every day at 5 PM
+  handleCron() {
+    console.log('Updating records...');
+
+    const update = async () => {
+      const records = await this.reserveRecordRepository.find({
+        where: { status: Not(ReservationStatus.DONE) },
+      });
+
+      records.forEach(async (record) => {
+        if (new Date(record.endingDate) < new Date()) {
+          record.status = ReservationStatus.DONE;
+          await this.reserveRecordRepository.save(record);
+        }
+      });
+    };
+    update();
+  }
 
   async create(createReserveRecordDto: CreateReserveRecordDto, userId: string) {
     try {
@@ -35,7 +55,8 @@ export class ReserveRecordsService {
         user: await this.userService.findOne(userId),
       });
 
-      return await this.reserveRecordRepository.save(reserveRecord);
+      await this.reserveRecordRepository.save(reserveRecord);
+      return 'Record created successfully';
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -59,8 +80,14 @@ export class ReserveRecordsService {
     });
   }
 
-  async findOnebyUserId(id: string): Promise<ReserveRecord> {
-    return this.reserveRecordRepository.findOne({ where: { user: { id } } });
+  async findOnebyUserId(id: string): Promise<ReserveRecord[]> {
+    return this.reserveRecordRepository.find({ where: { user: { id } } });
+  }
+
+  async findByReservationId(id: string): Promise<ReserveRecord[]> {
+    return this.reserveRecordRepository.find({
+      where: { reservation: { id } },
+    });
   }
 
   async update(id: string, updateReserveRecordDto: UpdateReserveRecordDto) {

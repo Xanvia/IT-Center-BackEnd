@@ -52,6 +52,11 @@ export class ReserveRecordsController {
     return this.reserveRecordsService.findOnebyUserId(req.user.id);
   }
 
+  @Get('reservation/:id')
+  findByReservationId(@Param('id') id: string) {
+    return this.reserveRecordsService.findByReservationId(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

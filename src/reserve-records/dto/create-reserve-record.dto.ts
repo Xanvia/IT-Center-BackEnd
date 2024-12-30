@@ -31,6 +31,9 @@ export class CreateReserveRecordDto {
   @IsEnum(ReservationStatus)
   status: ReservationStatus;
 
+  @IsOptional()
+  phoneNumber?: string;
+
   @IsString()
   reservationId: string;
 }
