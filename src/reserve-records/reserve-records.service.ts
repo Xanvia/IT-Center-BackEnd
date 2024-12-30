@@ -1,31 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository, UpdateResult } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateReserveRecordDto } from './dto/create-reserve-record.dto';
 import { UpdateReserveRecordDto } from './dto/update-reserve-record.dto';
 import { ReserveRecord } from './entities/reserve-record.entity';
-import { Status } from 'enums/registration.enum';
 import { ReservationStatus } from 'enums/reservation.enum';
+import { ReservationsService } from 'src/reservations/reservations.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ReserveRecordsService {
   constructor(
     @InjectRepository(ReserveRecord)
     private reserveRecordRepository: Repository<ReserveRecord>,
+    private reservationService: ReservationsService,
+    private userService: UsersService,
   ) {}
 
   async create(createReserveRecordDto: CreateReserveRecordDto, userId: string) {
-    // try {
-    //   const { reservationId, ...rest } = createReserveRecordDto;
-    //   const record = await this.reserveRecordRepository.findOne({
-    //     where: { reservationId },
-    //   });
-    // } catch (error) {
-    // }
-    // const reserveRecord = this.reserveRecordRepository.create(
-    //   createReserveRecordDto,
-    // );
-    // return this.reserveRecordRepository.save(reserveRecord);
+    try {
+      const { reservationId, ...rest } = createReserveRecordDto;
+      const record = await this.reservationService.findOne(reservationId);
+      if (!record) {
+        throw new NotFoundException('Reservation not found');
+      }
+
+      const reserveRecord = this.reserveRecordRepository.create({
+        ...rest,
+        reservation: record,
+        user: await this.userService.findOne(userId),
+      });
+
+      return await this.reserveRecordRepository.save(reserveRecord);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll(): Promise<ReserveRecord[]> {
@@ -46,23 +59,16 @@ export class ReserveRecordsService {
     });
   }
 
-  async findOne(id: string): Promise<ReserveRecord> {
-    return this.reserveRecordRepository.findOne({ where: { id } });
+  async findOnebyUserId(id: string): Promise<ReserveRecord> {
+    return this.reserveRecordRepository.findOne({ where: { user: { id } } });
   }
 
   async update(id: string, updateReserveRecordDto: UpdateReserveRecordDto) {
-    const record = await this.reserveRecordRepository.findOne({
-      where: { id },
-    });
-    if (!record) {
-      throw new Error('Record not found');
-    }
-
-    // const newRecord = await this.reserveRecordRepository.update(
-    //   id,
-    //   updateReserveRecordDto,
-    // );
-    // return newRecord;
+    const newRecord = await this.reserveRecordRepository.update(
+      id,
+      updateReserveRecordDto,
+    );
+    return newRecord;
   }
 
   async remove(id: string): Promise<void> {

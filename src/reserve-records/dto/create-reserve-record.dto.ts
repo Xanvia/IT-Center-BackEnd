@@ -14,11 +14,11 @@ export class CreateReserveRecordDto {
 
   @IsDate()
   @Type(() => Date)
-  startingDate: Date;
+  startingDate: string;
 
   @IsDate()
   @Type(() => Date)
-  endingDate: Date;
+  endingDate: string;
 
   @IsOptional()
   @IsString()

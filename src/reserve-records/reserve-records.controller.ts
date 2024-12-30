@@ -7,16 +7,19 @@ import {
   Param,
   Delete,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ReserveRecordsService } from './reserve-records.service';
 import { CreateReserveRecordDto } from './dto/create-reserve-record.dto';
 import { UpdateReserveRecordDto } from './dto/update-reserve-record.dto';
 import { URequrst } from 'types/request.type';
+import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 
 @Controller('reserve-records')
 export class ReserveRecordsController {
   constructor(private readonly reserveRecordsService: ReserveRecordsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Body() createReserveRecordDto: CreateReserveRecordDto,
@@ -43,9 +46,10 @@ export class ReserveRecordsController {
     return this.reserveRecordsService.findAllNotEnded();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reserveRecordsService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  findOnebyUserId(@Req() req: URequrst) {
+    return this.reserveRecordsService.findOnebyUserId(req.user.id);
   }
 
   @Patch(':id')
