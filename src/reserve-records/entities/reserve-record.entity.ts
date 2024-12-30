@@ -1,7 +1,7 @@
+import { ReservationStatus, TimeSlot } from 'enums/reservation.enum';
 import { Reservation } from 'src/reservations/entities/reservation.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ReservationStatus } from 'types/reservation.type';
 
 @Entity()
 export class ReserveRecord {
@@ -12,15 +12,19 @@ export class ReserveRecord {
   eventName: string;
 
   @Column({ type: 'date' })
-  date: string;
+  startingDate: string;
 
-  @Column()
-  isFullDay: boolean;
+  @Column({ type: 'date' })
+  endingDate: string;
 
-  @Column()
-  noOfDays: number;
+  @Column({ type: 'enum', enum: TimeSlot, default: TimeSlot.MORNING })
+  timeSlot: TimeSlot;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: ReservationStatus,
+    default: ReservationStatus.PENDING,
+  })
   status: ReservationStatus;
 
   @ManyToOne(() => Reservation, (reservation) => reservation.records, {

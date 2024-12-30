@@ -17,7 +17,7 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
-import { extname } from 'path';
+import path, { extname } from 'path';
 
 @Controller('courses')
 export class CoursesController {
@@ -54,7 +54,9 @@ export class CoursesController {
   @UseInterceptors(
     FilesInterceptor('course', 5, {
       storage: diskStorage({
-        destination: './uploads/course',
+        destination: (req, file, cb) => {
+          cb(null, path.join(__dirname, '..', '..', 'uploads', 'course'));
+        },
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
