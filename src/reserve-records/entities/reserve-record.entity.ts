@@ -6,12 +6,11 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  AfterLoad,
-  BeforeInsert,
-  BeforeUpdate,
+  Index,
 } from 'typeorm';
 
 @Entity()
+@Index(['startingDate', 'timeSlot'], { unique: true })
 export class ReserveRecord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
