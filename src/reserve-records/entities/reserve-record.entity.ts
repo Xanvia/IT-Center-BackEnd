@@ -27,6 +27,9 @@ export class ReserveRecord {
   })
   status: ReservationStatus;
 
+  @Column({ nullable: true })
+  description: string;
+
   @ManyToOne(() => Reservation, (reservation) => reservation.records, {
     onDelete: 'SET NULL',
   })
@@ -37,5 +40,3 @@ export class ReserveRecord {
   })
   user: User;
 }
-
-// need to add payment record

@@ -14,13 +14,18 @@ export class ReserveRecordsService {
     private reserveRecordRepository: Repository<ReserveRecord>,
   ) {}
 
-  async create(
-    createReserveRecordDto: CreateReserveRecordDto,
-  ): Promise<ReserveRecord> {
-    const reserveRecord = this.reserveRecordRepository.create(
-      createReserveRecordDto,
-    );
-    return this.reserveRecordRepository.save(reserveRecord);
+  async create(createReserveRecordDto: CreateReserveRecordDto, userId: string) {
+    // try {
+    //   const { reservationId, ...rest } = createReserveRecordDto;
+    //   const record = await this.reserveRecordRepository.findOne({
+    //     where: { reservationId },
+    //   });
+    // } catch (error) {
+    // }
+    // const reserveRecord = this.reserveRecordRepository.create(
+    //   createReserveRecordDto,
+    // );
+    // return this.reserveRecordRepository.save(reserveRecord);
   }
 
   async findAll(): Promise<ReserveRecord[]> {
@@ -45,10 +50,7 @@ export class ReserveRecordsService {
     return this.reserveRecordRepository.findOne({ where: { id } });
   }
 
-  async update(
-    id: string,
-    updateReserveRecordDto: UpdateReserveRecordDto,
-  ): Promise<UpdateResult> {
+  async update(id: string, updateReserveRecordDto: UpdateReserveRecordDto) {
     const record = await this.reserveRecordRepository.findOne({
       where: { id },
     });
@@ -56,11 +58,11 @@ export class ReserveRecordsService {
       throw new Error('Record not found');
     }
 
-    const newRecord = await this.reserveRecordRepository.update(
-      id,
-      updateReserveRecordDto,
-    );
-    return newRecord;
+    // const newRecord = await this.reserveRecordRepository.update(
+    //   id,
+    //   updateReserveRecordDto,
+    // );
+    // return newRecord;
   }
 
   async remove(id: string): Promise<void> {
