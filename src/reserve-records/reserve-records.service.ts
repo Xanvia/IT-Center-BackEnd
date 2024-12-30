@@ -4,6 +4,8 @@ import { Not, Repository, UpdateResult } from 'typeorm';
 import { CreateReserveRecordDto } from './dto/create-reserve-record.dto';
 import { UpdateReserveRecordDto } from './dto/update-reserve-record.dto';
 import { ReserveRecord } from './entities/reserve-record.entity';
+import { Status } from 'enums/registration.enum';
+import { ReservationStatus } from 'enums/reservation.enum';
 
 @Injectable()
 export class ReserveRecordsService {
@@ -27,13 +29,15 @@ export class ReserveRecordsService {
 
   // get all pending records
   async findAllPending(): Promise<ReserveRecord[]> {
-    return this.reserveRecordRepository.find({ where: { status: 'Pending' } });
+    return this.reserveRecordRepository.find({
+      where: { status: ReservationStatus.PENDING },
+    });
   }
 
   // get all records that not ended
   async findAllNotEnded(): Promise<ReserveRecord[]> {
     return this.reserveRecordRepository.find({
-      where: { status: Not('Done') },
+      where: { status: Not(ReservationStatus.DONE) },
     });
   }
 
