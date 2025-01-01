@@ -36,6 +36,11 @@ export class ReservationsController {
     return this.reservationsService.findOne(id);
   }
 
+  @Get(':id/records')
+  findOneWithRecords(@Param('id') id: string) {
+    return this.reservationsService.findOneWithRecords(id);
+  }
+
   @Put(':id')
   update(
     @Param('id') id: string,

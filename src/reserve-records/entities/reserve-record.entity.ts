@@ -6,12 +6,11 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  AfterLoad,
-  BeforeInsert,
-  BeforeUpdate,
+  Index,
 } from 'typeorm';
 
 @Entity()
+@Index(['startingDate', 'timeSlot'], { unique: true })
 export class ReserveRecord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -37,6 +36,9 @@ export class ReserveRecord {
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({ nullable: true })
+  charges: number;
 
   @Column({ nullable: true })
   phoneNumber: string;

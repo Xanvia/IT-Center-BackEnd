@@ -28,6 +28,10 @@ export class CreateReserveRecordDto {
   timeSlot: TimeSlot;
 
   @IsOptional()
+  @IsNumber()
+  charges?: number;
+
+  @IsOptional()
   @IsEnum(ReservationStatus)
   status: ReservationStatus;
 

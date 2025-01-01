@@ -81,7 +81,15 @@ export class ReserveRecordsService {
   }
 
   async findOnebyUserId(id: string): Promise<ReserveRecord[]> {
-    return this.reserveRecordRepository.find({ where: { user: { id } } });
+    return this.reserveRecordRepository.find({
+      where: { user: { id } },
+      relations: ['reservation'],
+      select: {
+        reservation: {
+          name: true,
+        },
+      },
+    });
   }
 
   async findByReservationId(id: string): Promise<ReserveRecord[]> {

@@ -32,6 +32,13 @@ export class ReservationsService {
     return reservation;
   }
 
+  async findOneWithRecords(id: string): Promise<Reservation> {
+    return await this.reservationRepo.findOne({
+      where: { id },
+      relations: { records: true },
+    });
+  }
+
   async update(id: string, updateReservationDto: UpdateReservationDto) {
     const updateData = { ...updateReservationDto };
     return await this.reservationRepo.update(id, updateData);
