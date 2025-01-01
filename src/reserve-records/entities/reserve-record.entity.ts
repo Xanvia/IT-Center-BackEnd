@@ -38,6 +38,9 @@ export class ReserveRecord {
   description: string;
 
   @Column({ nullable: true })
+  charges: number;
+
+  @Column({ nullable: true })
   phoneNumber: string;
 
   @ManyToOne(() => Reservation, (reservation) => reservation.records, {
