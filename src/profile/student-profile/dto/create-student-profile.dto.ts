@@ -95,6 +95,10 @@ export class CreateStudentProfileDto {
 
   @IsString()
   @IsNotEmpty()
+  nationalIdCardNo: string;
+
+  @IsString()
+  @IsNotEmpty()
   address: string;
 
   @IsString()
