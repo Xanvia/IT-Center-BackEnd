@@ -24,6 +24,9 @@ export class StudentProfile extends Profile {
   dateOfBirth: Date;
 
   @Column()
+  nationalIdCardNo: string;
+
+  @Column()
   address: string;
 
   @Column()
