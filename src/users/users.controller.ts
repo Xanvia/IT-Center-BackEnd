@@ -58,8 +58,8 @@ export class UsersController {
     return this.userService.getMyStudentInfo(req.user.id);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('/staff')
   async getStaff() {
@@ -82,8 +82,8 @@ export class UsersController {
     return this.userService.updateUsertoStudent(req.user.id, profile);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post('/convert/staff')
   async usertoStaff(@Body() req) {

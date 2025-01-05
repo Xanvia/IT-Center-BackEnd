@@ -191,14 +191,16 @@ export class UsersService {
       profile.isApproved = true;
       staff.staffProfile = profile;
 
-      const newOne = await this.staffRepo.save(staff);
-      if (newOne) {
-        await this.userRepo.delete({ email: userEmail });
-        // delete password and refresh token
-        delete newOne.hashedPassword;
-        delete newOne.hashedRefreshToken;
+      // delete the previos
+      await this.userRepo.delete({ email: userEmail });
 
-        return newOne;
+      // create new staff
+      const newOne = await this.staffRepo.save(staff);
+
+      if (!newOne) {
+        const user = this.userRepo.create(data);
+        await this.userRepo.save(user);
+        throw new BadRequestException('Failed to update user to staff');
       }
     } catch (error) {
       throw new BadRequestException(
