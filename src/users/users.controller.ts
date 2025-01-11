@@ -66,9 +66,9 @@ export class UsersController {
     return this.userService.getStaff();
   }
 
-  @Roles(S_ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(S_ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('/admin')
   async getAdmins() {
     return this.userService.getAdmins();
@@ -88,6 +88,24 @@ export class UsersController {
   @Post('/convert/staff')
   async usertoStaff(@Body() req) {
     return this.userService.updateUsertoStaff(req.requestBy);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/admin')
+  async stafftoAdmin(@Body() req) {
+    return this.userService.updateStafftoAdmin(req.requestId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/super-admin')
+  async admintoSuperAdmin(@Body() req) {
+    return this.userService.updateAdmintoSuperAdmin(req.requestId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/demote/staff')
+  async adminToStaff(@Body() req) {
+    return this.userService.updateAdmintoStaff(req.requestId);
   }
 
   @UseGuards(JwtAuthGuard)
