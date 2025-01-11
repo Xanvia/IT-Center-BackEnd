@@ -70,29 +70,6 @@ export class UsersService {
 
   // find all staff
   async getStaff(): Promise<User[]> {
-    // get staff, admin, super admin
-    // return await this.userRepo.find({
-    //   where: [
-    //     { role: Role.STAFF },
-    //     { role: Role.ADMIN },
-    //     { role: Role.S_ADMIN },
-    //   ],
-    //   relations: ['staffProfile'],
-    //   // select: {
-    //   //   id: true,
-    //   //   name: true,
-    //   //   email: true,
-    //   //   image: true,
-    //   //   role: true,
-    //   //   // staffProfile: {
-    //   //   //   id: true,
-    //   //   //   designation: true,
-    //   //   //   extNo: true,
-    //   //   //   title: true,
-    //   //   // },
-    //   // },
-    // });
-
     return await this.staffRepo.find({
       relations: ['staffProfile'],
       select: {
@@ -248,6 +225,9 @@ export class UsersService {
 
   // Update a staff to Admin
   async updateStafftoAdmin(id: string) {
+    if (!id) {
+      throw new BadRequestException('User not found');
+    }
     const user = await this.staffRepo.findOne({
       where: { id },
       relations: ['staffProfile'],
@@ -281,6 +261,9 @@ export class UsersService {
 
   // Update a admin to Super Admin
   async updateAdmintoSuperAdmin(id: string) {
+    if (!id) {
+      throw new BadRequestException('User not found');
+    }
     const user = await this.adminRepo.findOne({
       where: { id },
       relations: ['staffProfile'],
