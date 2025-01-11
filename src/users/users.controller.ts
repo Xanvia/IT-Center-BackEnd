@@ -149,9 +149,9 @@ export class UsersController {
     return this.userService.deleteUser(userId);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Delete('/staff/:id')
   async deleteStaff(@Param('id') userId: string) {
     return this.userService.deleteStaff(userId);

@@ -70,7 +70,21 @@ export class UsersService {
 
   // find all staff
   async getStaff(): Promise<Staff[]> {
-    return await this.staffRepo.find();
+    return await this.staffRepo.find({
+      relations: ['staffProfile'],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        staffProfile: {
+          id: true,
+          designation: true,
+          extNo: true,
+          title: true,
+        },
+      },
+    });
   }
 
   // find all admins
@@ -108,10 +122,7 @@ export class UsersService {
   }
 
   // Update a user to student
-  async updateUsertoStudent(
-    userId: string,
-    profile: CreateStudentProfileDto,
-  ): Promise<Student> {
+  async updateUsertoStudent(userId: string, profile: CreateStudentProfileDto) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) {
       throw new BadRequestException('User not found');
@@ -126,14 +137,15 @@ export class UsersService {
       const profileData = await this.studentProfileService.create(profile);
       student.studentProfile = profileData;
 
-      const newOne = await this.studentRepo.save(student);
-      if (newOne) {
-        await this.userRepo.delete({ id: userId });
-        // delete password and refresh token
-        delete newOne.hashedPassword;
-        delete newOne.hashedRefreshToken;
+      // delete the previos
+      await this.userRepo.delete({ id: userId });
 
-        return newOne;
+      const newOne = await this.studentRepo.save(student);
+
+      if (!newOne) {
+        const user = this.userRepo.create(data);
+        await this.userRepo.save(user);
+        throw new BadRequestException('Failed to update user to Student');
       }
     } catch (error) {
       throw new BadRequestException(
