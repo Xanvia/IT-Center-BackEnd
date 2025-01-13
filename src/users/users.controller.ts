@@ -18,7 +18,7 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { URequrst } from 'types/request.type';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { ADMIN, S_ADMIN, STUDENT, USER } from 'types/user.type';
+import { ADMIN, STUDENT, USER } from 'types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
