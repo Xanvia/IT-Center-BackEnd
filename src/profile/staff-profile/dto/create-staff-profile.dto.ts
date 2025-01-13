@@ -7,6 +7,7 @@ import {
   IsEnum,
   ArrayMaxSize,
   IsOptional,
+  IsNotEmpty,
 } from 'class-validator';
 import { Title } from 'enums/title.enum';
 import { Column } from 'typeorm';
@@ -15,7 +16,8 @@ export class CreateStaffProfileDto {
   @IsEnum(Title)
   title: Title;
 
-  @Column()
+  @IsString()
+  @IsNotEmpty()
   requestBy: string;
 
   @IsString()
