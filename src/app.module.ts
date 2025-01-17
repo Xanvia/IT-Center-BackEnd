@@ -15,6 +15,7 @@ import { ReserveRecordsModule } from './reserve-records/reserve-records.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { RegistrationRecordsModule } from './registration-records/registration-records.module';
 import { ContentsModule } from './contents/contents.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ContentsModule } from './contents/contents.module';
     NotificationsModule,
     RegistrationRecordsModule,
     ContentsModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
