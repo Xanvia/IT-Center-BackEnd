@@ -16,8 +16,14 @@ export class Payment {
   @Column()
   referenceId: string;
 
+  @Column()
+  subject: string;
+
   @Column({ nullable: true })
   description: string;
+
+  @Column({ default: false })
+  success: boolean;
 
   @CreateDateColumn()
   createdDate: Date;

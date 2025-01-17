@@ -14,5 +14,6 @@ import { ReservationsModule } from 'src/reservations/reservations.module';
   ],
   controllers: [ReserveRecordsController],
   providers: [ReserveRecordsService],
+  exports: [ReserveRecordsService],
 })
 export class ReserveRecordsModule {}

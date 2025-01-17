@@ -62,6 +62,11 @@ export class ReserveRecordsService {
     }
   }
 
+  // find one by id
+  async findOne(id: string): Promise<ReserveRecord> {
+    return this.reserveRecordRepository.findOne({ where: { id } });
+  }
+
   // find all with user detials
   async findAll(): Promise<ReserveRecord[]> {
     return this.reserveRecordRepository.find({

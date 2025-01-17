@@ -1,16 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Payment } from './payment.entity';
 import { Repository } from 'typeorm';
+import { ReserveRecordsService } from 'src/reserve-records/reserve-records.service';
+const PaymentParser = require('../../utils/paymentParser');
 
 @Injectable()
 export class PaymentService {
   constructor(
     @InjectRepository(Payment)
     private paymentRepo: Repository<Payment>,
+    private reservationRecordService: ReserveRecordsService,
   ) {}
 
-  async initiatePayment(recaptchaToken: string, recordId: string) {
+  async initiatePayment(
+    recaptchaToken: string,
+    recordId: string,
+    type: 'RESERVE' | 'COURSE',
+  ) {
     console.log('Initiating payment...');
 
     // initiate payment logic
@@ -30,54 +37,65 @@ export class PaymentService {
     const data = await response.json();
 
     // Check the result
-    if (data.success) {
-      console.log('reCAPTCHA verified successfully:', data);
-      return true; // Success
-    } else {
+    if (!data.success) {
+      return new HttpException('reCAPTCHA verification failed', 400);
       console.error('reCAPTCHA verification failed:', data);
       return false; // Failed
     }
-  }
 
-  async createSession(recordId: string) {
-    // try {
-    // Replace with your gateway credentials
-    const merchantId = 'your-merchant-id';
-    const apiUsername = '';
-    const apiPassword = 'your-api-password';
-    const apiEndpoint =
-      'https://bankofceylon.gateway.mastercard.com/api/nvp/version/60';
-
-    const orderData = {
-      apiOperation: 'CREATE_CHECKOUT_SESSION',
-      'order.id': 'order-' + Date.now(), // Unique order ID
-      'order.amount': '100.00', // Replace with actual amount
-      'order.currency': 'USD', // Replace with actual currency
-      'interaction.operation': 'PURCHASE',
+    // Create session
+    var paymentRecord: Payment;
+    if (type === 'RESERVE') {
+      try {
+        const record = await this.reservationRecordService.findOne(recordId);
+        paymentRecord = this.paymentRepo.create({
+          referenceId: recordId,
+          amount: record.charges,
+          description: `Reerved Date: ${record.startingDate} - ${record.endingDate}   Time: ${record.timeSlot}`,
+          subject: 'Reservation Payment for ' + record.eventName,
+        });
+        paymentRecord = await this.paymentRepo.save(paymentRecord);
+      } catch (error) {
+        return new HttpException('Record not found', 404);
+      }
+    } else {
+      // paymentRecord = this.paymentRepo.create({
+      //   referenceId: recordId,
+      //   amount: 100,
+      //   description: 'Course Payment',
+      //   subject: 'Course Payment',
+      // });
+      // paymentRecord = this.paymentRepo.save(paymentRecord);
+    }
+    const paymentRequest = {
+      apiOperation: 'INITIATE_CHECKOUT',
+      'order.id': paymentRecord.id,
+      'order.amount': paymentRecord.amount.toString(),
+      'order.currency': process.env.CURRENCY,
+      'order.reference': paymentRecord.referenceId,
+      'order.description': paymentRecord.description,
     };
 
-    //   const response = await axios.post(
-    //     apiEndpoint,
-    //     new URLSearchParams(orderData),
-    //     {
-    //       headers: {
-    //         Authorization: `Basic ${Buffer.from(`${merchantId}:${apiPassword}`).toString('base64')}`,
-    //         'Content-Type': 'application/x-www-form-urlencoded',
-    //       },
-    //     },
-    //   );
+    const merchant = {
+      certificateVerifyPeer: false,
+      certificateVerifyHost: 0,
+      proxyCurlOption: 0,
+      proxyCurlValue: 0,
+      gatewayUrl: process.env.PAYMENT_URL,
+      merchantId: process.env.MERCHANT_ID,
+      apiUsername: process.env.PAYMENT_USER,
+      password: process.env.PAYMENT_PASSWORD,
+      debug: true,
+      version: '71',
+    };
 
-    //   const parsedResponse = new URLSearchParams(response.data);
-    //   const sessionId = parsedResponse.get('session.id');
+    const paymentParser = new PaymentParser(merchant);
+    const res = await paymentParser.sendTransaction(paymentRequest);
 
-    //   if (sessionId) {
-    //     res.json({ sessionId });
-    //   } else {
-    //     res.status(400).json({ error: 'Failed to create session' });
-    //   }
-    // } catch (error) {
-    //   console.error('Error creating session:', error);
-    //   res.status(500).json({ error: 'Internal server error' });
-    // }
+    console.log('Payment response:', res);
+  }
+  catch(error) {
+    console.error('Error initiating payment:', error);
+    return new HttpException('Internal server error', 500);
   }
 }

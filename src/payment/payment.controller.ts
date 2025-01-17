@@ -10,6 +10,7 @@ export class PaymentController {
     return this.paymentService.initiatePayment(
       body.recaptchaToken,
       body.recordId,
+      body.type,
     );
   }
 }
