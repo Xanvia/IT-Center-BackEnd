@@ -69,8 +69,23 @@ export class UsersService {
   }
 
   // find all staff
-  async getStaff(): Promise<Staff[]> {
-    return await this.staffRepo.find();
+  async getStaff(): Promise<User[]> {
+    return await this.staffRepo.find({
+      relations: ['staffProfile'],
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        staffProfile: {
+          id: true,
+          designation: true,
+          extNo: true,
+          title: true,
+        },
+      },
+    });
   }
 
   // find all admins
@@ -108,10 +123,7 @@ export class UsersService {
   }
 
   // Update a user to student
-  async updateUsertoStudent(
-    userId: string,
-    profile: CreateStudentProfileDto,
-  ): Promise<Student> {
+  async updateUsertoStudent(userId: string, profile: CreateStudentProfileDto) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) {
       throw new BadRequestException('User not found');
@@ -126,14 +138,15 @@ export class UsersService {
       const profileData = await this.studentProfileService.create(profile);
       student.studentProfile = profileData;
 
-      const newOne = await this.studentRepo.save(student);
-      if (newOne) {
-        await this.userRepo.delete({ id: userId });
-        // delete password and refresh token
-        delete newOne.hashedPassword;
-        delete newOne.hashedRefreshToken;
+      // delete the previos
+      await this.userRepo.delete({ id: userId });
 
-        return newOne;
+      const newOne = await this.studentRepo.save(student);
+
+      if (!newOne) {
+        const user = this.userRepo.create(data);
+        await this.userRepo.save(user);
+        throw new BadRequestException('Failed to update user to Student');
       }
     } catch (error) {
       throw new BadRequestException(
@@ -191,14 +204,16 @@ export class UsersService {
       profile.isApproved = true;
       staff.staffProfile = profile;
 
-      const newOne = await this.staffRepo.save(staff);
-      if (newOne) {
-        await this.userRepo.delete({ email: userEmail });
-        // delete password and refresh token
-        delete newOne.hashedPassword;
-        delete newOne.hashedRefreshToken;
+      // delete the previos
+      await this.userRepo.delete({ email: userEmail });
 
-        return newOne;
+      // create new staff
+      const newOne = await this.staffRepo.save(staff);
+
+      if (!newOne) {
+        const user = this.userRepo.create(data);
+        await this.userRepo.save(user);
+        throw new BadRequestException('Failed to update user to staff');
       }
     } catch (error) {
       throw new BadRequestException(
@@ -208,7 +223,112 @@ export class UsersService {
     }
   }
 
-  // deletea staff
+  // Update a staff to Admin
+  async updateStafftoAdmin(id: string) {
+    if (!id) {
+      throw new BadRequestException('User not found');
+    }
+    const user = await this.staffRepo.findOne({
+      where: { id },
+      relations: ['staffProfile'],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    try {
+      const { id, createdDate, role, ...data } = user;
+      const admin = this.adminRepo.create(data);
+
+      // delete the previos
+      await this.staffRepo.delete({ id });
+
+      // create new admin
+      const newOne = await this.adminRepo.save(admin);
+
+      if (!newOne) {
+        const user = this.staffRepo.create(data);
+        await this.staffRepo.save(user);
+        throw new BadRequestException('Failed to update staff to admin');
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        'Failed to update staff to admin',
+        error.message,
+      );
+    }
+  }
+
+  // Update a admin to Super Admin
+  async updateAdmintoSuperAdmin(id: string) {
+    if (!id) {
+      throw new BadRequestException('User not found');
+    }
+    const user = await this.adminRepo.findOne({
+      where: { id },
+      relations: ['staffProfile'],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    try {
+      const { id, createdDate, role, ...data } = user;
+      const sAdmin = this.sAdminRepo.create(data);
+
+      // delete the previos
+      await this.adminRepo.delete({ id });
+
+      // create new super admin
+      const newOne = await this.sAdminRepo.save(sAdmin);
+
+      if (!newOne) {
+        const user = this.adminRepo.create(data);
+        await this.adminRepo.save(user);
+        throw new BadRequestException('Failed to update admin to super admin');
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        'Failed to update admin to super admin',
+        error.message,
+      );
+    }
+  }
+
+  // Update Admin to Staff
+  async updateAdmintoStaff(id: string) {
+    const user = await this.adminRepo.findOne({
+      where: { id },
+      relations: ['staffProfile'],
+    });
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    try {
+      const { id, createdDate, role, ...data } = user;
+      const staff = this.staffRepo.create(data);
+
+      // delete the previos
+      await this.adminRepo.delete({ id });
+
+      // create new staff
+      const newOne = await this.staffRepo.save(staff);
+
+      if (!newOne) {
+        const user = this.adminRepo.create(data);
+        await this.adminRepo.save(user);
+        throw new BadRequestException('Failed to update admin to staff');
+      }
+    } catch (error) {
+      throw new BadRequestException(
+        'Failed to update admin to staff',
+        error.message,
+      );
+    }
+  }
+
+  // delete staff
   async deleteStaff(id: string): Promise<DeleteResult> {
     return await this.staffRepo.delete(id);
   }

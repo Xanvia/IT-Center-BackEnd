@@ -62,8 +62,21 @@ export class ReserveRecordsService {
     }
   }
 
+  // find all with user detials
   async findAll(): Promise<ReserveRecord[]> {
-    return this.reserveRecordRepository.find();
+    return this.reserveRecordRepository.find({
+      relations: ['user', 'reservation'],
+      select: {
+        user: {
+          email: true,
+          name: true,
+          image: true,
+        },
+        reservation: {
+          name: true,
+        },
+      },
+    });
   }
 
   // get all pending records

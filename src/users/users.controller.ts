@@ -58,17 +58,17 @@ export class UsersController {
     return this.userService.getMyStudentInfo(req.user.id);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('/staff')
   async getStaff() {
     return this.userService.getStaff();
   }
 
-  @Roles(S_ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(S_ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get('/admin')
   async getAdmins() {
     return this.userService.getAdmins();
@@ -82,12 +82,30 @@ export class UsersController {
     return this.userService.updateUsertoStudent(req.user.id, profile);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post('/convert/staff')
   async usertoStaff(@Body() req) {
     return this.userService.updateUsertoStaff(req.requestBy);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/admin')
+  async stafftoAdmin(@Body() req) {
+    return this.userService.updateStafftoAdmin(req.requestId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/super-admin')
+  async admintoSuperAdmin(@Body() req) {
+    return this.userService.updateAdmintoSuperAdmin(req.requestId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/demote/staff')
+  async adminToStaff(@Body() req) {
+    return this.userService.updateAdmintoStaff(req.requestId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -149,9 +167,9 @@ export class UsersController {
     return this.userService.deleteUser(userId);
   }
 
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Delete('/staff/:id')
   async deleteStaff(@Param('id') userId: string) {
     return this.userService.deleteStaff(userId);
