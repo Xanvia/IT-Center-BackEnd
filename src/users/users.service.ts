@@ -96,20 +96,13 @@ export class UsersService {
   // find student by the id
   async getMyStudentInfo(userId: string): Promise<Student | undefined> {
     // get student data with limited profile data
-    return await this.studentRepo
-      .createQueryBuilder('student')
-      .leftJoinAndSelect('student.studentProfile', 'profile')
-      .select([
-        'student.name',
-        'student.email',
-        'student.image',
-        'student.studentId',
-        'profile.dateOfBirth',
-        'profile.phoneNumber',
-        'profile.address',
-      ])
-      .where('student.id = :userId', { userId })
-      .getOne();
+    const student = await this.studentRepo.findOne({
+      where: { id: userId },
+      relations: { studentProfile: true },
+    });
+    delete student.hashedPassword;
+    delete student.hashedRefreshToken;
+    return student;
   }
 
   // will be used in auth service to update user's refresh token
