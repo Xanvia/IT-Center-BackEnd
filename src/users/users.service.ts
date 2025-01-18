@@ -94,12 +94,16 @@ export class UsersService {
   }
 
   // find student by the id
-  async getMyStudentInfo(userId: string): Promise<Student | undefined> {
+  async getMyStudentInfo(userId: string) {
     // get student data with limited profile data
     const student = await this.studentRepo.findOne({
       where: { id: userId },
       relations: { studentProfile: true },
     });
+
+    if (!student) {
+      return new NotFoundException('user not found');
+    }
     delete student.hashedPassword;
     delete student.hashedRefreshToken;
     return student;
