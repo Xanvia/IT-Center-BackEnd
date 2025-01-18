@@ -74,6 +74,8 @@ export class PaymentService {
       'order.currency': process.env.CURRENCY,
       'order.reference': paymentRecord.referenceId,
       'order.description': paymentRecord.description,
+      'interaction.operation': 'PURCHASE',
+      'interaction.merchant.name': 'ITC_PAYMENTS',
     };
 
     const merchant = {
@@ -92,7 +94,21 @@ export class PaymentService {
     const paymentParser = new PaymentParser(merchant);
     const res = await paymentParser.sendTransaction(paymentRequest);
 
-    console.log('Payment response:', res);
+    // Parse the response to get the session id
+    const responseParams = res.split('&');
+    let sessionId = '';
+    for (const param of responseParams) {
+      const [key, value] = param.split('=');
+      if (key === 'session.id') {
+        sessionId = value;
+        break;
+      }
+    }
+
+    return {
+      sessionId,
+      responseParams,
+    };
   }
   catch(error) {
     console.error('Error initiating payment:', error);

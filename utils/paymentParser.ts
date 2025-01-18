@@ -21,7 +21,7 @@ class PaymentParser {
     return `${this.gatewayUrl}/version/${this.version}`;
   }
 
-  // Format request data into Name-Value Pair (NVP) format
+  // Format request data into Name-Value Pair (NVP) format.
   parseRequest(data) {
     const params = new URLSearchParams(data);
 
@@ -37,13 +37,12 @@ class PaymentParser {
   async sendTransaction(data) {
     const requestUrl = this.formRequestUrl();
     const requestBody = this.parseRequest(data);
-    console.log('Request URL:', requestUrl);
-    console.log('Request Params:', requestBody);
 
     try {
       const axiosConfig = {
         method: 'post',
-        url: requestUrl + '?' + requestBody,
+        url: requestUrl,
+        data: requestBody,
         timeout: 35000,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
@@ -70,10 +69,7 @@ class PaymentParser {
         //   : false,
       };
 
-      console.log(axiosConfig);
-      console.log('Sending request to gateway...');
       const response = await axios(axiosConfig);
-      console.log('Response:', response.data);
       return response.data; // Handle the gateway response
     } catch (error) {
       return error;
