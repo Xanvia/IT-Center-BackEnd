@@ -94,20 +94,23 @@ export class PaymentService {
     const paymentParser = new PaymentParser(merchant);
     const res = await paymentParser.sendTransaction(paymentRequest);
 
-    // Parse the response to get the session id
+    // Parse the response to get the session id.
     const responseParams = res.split('&');
     let sessionId = '';
+    let version = '';
     for (const param of responseParams) {
       const [key, value] = param.split('=');
       if (key === 'session.id') {
         sessionId = value;
-        break;
+      } else if (key === 'session.version') {
+        version = value;
       }
     }
 
     return {
       sessionId,
       responseParams,
+      version,
     };
   }
   catch(error) {

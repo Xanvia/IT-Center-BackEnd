@@ -1,5 +1,6 @@
 const axios = require('axios');
 const fs = require('fs');
+const https = require('https');
 
 class PaymentParser {
   private gatewayUrl: string;
@@ -39,7 +40,13 @@ class PaymentParser {
     const requestBody = this.parseRequest(data);
 
     try {
+      // Create an HTTPS agent
+      const httpsAgent = new https.Agent({
+        rejectUnauthorized: false, // Equivalent to disabling both CURLOPT_SSL_VERIFYPEER and CURLOPT_SSL_VERIFYHOST
+      });
+
       const axiosConfig = {
+        httpsAgent,
         method: 'post',
         url: requestUrl,
         data: requestBody,
