@@ -33,19 +33,9 @@ export class UsersService {
     private staffProfileService: StaffProfileService,
   ) {}
 
-  // will be used in auth service to create user
-  async createUser(createUserDto: CreateUserDto) {
-    createUserDto.hashedPassword = await hashPassword(
-      createUserDto.hashedPassword,
-    );
-    const user = this.userRepo.create(createUserDto);
-    try {
-      const newUser = await this.userRepo.save(user);
-      const { hashedPassword, hashedRefreshToken, ...sanitizedUser } = newUser;
-      return sanitizedUser;
-    } catch (error) {
-      console.log(error);
-    }
+  // find all users
+  async getUsers(): Promise<User[]> {
+    return await this.userRepo.find();
   }
 
   // find user with the id
@@ -58,17 +48,37 @@ export class UsersService {
     return await this.userRepo.findOne({ where: { email } });
   }
 
-  // find all users
-  async getUsers(): Promise<User[]> {
-    return await this.userRepo.find();
-  }
-
   // find all students
   async getStudents(): Promise<Student[]> {
-    return await this.studentRepo.find();
+    return await this.studentRepo.find({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        studentId: true,
+      },
+    });
   }
 
-  // find all staff
+  // find student by the id
+  async getMyStudentInfo(userId: string) {
+    // get student data with limited profile data
+    const student = await this.studentRepo.findOne({
+      where: { id: userId },
+      relations: { studentProfile: true },
+    });
+
+    if (!student) {
+      return new NotFoundException('user not found');
+    }
+    delete student.hashedPassword;
+    delete student.hashedRefreshToken;
+    return student;
+  }
+
+  // find all staff members includong admins
   async getStaff(): Promise<User[]> {
     return await this.staffRepo.find({
       relations: ['staffProfile'],
@@ -88,25 +98,40 @@ export class UsersService {
     });
   }
 
+  // find staff by the id
+  async getMyStaffInfo(userId: string) {
+    // get student data with limited profile data
+    const staff = await this.staffRepo.findOne({
+      where: { id: userId },
+      relations: { staffProfile: true },
+    });
+
+    if (!staff) {
+      return new NotFoundException('user not found');
+    }
+    delete staff.hashedPassword;
+    delete staff.hashedRefreshToken;
+    return staff;
+  }
+
   // find all admins
   async getAdmins(): Promise<Admin[]> {
     return await this.adminRepo.find();
   }
 
-  // find student by the id
-  async getMyStudentInfo(userId: string) {
-    // get student data with limited profile data
-    const student = await this.studentRepo.findOne({
-      where: { id: userId },
-      relations: { studentProfile: true },
-    });
-
-    if (!student) {
-      return new NotFoundException('user not found');
+  // will be used in auth service to create user
+  async createUser(createUserDto: CreateUserDto) {
+    createUserDto.hashedPassword = await hashPassword(
+      createUserDto.hashedPassword,
+    );
+    const user = this.userRepo.create(createUserDto);
+    try {
+      const newUser = await this.userRepo.save(user);
+      const { hashedPassword, hashedRefreshToken, ...sanitizedUser } = newUser;
+      return sanitizedUser;
+    } catch (error) {
+      console.log(error);
     }
-    delete student.hashedPassword;
-    delete student.hashedRefreshToken;
-    return student;
   }
 
   // will be used in auth service to update user's refresh token
@@ -117,6 +142,36 @@ export class UsersService {
   // delete user
   async deleteUser(id: string): Promise<DeleteResult> {
     return await this.userRepo.delete(id);
+  }
+
+  // Update a user profile image
+  async updateProfileImage(userId: string, imageUrl: string) {
+    return await this.userRepo.update({ id: userId }, { image: imageUrl });
+  }
+
+  // change user passowrd
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    // check previous password is correct
+    const user = await this.findOne(userId);
+    if (!user) throw new NotFoundException('User not found');
+    const isPasswordMatch = await compare(currentPassword, user.hashedPassword);
+
+    if (!isPasswordMatch) {
+      throw new BadRequestException('Invalid password');
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    user.hashedPassword = hashedPassword;
+    return await this.userRepo.save(user);
+  }
+
+  // update user profile
+  async updateProfile(userId: string, updateUserDto: UpdateUserDto) {
+    return await this.userRepo.update({ id: userId }, updateUserDto);
   }
 
   // Update a user to student
@@ -151,36 +206,6 @@ export class UsersService {
         error.message,
       );
     }
-  }
-
-  // Update a user profile image
-  async updateProfileImage(userId: string, imageUrl: string) {
-    return await this.userRepo.update({ id: userId }, { image: imageUrl });
-  }
-
-  // change user passowrd
-  async changePassword(
-    userId: string,
-    currentPassword: string,
-    newPassword: string,
-  ) {
-    // check previous password is correct
-    const user = await this.findOne(userId);
-    if (!user) throw new NotFoundException('User not found');
-    const isPasswordMatch = await compare(currentPassword, user.hashedPassword);
-
-    if (!isPasswordMatch) {
-      throw new BadRequestException('Invalid password');
-    }
-
-    const hashedPassword = await hashPassword(newPassword);
-    user.hashedPassword = hashedPassword;
-    return await this.userRepo.save(user);
-  }
-
-  // update user profile
-  async updateProfile(userId: string, updateUserDto: UpdateUserDto) {
-    return await this.userRepo.update({ id: userId }, updateUserDto);
   }
 
   // Update a user to Staff
@@ -323,11 +348,6 @@ export class UsersService {
         error.message,
       );
     }
-  }
-
-  // delete staff
-  async deleteStaff(id: string): Promise<DeleteResult> {
-    return await this.staffRepo.delete(id);
   }
 
   // delete an account

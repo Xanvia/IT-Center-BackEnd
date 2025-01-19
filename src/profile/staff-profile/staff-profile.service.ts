@@ -47,9 +47,18 @@ export class StaffProfileService {
     return this.staffProfileRepository.save(newProfile);
   }
 
-  // Get all staff profiles
+  // Get all staff profiles including requests
   async findAll(): Promise<StaffProfile[]> {
     return this.staffProfileRepository.find();
+  }
+
+  // Get all staff profiles
+  async findAllProfiles(): Promise<StaffProfile[]> {
+    return this.staffProfileRepository.find({
+      where: {
+        isApproved: true,
+      },
+    });
   }
 
   // Get all staff profile requests
