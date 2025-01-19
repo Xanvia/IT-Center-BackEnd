@@ -50,13 +50,11 @@ export class CoursesController {
 
   // not tested
   @UseGuards(JwtAuthGuard)
-  @Post('upload-img')
+  @Post('upload')
   @UseInterceptors(
     FilesInterceptor('course', 5, {
       storage: diskStorage({
-        destination: (req, file, cb) => {
-          cb(null, path.join(__dirname, '..', '..', 'uploads', 'course'));
-        },
+        destination: './uploads/courses',
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -75,14 +73,18 @@ export class CoursesController {
     }),
   )
   async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
-    if (!files) {
+    if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }
-    // get urls and return
-    const paths = files.map((file) => file.path);
+
     return {
       message: 'Files uploaded successfully',
-      paths: paths,
+      files: files.map((file) => ({
+        filename: file.filename,
+        path: file.path,
+        size: file.size,
+        type: file.mimetype,
+      })),
     };
   }
 }
