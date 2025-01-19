@@ -13,7 +13,9 @@ export class ALResult {
   @Column({ type: 'enum', enum: Grade })
   grade: Grade;
 
-  @ManyToOne(() => Education, (parent) => parent.aLevelResults)
+  @ManyToOne(() => Education, (parent) => parent.aLevelResults, {
+    onDelete: 'CASCADE',
+  })
   education: Education;
 }
 

@@ -10,7 +10,6 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 import { Title } from 'enums/title.enum';
-import { Column } from 'typeorm';
 
 export class CreateStaffProfileDto {
   @IsEnum(Title)

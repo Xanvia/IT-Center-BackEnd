@@ -13,7 +13,6 @@ import {
 import { RegistrationRecordsService } from './registration-records.service';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 
 @Controller('registration-records')

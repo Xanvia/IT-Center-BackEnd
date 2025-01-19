@@ -71,11 +71,17 @@ export class UsersService {
     // get student data with limited profile data
     const student = await this.studentRepo.findOne({
       where: { id: userId },
-      relations: { studentProfile: true },
+      relations: {
+        studentProfile: {
+          education: {
+            aLevelResults: true,
+          },
+        },
+      },
     });
 
     if (!student) {
-      return new NotFoundException('user not found');
+      throw new NotFoundException('user not found');
     }
     delete student.hashedPassword;
     delete student.hashedRefreshToken;
@@ -114,7 +120,7 @@ export class UsersService {
     });
 
     if (!staff) {
-      return new NotFoundException('user not found');
+      throw new NotFoundException('user not found');
     }
     delete staff.hashedPassword;
     delete staff.hashedRefreshToken;
