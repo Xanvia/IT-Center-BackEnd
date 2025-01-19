@@ -55,12 +55,12 @@ class HigherEduDto {
 
 // Employment DTO
 class EmploymentDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   institution: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   designation: string;
 
   @IsOptional()

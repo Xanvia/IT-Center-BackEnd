@@ -60,6 +60,9 @@ export class UsersService {
         studentId: true,
         createdDate: true,
       },
+      order: {
+        createdDate: 'DESC',
+      },
     });
   }
 
@@ -95,6 +98,9 @@ export class UsersService {
           extNo: true,
           title: true,
         },
+      },
+      order: {
+        name: 'ASC',
       },
     });
   }
