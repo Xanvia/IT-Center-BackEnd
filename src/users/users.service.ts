@@ -58,6 +58,7 @@ export class UsersService {
         image: true,
         role: true,
         studentId: true,
+        createdDate: true,
       },
     });
   }
