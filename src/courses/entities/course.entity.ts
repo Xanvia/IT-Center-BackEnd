@@ -42,10 +42,10 @@ export class Course {
   registered: number;
 
   @Column({ type: 'date' })
-  startingDate: Date;
+  startingDate: string;
 
   @Column({ type: 'date' })
-  endingDate: Date;
+  endingDate: string;
 
   @OneToMany(() => RegistrationRecord, (record) => record.course, {
     onUpdate: 'CASCADE',

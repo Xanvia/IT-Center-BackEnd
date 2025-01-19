@@ -40,9 +40,9 @@ export class CreateCourseDto {
 
   @Type(() => Date)
   @IsDate()
-  startingDate: Date;
+  startingDate: string;
 
   @Type(() => Date)
   @IsDate()
-  endingDate: Date;
+  endingDate: string;
 }

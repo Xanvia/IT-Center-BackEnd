@@ -17,7 +17,10 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
-import path, { extname } from 'path';
+import { extname } from 'path';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ADMIN } from 'types/user.type';
+import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 
 @Controller('courses')
 export class CoursesController {
@@ -33,22 +36,32 @@ export class CoursesController {
     return this.coursesService.findOne(id);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createCourseDto: CreateCourseDto) {
     return this.coursesService.create(createCourseDto);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
     return this.coursesService.update(id, updateCourseDto);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.coursesService.remove(id);
   }
 
-  // not tested
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(
