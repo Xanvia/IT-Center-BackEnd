@@ -6,6 +6,7 @@ import { ReserveRecord } from './entities/reserve-record.entity';
 import { UsersModule } from 'src/users/users.module';
 import { ReservationsModule } from 'src/reservations/reservations.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { MailModule } from 'src/emails/mail.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
     UsersModule,
     ReservationsModule,
     NotificationsModule,
+    MailModule,
   ],
   controllers: [ReserveRecordsController],
   providers: [ReserveRecordsService],

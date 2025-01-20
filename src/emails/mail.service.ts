@@ -1,6 +1,7 @@
 // src/mail/mail.service.ts
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ReserveRecord } from 'src/reserve-records/entities/reserve-record.entity';
 
 @Injectable()
 export class MailService {
@@ -14,6 +15,15 @@ export class MailService {
       context: {
         name: 'john doe',
       },
+    });
+  }
+
+  async createReservationRecord(record: ReserveRecord) {
+    await this.mailerService.sendMail({
+      to: record.user.email,
+      subject: 'Your Reservation record sent successfully!',
+      template: __dirname + '/template/reservationCreate',
+      context: record,
     });
   }
 }

@@ -14,6 +14,7 @@ import { UsersService } from 'src/users/users.service';
 import { Cron } from '@nestjs/schedule';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { Sender } from 'enums/sender.enum';
+import { MailService } from 'src/emails/mail.service';
 
 @Injectable()
 export class ReserveRecordsService {
@@ -23,6 +24,7 @@ export class ReserveRecordsService {
     private reservationService: ReservationsService,
     private userService: UsersService,
     private notificationService: NotificationsService,
+    private emailServices: MailService,
   ) {}
 
   @Cron('0 17 * * *') // every day at 5 PM
@@ -66,6 +68,8 @@ export class ReserveRecordsService {
         subject: `Reservation request for ${record.name}`,
         content: `Your reservation request for ${record.name} on ${reserveRecord.startingDate} has been created successfully`,
       });
+
+      await this.emailServices.createReservationRecord(reserveRecord);
       return 'Record created successfully';
     } catch (error) {
       throw new BadRequestException(error.message);
