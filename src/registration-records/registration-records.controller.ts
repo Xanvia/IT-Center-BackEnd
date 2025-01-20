@@ -41,7 +41,6 @@ export class RegistrationRecordsController {
   @Roles(STUDENT)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
-  @UseGuards(JwtAuthGuard)
   @Get('user')
   findAllforUser(@Req() req) {
     return this.registrationRecordsService.findAllforUser(req.user.id);
