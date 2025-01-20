@@ -14,13 +14,14 @@ export class NotificationsService {
   ) {}
 
   async createForUser(createNotificationDto: CreateNotificationDto) {
-    const { userId, sender, content } = createNotificationDto;
+    const { userId, sender, content, subject } = createNotificationDto;
     try {
       const user = await this.userService.findOne(userId);
       const notification = this.notificationRepo.create({
         user,
         sender,
         content,
+        subject,
       });
       return await this.notificationRepo.save(notification);
     } catch (error) {

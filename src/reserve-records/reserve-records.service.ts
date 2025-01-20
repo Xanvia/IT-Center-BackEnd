@@ -68,6 +68,7 @@ export class ReserveRecordsService {
       relations: ['user', 'reservation'],
       select: {
         user: {
+          id: true,
           email: true,
           name: true,
           image: true,

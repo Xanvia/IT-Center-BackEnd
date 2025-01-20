@@ -17,6 +17,9 @@ export class Notification {
   sender: Sender;
 
   @Column()
+  subject: string;
+
+  @Column()
   content: string;
 
   @Column({ default: false })
