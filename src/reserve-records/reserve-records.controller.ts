@@ -14,8 +14,6 @@ import { CreateReserveRecordDto } from './dto/create-reserve-record.dto';
 import { UpdateReserveRecordDto } from './dto/update-reserve-record.dto';
 import { URequrst } from 'types/request.type';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { ADMIN } from 'types/user.type';
 
 @Controller('reserve-records')
 export class ReserveRecordsController {

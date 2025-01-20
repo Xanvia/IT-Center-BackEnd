@@ -12,6 +12,8 @@ import { ReservationStatus } from 'enums/reservation.enum';
 import { ReservationsService } from 'src/reservations/reservations.service';
 import { UsersService } from 'src/users/users.service';
 import { Cron } from '@nestjs/schedule';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { Sender } from 'enums/sender.enum';
 
 @Injectable()
 export class ReserveRecordsService {
@@ -20,6 +22,7 @@ export class ReserveRecordsService {
     private reserveRecordRepository: Repository<ReserveRecord>,
     private reservationService: ReservationsService,
     private userService: UsersService,
+    private notificationService: NotificationsService,
   ) {}
 
   @Cron('0 17 * * *') // every day at 5 PM
@@ -56,6 +59,13 @@ export class ReserveRecordsService {
       });
 
       await this.reserveRecordRepository.save(reserveRecord);
+
+      await this.notificationService.createForUser({
+        userId: userId,
+        sender: Sender.SYSTEM,
+        subject: `Reservation request for ${record.name}`,
+        content: `Your reservation request for ${record.name} on ${reserveRecord.startingDate} has been created successfully`,
+      });
       return 'Record created successfully';
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -117,6 +127,21 @@ export class ReserveRecordsService {
       id,
       updateReserveRecordDto,
     );
+    try {
+      const record = await this.reserveRecordRepository.findOne({
+        where: { id },
+        relations: ['user'],
+      });
+      await this.notificationService.createForUser({
+        userId: record.user.id,
+        sender: Sender.SYSTEM,
+        subject: `Reservation Event: ${record.eventName}`,
+        content: `Your reservation request for ${record.eventName} on ${record.startingDate} has been updated.`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
     return newRecord;
   }
 
