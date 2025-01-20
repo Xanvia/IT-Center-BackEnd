@@ -62,6 +62,7 @@ export class RegistrationRecordsService {
         'course.courseName as courseName',
         'JSON_ARRAYAGG(JSON_OBJECT(' +
           '"id", record.id, ' +
+          '"studentId", student.id, ' +
           '"name", student.name, ' +
           "'email', student.email, " +
           '"profileImage", student.image, ' +
