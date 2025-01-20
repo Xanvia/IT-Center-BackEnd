@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UploadedFile,
   UseGuards,
@@ -17,15 +18,17 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { URequrst } from 'types/request.type';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { ADMIN, S_ADMIN, USER } from 'types/user.type';
+import { ADMIN, S_ADMIN, STAFF, STUDENT, USER } from 'types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Controller('user')
 export class UsersController {
   constructor(private userService: UsersService) {}
 
+  // get all users by admin (NOT NEEDED)
   @Roles(ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
@@ -34,12 +37,14 @@ export class UsersController {
     return this.userService.getUsers();
   }
 
+  // get own details by user (NOT NEEDED)
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getUser(@Req() req: URequrst) {
     return this.userService.findOne(req.user.id);
   }
 
+  // get all students by admin
   @Roles(ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
@@ -48,6 +53,43 @@ export class UsersController {
     return this.userService.getStudents();
   }
 
+  // get own student details by student
+  @Roles(STUDENT)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/student/me')
+  async getMyStudentInfo(@Req() req: URequrst) {
+    return this.userService.getMyStudentInfo(req.user.id);
+  }
+
+  // get student details by admin
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/student/:id')
+  async getStudentInfo(@Param('id') userId: string) {
+    return this.userService.getMyStudentInfo(userId);
+  }
+
+  // get all staff members including admins
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/staff')
+  async getStaffs() {
+    return this.userService.getStaff();
+  }
+
+  // get own student details by staff
+  @Roles(STAFF)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/staff/me')
+  async getMyStaffInfo(@Req() req: URequrst) {
+    return this.userService.getMyStaffInfo(req.user.id);
+  }
+
+  // get all admins by super admin  (NOT NEEDED)
   @Roles(S_ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
@@ -56,6 +98,7 @@ export class UsersController {
     return this.userService.getAdmins();
   }
 
+  // convert user to student by user
   @Roles(USER)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
@@ -64,17 +107,51 @@ export class UsersController {
     return this.userService.updateUsertoStudent(req.user.id, profile);
   }
 
-  @Delete(':id')
-  async deleteUser(@Param('id') userId: string) {
-    return this.userService.deleteUser(userId);
+  // convert user to staff by admin
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/staff')
+  async usertoStaff(@Body() req) {
+    return this.userService.updateUsertoStaff(req.requestBy);
   }
 
+  // convert staff to admin by super admin
+  @Roles(S_ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/admin')
+  async stafftoAdmin(@Body() req) {
+    return this.userService.updateStafftoAdmin(req.requestId);
+  }
+
+  // convert admin to super admin by super admin
+  @Roles(S_ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Post('/convert/super-admin')
+  async admintoSuperAdmin(@Body() req) {
+    return this.userService.updateAdmintoSuperAdmin(req.requestId);
+  }
+
+  // demote staff to user by super admin
+  @Roles(S_ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Post('/demote/staff')
+  async adminToStaff(@Body() req) {
+    return this.userService.updateAdmintoStaff(req.requestId);
+  }
+
+  // upload user image by user
   @UseGuards(JwtAuthGuard)
   @Post('upload-img')
   @UseInterceptors(
     FileInterceptor('user', {
       storage: diskStorage({
-        destination: './uploads/users',
+        destination: (req, file, cb) => {
+          cb(null, 'uploads/users');
+        },
         filename: (req, file, cb) => {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -98,7 +175,6 @@ export class UsersController {
     }
     const res = await this.userService.updateProfileImage(
       req.user.id,
-      req.user.role,
       file.path,
     );
     if (!res.affected) {
@@ -108,5 +184,35 @@ export class UsersController {
       message: 'Files uploaded successfully',
       path: file.path,
     };
+  }
+
+  // change password by user
+  @UseGuards(JwtAuthGuard)
+  @Put('/password')
+  async changePassword(@Req() req, @Body() body) {
+    return this.userService.changePassword(req.user.id, body.current, body.new);
+  }
+
+  // change account details by user
+  @UseGuards(JwtAuthGuard)
+  @Put('/')
+  async updateProfile(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.updateProfile(req.user.id, updateUserDto);
+  }
+
+  // delete account by user
+  @UseGuards(JwtAuthGuard)
+  @Delete('/')
+  async deleteUser(@Req() req: URequrst) {
+    return this.userService.deleteUser(req.user.id);
+  }
+
+  // delete account by admin
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:id')
+  async deleteUserByAdmin(@Param('id') userId: string) {
+    return this.userService.deleteUser(userId);
   }
 }

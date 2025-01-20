@@ -1,28 +1,24 @@
 import {
-  IsDate,
-  IsNotEmpty,
+  IsArray,
   IsOptional,
   IsString,
   Matches,
   MaxLength,
 } from 'class-validator';
 
-export class CreateNewsDto {
-  @IsNotEmpty()
+export class CreateContentDto {
   @IsString()
   @MaxLength(50)
   title: string;
 
-  @IsNotEmpty()
   @IsString()
   description: string;
 
   @IsOptional()
-  @IsDate()
-  date?: string;
+  date?: Date;
 
   @IsOptional()
-  @IsString()
+  @IsArray()
   images?: string[];
 
   @IsOptional()

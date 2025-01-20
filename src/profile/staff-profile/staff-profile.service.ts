@@ -21,9 +21,11 @@ export class StaffProfileService {
   ) {}
 
   // Create a new staff profile
-  async create(createProfileDto: CreateStaffProfileDto): Promise<StaffProfile> {
+  async create(
+    createProfileDto: CreateStaffProfileDto,
+    id: string,
+  ): Promise<StaffProfile> {
     const { emails, telephones, ...profileData } = createProfileDto;
-
     const newProfile = this.staffProfileRepository.create(profileData);
 
     if (emails && emails.length) {
@@ -45,9 +47,18 @@ export class StaffProfileService {
     return this.staffProfileRepository.save(newProfile);
   }
 
-  // Get all staff profiles
+  // Get all staff profiles including requests
   async findAll(): Promise<StaffProfile[]> {
     return this.staffProfileRepository.find();
+  }
+
+  // Get all staff profiles
+  async findAllProfiles(): Promise<StaffProfile[]> {
+    return this.staffProfileRepository.find({
+      where: {
+        isApproved: true,
+      },
+    });
   }
 
   // Get all staff profile requests
@@ -56,6 +67,12 @@ export class StaffProfileService {
       where: {
         isApproved: false,
       },
+    });
+  }
+
+  async findByEmail(email: string): Promise<StaffProfile> {
+    return this.staffProfileRepository.findOne({
+      where: { requestBy: email },
     });
   }
 

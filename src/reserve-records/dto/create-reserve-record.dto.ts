@@ -1,12 +1,43 @@
-import { IsString, IsNumber, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNumber,
+  IsDate,
+  IsEnum,
+  IsOptional,
+} from 'class-validator';
+import { ReservationStatus, TimeSlot } from 'enums/reservation.enum';
 
 export class CreateReserveRecordDto {
-  //   @IsString()
-  //   readonly userId: string;
-  //   @IsString()
-  //   readonly itemId: string;
-  //   @IsDate()
-  //   readonly reserveDate: Date;
-  //   @IsNumber()
-  //   readonly duration: number;
+  @IsString()
+  eventName: string;
+
+  @IsDate()
+  @Type(() => Date)
+  startingDate: string;
+
+  @IsDate()
+  @Type(() => Date)
+  endingDate: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsEnum(TimeSlot)
+  timeSlot: TimeSlot;
+
+  @IsOptional()
+  @IsNumber()
+  charges?: number;
+
+  @IsOptional()
+  @IsEnum(ReservationStatus)
+  status: ReservationStatus;
+
+  @IsOptional()
+  phoneNumber?: string;
+
+  @IsString()
+  reservationId: string;
 }

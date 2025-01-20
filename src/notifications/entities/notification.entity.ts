@@ -1,3 +1,4 @@
+import { Sender } from 'enums/sender.enum';
 import { User } from 'src/users/entities/user.entity';
 import {
   Entity,
@@ -12,6 +13,12 @@ export class Notification {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'enum', enum: Sender })
+  sender: Sender;
+
+  @Column()
+  subject: string;
+
   @Column()
   content: string;
 
@@ -21,6 +28,6 @@ export class Notification {
   @CreateDateColumn()
   createdDate: Date;
 
-  @ManyToOne(() => User, (user) => user.notifications)
+  @ManyToOne(() => User, (user) => user.notifications, { onDelete: 'CASCADE' })
   user: User;
 }

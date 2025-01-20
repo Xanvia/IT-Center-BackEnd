@@ -1,23 +1,36 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Content } from './content.entity';
+import { Content } from './entities/content.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ContentImage } from './contentImage.entity';
-
-interface CreateContentDto {
-  images?: string[];
-}
+import { ContentImage } from './entities/contentImage.entity';
+import { CreateContentDto } from './dto/createContent.dto';
+import { UpdateContentDto } from './dto/updateContent.dto';
+import { Log } from './entities/log.entity';
+import { Project } from './entities/project.entity';
+import { News } from './entities/news.entity';
 
 @Injectable()
-export abstract class ContentsService {
+export class ContentsService {
   constructor(
     @InjectRepository(Content) private contentRepo: Repository<Content>,
+    @InjectRepository(Log) private logRepo: Repository<Log>,
+    @InjectRepository(Project) private projectRepo: Repository<Project>,
+    @InjectRepository(News) private newsRepo: Repository<News>,
   ) {}
 
   // get all content
-  async findAll(): Promise<Content[]> {
-    return await this.contentRepo.find();
+  async findAllLogs(): Promise<Content[]> {
+    return await this.logRepo.find();
   }
+
+  async findAllProjects(): Promise<Content[]> {
+    return await this.projectRepo.find();
+  }
+
+  async findAllNews(): Promise<Content[]> {
+    return await this.newsRepo.find();
+  }
+
   // get content by id
   async findbyID(id: string): Promise<Content> {
     return await this.contentRepo.findOne({ where: { id: id } });
@@ -27,12 +40,17 @@ export abstract class ContentsService {
     return await this.contentRepo.delete({ id: id });
   }
 
-  // create Content
-  async createContent<createDto extends CreateContentDto>(
-    createContentsDto: createDto,
-  ) {
+  // create Log
+  async createContent(createContentsDto: CreateContentDto, type: string) {
     const { images, ...rest } = createContentsDto;
-    const newItem = this.contentRepo.create({ ...rest });
+    var newItem = null;
+    if (type === 'log') {
+      newItem = this.logRepo.create({ ...rest });
+    } else if (type === 'project') {
+      newItem = this.projectRepo.create({ ...rest });
+    } else if (type === 'news') {
+      newItem = this.newsRepo.create({ ...rest });
+    }
 
     if (images && images.length) {
       newItem.images = images.map((image) => {
@@ -46,14 +64,25 @@ export abstract class ContentsService {
   }
 
   // update Content
-  async updateContent<updateDto>(id: string, updateContentDto: updateDto) {
+  async updateContent(id: string, updateContentDto: UpdateContentDto) {
     const existingContent = await this.contentRepo.findOne({
       where: { id: id },
     });
     if (!existingContent) {
       throw new NotFoundException(`Content with ID '${id}' not found`);
     }
-    await this.contentRepo.update({ id }, { ...updateContentDto });
-    return this.contentRepo.findOne({ where: { id: id } });
+
+    const { images, ...rest } = updateContentDto;
+    const updatedContent = this.contentRepo.merge(existingContent, { ...rest });
+
+    if (images && images.length) {
+      updatedContent.images = images.map((image) => {
+        const newImage = new ContentImage();
+        newImage.path = image;
+        return newImage;
+      });
+    }
+
+    return await this.contentRepo.save(updatedContent);
   }
 }

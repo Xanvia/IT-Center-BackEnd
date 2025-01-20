@@ -4,7 +4,6 @@ import {
   IsString,
   IsArray,
   IsBoolean,
-  IsDecimal,
   IsNumber,
   IsOptional,
 } from 'class-validator';
@@ -30,7 +29,6 @@ export class CreateReservationDto {
   @IsOptional()
   noOfComputers: number;
 
-  @IsNotEmpty()
   @IsString()
   @IsOptional()
   availableSoftwares: string;
@@ -45,7 +43,7 @@ export class CreateReservationDto {
 
   @IsString()
   @IsOptional()
-  specialities: string;
+  bestCase: string;
 
   @IsNotEmpty()
   @IsString()

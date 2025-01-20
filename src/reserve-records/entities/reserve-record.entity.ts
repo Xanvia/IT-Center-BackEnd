@@ -1,9 +1,16 @@
+import { ReservationStatus, TimeSlot } from 'enums/reservation.enum';
 import { Reservation } from 'src/reservations/entities/reservation.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { ReservationStatus } from 'types/reservation.type';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Index,
+} from 'typeorm';
 
 @Entity()
+@Index(['startingDate', 'timeSlot'], { unique: true })
 export class ReserveRecord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -12,22 +19,37 @@ export class ReserveRecord {
   eventName: string;
 
   @Column({ type: 'date' })
-  date: string;
+  startingDate: string;
 
-  @Column()
-  isFullDay: boolean;
+  @Column({ type: 'date' })
+  endingDate: string;
 
-  @Column()
-  noOfDays: number;
+  @Column({ type: 'enum', enum: TimeSlot, default: TimeSlot.MORNING })
+  timeSlot: TimeSlot;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: ReservationStatus,
+    default: ReservationStatus.PENDING,
+  })
   status: ReservationStatus;
 
-  @ManyToOne(() => Reservation, (reservation) => reservation.records)
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
+  charges: number;
+
+  @Column({ nullable: true })
+  phoneNumber: string;
+
+  @ManyToOne(() => Reservation, (reservation) => reservation.records, {
+    onDelete: 'SET NULL',
+  })
   reservation: Reservation;
 
-  @ManyToOne(() => User, (user) => user.reserveRecords)
+  @ManyToOne(() => User, (user) => user.reserveRecords, {
+    onDelete: 'SET NULL',
+  })
   user: User;
 }
-
-// need to add payment record

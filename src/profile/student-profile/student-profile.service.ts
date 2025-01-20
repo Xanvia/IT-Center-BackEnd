@@ -11,6 +11,7 @@ import { StudentProfile } from './entities/studentProfile.entity';
 import { HigherEdu } from './entities/higherEdu.entity';
 import { Employment } from './entities/employment.entity';
 import { Education } from './entities/education.entity';
+import { ALResult } from './entities/alResult.entity';
 
 @Injectable()
 export class StudentProfileService {
@@ -26,6 +27,9 @@ export class StudentProfileService {
 
     @InjectRepository(Education)
     private educationRepository: Repository<Education>,
+
+    @InjectRepository(ALResult)
+    private alRepo: Repository<ALResult>,
   ) {}
 
   // Create a new student profile with all nested entities
@@ -38,6 +42,7 @@ export class StudentProfileService {
       fullName,
       nameWithIntials,
       dateOfBirth,
+      nationalIdCardNo,
       address,
       phoneNumber,
       otherQualification,
@@ -53,15 +58,20 @@ export class StudentProfileService {
       fullName,
       nameWithIntials,
       dateOfBirth,
+      nationalIdCardNo,
       address,
       phoneNumber,
       otherQualification,
     });
 
     // Create Education
-    const edu = this.educationRepository.create(education);
+    const { aLevelResults, ...rest } = education;
+    const edu = this.educationRepository.create(rest);
+    edu.aLevelResults = aLevelResults.map((al) => this.alRepo.create(al));
+    console.log(edu);
 
     studentProfile.education = await this.educationRepository.save(edu);
+    console.log(studentProfile);
     // Create Higher Education (if any)
     studentProfile.higherEdu = higherEdu.map((edu) =>
       this.higherEduRepository.create(edu),

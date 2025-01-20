@@ -55,12 +55,12 @@ class HigherEduDto {
 
 // Employment DTO
 class EmploymentDto {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   institution: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   designation: string;
 
   @IsOptional()
@@ -92,6 +92,10 @@ export class CreateStudentProfileDto {
   @IsDate()
   @Type(() => Date)
   dateOfBirth: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  nationalIdCardNo: string;
 
   @IsString()
   @IsNotEmpty()

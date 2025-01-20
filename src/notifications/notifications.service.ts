@@ -1,26 +1,148 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Notification } from './entities/notification.entity';
+import { Repository } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class NotificationsService {
-  create(createNotificationDto: CreateNotificationDto) {
-    return 'This action adds a new notification';
+  constructor(
+    @InjectRepository(Notification)
+    private notificationRepo: Repository<Notification>,
+    private userService: UsersService,
+  ) {}
+
+  async createForUser(createNotificationDto: CreateNotificationDto) {
+    const { userId, sender, content, subject } = createNotificationDto;
+    try {
+      const user = await this.userService.findOne(userId);
+      const notification = this.notificationRepo.create({
+        user,
+        sender,
+        content,
+        subject,
+      });
+      return await this.notificationRepo.save(notification);
+    } catch (error) {
+      throw new BadRequestException('Something went wrong');
+    }
   }
 
-  findAll() {
-    return `This action returns all notifications`;
+  async createForAllUsers(createNotificationDto: CreateNotificationDto) {
+    try {
+      delete createNotificationDto.userId;
+      const users = await this.userService.getUsers();
+
+      users.forEach(async (user) => {
+        const notification = this.notificationRepo.create({
+          user,
+          ...createNotificationDto,
+        });
+        await this.notificationRepo.save(notification);
+      });
+      return 'Notifications send for all users';
+    } catch (error) {
+      throw new BadRequestException('Something went wrong');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} notification`;
+  async createForAllStudents(createNotificationDto: CreateNotificationDto) {
+    try {
+      delete createNotificationDto.userId;
+      const users = await this.userService.getStudents();
+
+      users.forEach(async (user) => {
+        const notification = this.notificationRepo.create({
+          user,
+          ...createNotificationDto,
+        });
+        await this.notificationRepo.save(notification);
+      });
+      return 'Notifications send for all students';
+    } catch (error) {
+      throw new BadRequestException('Something went wrong');
+    }
   }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return `This action updates a #${id} notification`;
+  async createForAllTeachers(createNotificationDto: CreateNotificationDto) {
+    try {
+      delete createNotificationDto.userId;
+      const users = await this.userService.getStaff();
+
+      users.forEach(async (user) => {
+        const notification = this.notificationRepo.create({
+          user,
+          ...createNotificationDto,
+        });
+        await this.notificationRepo.save(notification);
+      });
+      return 'Notifications send for all teachers';
+    } catch (error) {
+      throw new BadRequestException('Something went wrong');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  async findAllforUser(userId: string) {
+    try {
+      return await this.notificationRepo.find({
+        where: { user: { id: userId } },
+        order: { createdDate: 'DESC' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve notifications');
+    }
+  }
+
+  async findAllnewNotifications(userId: string) {
+    try {
+      return await this.notificationRepo.find({
+        where: { user: { id: userId }, isRead: false },
+        order: { createdDate: 'DESC' },
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to retrieve new notifications');
+    }
+  }
+
+  async setNotificationAsRead(notificationId: string) {
+    try {
+      return await this.notificationRepo.update(notificationId, {
+        isRead: true,
+      });
+    } catch (error) {
+      throw new BadRequestException('Failed to set notification as read');
+    }
+  }
+
+  async setAllNotificationAsRead(userId: string) {
+    try {
+      const result = await this.notificationRepo.update(
+        { user: { id: userId }, isRead: false },
+        { isRead: true },
+      );
+      if (result.affected === 0) {
+        throw new BadRequestException('No notifications found for this user');
+      }
+      return result;
+    } catch (error) {
+      throw new BadRequestException('Failed to update notifications');
+    }
+  }
+
+  async deleteNotification(notificationId: string) {
+    try {
+      return await this.notificationRepo.delete(notificationId);
+    } catch (error) {
+      throw new BadRequestException('Failed to delete notification');
+    }
+  }
+
+  async deleteAllNotification(userId: string) {
+    try {
+      return await this.notificationRepo.delete({ user: { id: userId } });
+    } catch (error) {
+      throw new BadRequestException('Failed to delete all notifications');
+    }
   }
 }

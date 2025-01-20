@@ -24,6 +24,9 @@ export class StudentProfile extends Profile {
   dateOfBirth: Date;
 
   @Column()
+  nationalIdCardNo: string;
+
+  @Column()
   address: string;
 
   @Column()
@@ -58,6 +61,5 @@ export class StudentProfile extends Profile {
   employment: Employment;
 
   @OneToOne(() => Student, (user) => user.studentProfile)
-  @JoinColumn()
   user: Student;
 }

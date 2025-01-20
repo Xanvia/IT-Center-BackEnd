@@ -5,7 +5,7 @@ import { StaffProfile } from 'src/profile/staff-profile/entities/StaffProfile.en
 
 @ChildEntity(Role.STAFF)
 export class Staff extends User {
-  @OneToOne(() => StaffProfile, (profile) => profile.user)
+  @OneToOne(() => StaffProfile, (profile) => profile.user, { cascade: true })
   @JoinColumn()
   staffProfile: StaffProfile;
 }

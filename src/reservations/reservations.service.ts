@@ -32,12 +32,19 @@ export class ReservationsService {
     return reservation;
   }
 
+  async findOneWithRecords(id: string): Promise<Reservation> {
+    return await this.reservationRepo.findOne({
+      where: { id },
+      relations: { records: true },
+    });
+  }
+
   async update(id: string, updateReservationDto: UpdateReservationDto) {
     const updateData = { ...updateReservationDto };
     return await this.reservationRepo.update(id, updateData);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: string): Promise<void> {
     const result = await this.reservationRepo.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Reservation with id ${id} not found!`);

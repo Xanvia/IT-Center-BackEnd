@@ -3,4 +3,5 @@ export enum Status {
   NOTPAID = 'NOT-PAID',
   REJECTED = 'REJECTED',
   ENROLLED = 'ENROLLED',
+  COMPLETED = 'COMPLETED',
 }

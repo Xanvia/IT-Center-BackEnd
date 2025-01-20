@@ -9,7 +9,7 @@ export class StaffProfile extends Profile {
   @Column()
   designation: string;
 
-  @Column()
+  @Column({ nullable: true })
   nominal: string;
 
   @Column()
@@ -27,7 +27,12 @@ export class StaffProfile extends Profile {
   })
   telephones: Telephone[];
 
-  @OneToOne(() => Staff, (user) => user.staffProfile)
+  @OneToOne(() => Staff, (user) => user.staffProfile, { onDelete: 'CASCADE' })
   user: Staff;
+
+  @Column({ default: false })
   isApproved: boolean;
+
+  @Column()
+  requestBy: string;
 }

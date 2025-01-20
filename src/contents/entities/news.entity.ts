@@ -1,5 +1,5 @@
 import { ChildEntity, Column } from 'typeorm';
-import { Content } from '../content.entity';
+import { Content } from './content.entity';
 
 @ChildEntity()
 export class News extends Content {

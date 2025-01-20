@@ -9,6 +9,11 @@
         "include": "../uploads",
         "outDir": "dist/uploads",
         "watchAssets": true
+      },
+      {
+        "include": "/emails/template",
+        "outDir": "dist/src",
+        "watchAssets": true
       }
     ],
     "watchAssets": true

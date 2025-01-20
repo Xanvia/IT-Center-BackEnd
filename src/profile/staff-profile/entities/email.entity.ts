@@ -9,6 +9,8 @@ export class Email {
   @Column()
   email: string;
 
-  @ManyToOne(() => StaffProfile, (parent) => parent.emails)
+  @ManyToOne(() => StaffProfile, (parent) => parent.emails, {
+    onDelete: 'CASCADE',
+  })
   profile: StaffProfile;
 }

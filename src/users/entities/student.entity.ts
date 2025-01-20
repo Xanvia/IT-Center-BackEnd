@@ -1,11 +1,10 @@
 import {
   ChildEntity,
   Column,
-  Generated,
+  DataSource,
   JoinColumn,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Role } from 'enums/role.enum';
@@ -14,11 +13,26 @@ import { RegistrationRecord } from 'src/registration-records/entities/registrati
 
 @ChildEntity(Role.STUDENT)
 export class Student extends User {
-  @Generated('increment')
-  sId: string;
+  @Column({ unique: true, length: 8 })
+  studentId: string;
 
-  get studentId(): string {
-    return `ITC${String(this.id).padStart(5, '0')}`;
+  // Method to generate the next formatted student ID
+  static async getNextStudentId(dataSource: DataSource): Promise<string> {
+    const result = await dataSource
+      .createQueryBuilder()
+      .select('studentId')
+      .from(Student, 'student')
+      .orderBy('studentId', 'DESC')
+      .limit(1)
+      .getRawOne();
+
+    if (result === undefined || result.studentId === null) {
+      return 'ITC0001';
+    }
+
+    const currentNumber = parseInt(result.studentId.replace('ITC', ''));
+    const nextNumber = currentNumber + 1;
+    return `ITC${nextNumber.toString().padStart(4, '0')}`;
   }
 
   @OneToOne(() => StudentProfile, (profile) => profile.user, { cascade: true })
@@ -27,6 +41,7 @@ export class Student extends User {
 
   @OneToMany(() => RegistrationRecord, (record) => record.student, {
     onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
   })
   registrationRecords: RegistrationRecord[];
 }
