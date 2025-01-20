@@ -66,7 +66,7 @@ export class ReserveRecordsService {
         userId: userId,
         sender: Sender.SYSTEM,
         subject: `Reservation request for ${record.name}`,
-        content: `Your reservation request for ${record.name} on ${reserveRecord.startingDate} has been created successfully`,
+        content: `Your reservation request for ${record.name} on ${reserveRecord.startingDate.split('05:30')} has been created successfully!`,
       });
 
       await this.emailServices.createReservationRecord(reserveRecord);

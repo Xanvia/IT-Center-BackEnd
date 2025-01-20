@@ -8,22 +8,30 @@ export class MailService {
   constructor(private readonly mailerService: MailerService) {}
 
   async testMail(email: string) {
-    await this.mailerService.sendMail({
-      to: email,
-      subject: 'Welcome to IT Center!',
-      template: __dirname + '/template/confirmation',
-      context: {
-        name: 'john doe',
-      },
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Welcome to IT Center!',
+        template: __dirname + '/template/confirmation',
+        context: {
+          name: 'john doe',
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async createReservationRecord(record: ReserveRecord) {
-    await this.mailerService.sendMail({
-      to: record.user.email,
-      subject: 'Your Reservation record sent successfully!',
-      template: __dirname + '/template/reservationCreate',
-      context: record,
-    });
+    try {
+      await this.mailerService.sendMail({
+        to: record.user.email,
+        subject: 'Your Reservation record sent successfully!',
+        template: __dirname + '/template/reservationCreate',
+        context: record,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
