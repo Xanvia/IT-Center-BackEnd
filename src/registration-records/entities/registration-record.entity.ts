@@ -2,9 +2,17 @@ import { Grade } from 'enums/grade.enum';
 import { Status } from 'enums/registration.enum';
 import { Course } from 'src/courses/entities/course.entity';
 import { Student } from 'src/users/entities/student.entity';
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  Index,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
+@Index(['student', 'course'], { unique: true })
 export class RegistrationRecord {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,7 +27,7 @@ export class RegistrationRecord {
   })
   course: Course;
 
-  @Column({ type: 'date' })
+  @CreateDateColumn()
   registrationDate: Date;
 
   @Column({ type: 'enum', enum: Status, default: Status.PENDING })

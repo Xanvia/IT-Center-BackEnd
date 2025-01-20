@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
 import { Repository } from 'typeorm';
@@ -18,25 +18,22 @@ export class RegistrationRecordsService {
   ) {}
 
   async create(createRegistrationRecordDto: CreateRegistrationRecordDto) {
-    const {
-      studentId,
-      courseId,
-      registrationDate,
-      status,
-      result,
-      paymentDate,
-    } = createRegistrationRecordDto;
-    const student = await this.studentService.findOne(studentId);
-    const course = await this.courseService.findOne(courseId);
-    const registrationRecord = this.repo.create({
-      student,
-      course,
-      registrationDate,
-      status,
-      result,
-      paymentDate,
-    });
-    return await this.repo.save(registrationRecord);
+    try {
+      const { studentId, courseId, status, result, paymentDate } =
+        createRegistrationRecordDto;
+      const student = await this.studentService.findOne(studentId);
+      const course = await this.courseService.findOne(courseId);
+      const registrationRecord = this.repo.create({
+        student,
+        course,
+        status,
+        result,
+        paymentDate,
+      });
+      return await this.repo.save(registrationRecord);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async findAll() {
