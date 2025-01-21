@@ -14,6 +14,8 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 import { ADMIN } from 'types/user.type';
+import { CreateConsultationDto } from './dto/createConsultation.dto';
+import { Consultation } from './consultation.entity';
 
 @Controller('feedbacks')
 export class FeedbacksController {
@@ -22,6 +24,11 @@ export class FeedbacksController {
   @Post()
   createFeedBack(@Body() createFeedBackDto: CreateFeedbackDto) {
     return this.feedbackService.createFeedBack(createFeedBackDto);
+  }
+
+  @Post('/consultation')
+  createConsultation(@Body() createConsultationDto: CreateConsultationDto) {
+    return this.feedbackService.createConsultation(createConsultationDto);
   }
 
   @Roles(ADMIN)
@@ -38,5 +45,13 @@ export class FeedbacksController {
   @Get()
   getAll(): Promise<Feedback[]> {
     return this.feedbackService.getAll();
+  }
+
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
+  @Get('/consultation')
+  getAllConsultations(): Promise<Consultation[]> {
+    return this.feedbackService.getAllConst();
   }
 }
