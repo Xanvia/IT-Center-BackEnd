@@ -50,7 +50,7 @@ export class ContentsController {
     return this.contentService.createContent(createcontentDto, 'log');
   }
 
-  @Post('project')
+  @Post('projects')
   createProject(@Body() createcontentDto: CreateContentDto) {
     return this.contentService.createContent(createcontentDto, 'project');
   }
