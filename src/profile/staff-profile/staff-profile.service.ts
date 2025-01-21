@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { StaffProfile } from './entities/StaffProfile.entity';
@@ -86,36 +90,43 @@ export class StaffProfileService {
     id: string,
     updateProfileDto: UpdateStaffProfileDto,
   ): Promise<StaffProfile> {
-    const { emails, telephones, ...profileData } = updateProfileDto;
-
     // Update profile
-    await this.staffProfileRepository.update(id, profileData);
+    try {
+      const { emails, telephones, ...profileData } = updateProfileDto;
 
-    const profile = await this.staffProfileRepository.findOne({
-      where: { id },
-    });
+      await this.staffProfileRepository.update(id, profileData);
 
-    // Update emails if provided
-    if (emails && emails.length) {
-      await this.emailRepository.delete({ profile }); // Delete old emails
-      profile.emails = emails.map((email) => {
-        const newEmail = new Email();
-        newEmail.email = email;
-        return newEmail;
+      const profile = await this.staffProfileRepository.findOne({
+        where: { id },
       });
-    }
+      if (!profile) {
+        throw new NotFoundException('Profile Not Found!');
+      }
 
-    // Update telephones if provided
-    if (telephones && telephones.length) {
-      await this.telephoneRepository.delete({ profile }); // Delete old telephones
-      profile.telephones = telephones.map((telephone) => {
-        const newTelephone = new Telephone();
-        newTelephone.phoneNumber = telephone;
-        return newTelephone;
-      });
-    }
+      // Update emails if provided
+      if (emails && emails.length) {
+        await this.emailRepository.delete({ profile }); // Delete old email
+        profile.emails = emails.map((email) => {
+          const newEmail = new Email();
+          newEmail.email = email;
+          return newEmail;
+        });
+      }
 
-    return this.staffProfileRepository.save(profile);
+      // Update telephones if provided
+      if (telephones && telephones.length) {
+        await this.telephoneRepository.delete({ profile }); // Delete old telephones
+        profile.telephones = telephones.map((telephone) => {
+          const newTelephone = new Telephone();
+          newTelephone.phoneNumber = telephone;
+          return newTelephone;
+        });
+      }
+
+      return this.staffProfileRepository.save(profile);
+    } catch (error) {
+      throw new BadRequestException('Profile not found');
+    }
   }
 
   // Method to update the isApproved field
