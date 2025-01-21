@@ -49,4 +49,31 @@ export class MailService {
       console.log(error);
     }
   }
+
+  async confirmRegistrationRecord(record: RegistrationRecord) {
+    try {
+      await this.mailerService.sendMail({
+        to: record.student.email,
+        subject:
+          'Course Registration: Your Request Has Been Confirmed. Proceed with Payment',
+        template: __dirname + '/template/registrationConfirm',
+        context: record,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateRegistrationRecord(record: RegistrationRecord) {
+    try {
+      await this.mailerService.sendMail({
+        to: record.student.email,
+        subject: 'Course Section: Update from Course Management System',
+        template: __dirname + '/template/registrationUpdate',
+        context: record,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

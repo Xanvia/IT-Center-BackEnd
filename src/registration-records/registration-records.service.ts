@@ -91,16 +91,53 @@ export class RegistrationRecordsService {
       .getRawMany();
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.repo.findOne({ where: { id } });
   }
 
-  update(id: string, updateRegistrationRecordDto: UpdateRegistrationRecordDto) {
+  async update(
+    id: string,
+    updateRegistrationRecordDto: UpdateRegistrationRecordDto,
+  ) {
     try {
-      this.repo.update(id, updateRegistrationRecordDto);
+      const res = await this.repo.update(id, updateRegistrationRecordDto);
+
+      if (res.affected === 0) {
+        throw new BadRequestException('Record not updated');
+      }
+
+      const record = await this.repo.findOne({
+        where: { id },
+        relations: ['student', 'course'],
+      });
+
+      if (!record) {
+        throw new BadRequestException('Record not found');
+      }
+
+      if (updateRegistrationRecordDto.status === Status.NOTPAID) {
+        await this.notificationService.createForUser({
+          userId: record.student.id,
+          sender: Sender.SYSTEM,
+          subject: `Course request confirmation for ${record.course.courseName}`,
+          content: `Your Request for course ${record.course.courseName} has been confirmed. You may now proceed with the payment.`,
+        });
+
+        await this.mailService.confirmRegistrationRecord(record);
+      } else {
+        await this.notificationService.createForUser({
+          userId: record.student.id,
+          sender: Sender.SYSTEM,
+          subject: `Update from Course Management System: ${record.course.courseName}`,
+          content: `Update for course ${record.course.courseName}. Please check your email or Your Enrolled-Course section for more details.`,
+        });
+
+        await this.mailService.updateRegistrationRecord(record);
+      }
+
       return 'Record updated successfully';
     } catch (err) {
-      throw new Error('Error while updating the record');
+      throw new BadRequestException('Error while updating the record');
     }
   }
 
@@ -113,16 +150,16 @@ export class RegistrationRecordsService {
       );
       return 'Records updated successfully';
     } catch (err) {
-      throw new Error('Error while updating the records');
+      throw new BadRequestException('Error while updating the records');
     }
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     try {
-      this.repo.delete(id);
+      await this.repo.delete(id);
       return 'Record deleted successfully';
     } catch (err) {
-      throw new Error('Error while deleting the record');
+      throw new BadRequestException('Error while deleting the record');
     }
   }
 }
