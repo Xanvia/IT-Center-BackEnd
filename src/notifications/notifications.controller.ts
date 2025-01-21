@@ -14,21 +14,33 @@ import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { URequrst } from 'types/request.type';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ADMIN } from 'types/user.type';
+import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('user')
   create(@Body() createNotificationDto: CreateNotificationDto) {
     return this.notificationsService.createForUser(createNotificationDto);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('all')
   createForAllUsers(@Body() createNotificationDto: CreateNotificationDto) {
     return this.notificationsService.createForAllUsers(createNotificationDto);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('allStudents')
   createForAllStudents(@Body() createNotificationDto: CreateNotificationDto) {
     return this.notificationsService.createForAllStudents(
@@ -36,6 +48,9 @@ export class NotificationsController {
     );
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('allTeachers')
   createForAllTeachers(@Body() createNotificationDto: CreateNotificationDto) {
     return this.notificationsService.createForAllTeachers(

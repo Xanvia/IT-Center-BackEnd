@@ -13,8 +13,10 @@ import {
 import { RegistrationRecordsService } from './registration-records.service';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { ADMIN, STUDENT } from 'types/user.type';
+import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
 
 @Controller('registration-records')
 export class RegistrationRecordsController {
@@ -22,32 +24,43 @@ export class RegistrationRecordsController {
     private readonly registrationRecordsService: RegistrationRecordsService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createRegistrationRecordDto: CreateRegistrationRecordDto) {
     return this.registrationRecordsService.create(createRegistrationRecordDto);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.registrationRecordsService.findAll();
   }
 
+  @Roles(STUDENT)
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('user')
   findAllforUser(@Req() req) {
     return this.registrationRecordsService.findAllforUser(req.user.id);
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('requests')
   findAllRequests() {
     return this.registrationRecordsService.getAllRecordsCourseWise();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.registrationRecordsService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -59,11 +72,15 @@ export class RegistrationRecordsController {
     );
   }
 
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Put()
   updateStatus() {
     return this.registrationRecordsService.updateAllPendingRecords();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.registrationRecordsService.remove(id);

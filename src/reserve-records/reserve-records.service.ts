@@ -12,6 +12,9 @@ import { ReservationStatus } from 'enums/reservation.enum';
 import { ReservationsService } from 'src/reservations/reservations.service';
 import { UsersService } from 'src/users/users.service';
 import { Cron } from '@nestjs/schedule';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { Sender } from 'enums/sender.enum';
+import { MailService } from 'src/emails/mail.service';
 
 @Injectable()
 export class ReserveRecordsService {
@@ -20,6 +23,8 @@ export class ReserveRecordsService {
     private reserveRecordRepository: Repository<ReserveRecord>,
     private reservationService: ReservationsService,
     private userService: UsersService,
+    private notificationService: NotificationsService,
+    private emailServices: MailService,
   ) {}
 
   @Cron('0 17 * * *') // every day at 5 PM
@@ -56,6 +61,15 @@ export class ReserveRecordsService {
       });
 
       await this.reserveRecordRepository.save(reserveRecord);
+
+      await this.notificationService.createForUser({
+        userId: userId,
+        sender: Sender.SYSTEM,
+        subject: `Reservation request for ${record.name}`,
+        content: `Your reservation request for ${record.name} on ${reserveRecord?.startingDate?.toString()?.split('T')[0]} has been created successfully!`,
+      });
+
+      await this.emailServices.createReservationRecord(reserveRecord);
       return 'Record created successfully';
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -68,6 +82,7 @@ export class ReserveRecordsService {
       relations: ['user', 'reservation'],
       select: {
         user: {
+          id: true,
           email: true,
           name: true,
           image: true,
@@ -116,7 +131,38 @@ export class ReserveRecordsService {
       id,
       updateReserveRecordDto,
     );
-    return newRecord;
+    if (newRecord.affected === 0) {
+      return 'No changes applied';
+    }
+    try {
+      const record = await this.reserveRecordRepository.findOne({
+        where: { id },
+        relations: ['user', 'reservation'],
+      });
+
+      if (updateReserveRecordDto.status === ReservationStatus.PAYMENT) {
+        await this.notificationService.createForUser({
+          userId: record.user.id,
+          sender: Sender.SYSTEM,
+          subject: `Reservation Event: ${record.eventName}`,
+          content: `Your reservation request for ${record.eventName} on ${record.startingDate} has been Confirmed. Plase check emails or my reservation section.`,
+        });
+
+        await this.emailServices.confirmReservationRecord(record);
+      } else {
+        await this.notificationService.createForUser({
+          userId: record.user.id,
+          sender: Sender.SYSTEM,
+          subject: `Reservation Event: ${record.eventName}`,
+          content: `Your reservation request for ${record.eventName} on ${record.startingDate} has been updated. Plase check emails or my reservation section.`,
+        });
+        await this.emailServices.updateReservationRecord(record);
+      }
+
+      return newRecord;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async remove(id: string): Promise<void> {

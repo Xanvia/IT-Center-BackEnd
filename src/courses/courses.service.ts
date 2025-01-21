@@ -5,27 +5,17 @@ import { DeleteResult, Repository } from 'typeorm';
 import { Course } from './entities/course.entity';
 import { NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
-import { CourseImage } from './entities/courseImage.entity';
 
 @Injectable()
 export class CoursesService {
   constructor(
     @InjectRepository(Course)
     private courseRepo: Repository<Course>,
-    @InjectRepository(CourseImage)
-    private courseImageRepo: Repository<CourseImage>,
   ) {}
 
   async create(createCourseDto: CreateCourseDto): Promise<Course> {
     try {
-      const { images, ...courseData } = createCourseDto;
-
-      const course = this.courseRepo.create(courseData);
-      const courseImages = await this.courseImageRepo.create(
-        images.map((path) => ({ path })),
-      );
-
-      course.images = courseImages;
+      const course = this.courseRepo.create(createCourseDto);
 
       return await this.courseRepo.save(course);
     } catch (error) {
@@ -45,26 +35,9 @@ export class CoursesService {
     return course;
   }
 
-  async update(id: string, updateCourseDto: UpdateCourseDto): Promise<Course> {
-    const { images, ...updateData } = updateCourseDto;
-
-    // Convert image IDs to CourseImage entities
-    const courseImages = images
-      ? images.map((id) => ({ id }) as CourseImage)
-      : undefined;
-
-    // Update the course
-    await this.courseRepo.update(id, {
-      ...updateData,
-      ...(courseImages && { images: courseImages }),
-    });
-
-    const updatedCourse = await this.courseRepo.findOneBy({ id });
-    if (!updatedCourse) {
-      throw new NotFoundException(`Course with id ${id} not found!`);
-    }
-
-    return updatedCourse;
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
+    const updateData = { ...updateCourseDto };
+    return await this.courseRepo.update(id, updateData);
   }
 
   async remove(id: string): Promise<DeleteResult> {
@@ -73,5 +46,64 @@ export class CoursesService {
       throw new NotFoundException(`Course with id ${id} not found!`);
     }
     return result;
+  }
+
+  // get stats
+  async getStatistics() {
+    const courses = await this.courseRepo.find({
+      relations: {
+        registrationRecords: true,
+      },
+    });
+
+    // total students grouped by course name
+    const totalStudents = courses.map((course) => ({
+      code: course.courseCode,
+      total: course.registrationRecords.length,
+    }));
+
+    // total students registered per month grouped by month name
+    function getLastSixMonthsRecords(courses) {
+      // Get current date
+      const today = new Date();
+
+      // Get last 6 months
+      const lastSixMonths = [];
+      for (let i = 0; i < 6; i++) {
+        const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        lastSixMonths.push({
+          month: date.toLocaleString('default', { month: 'long' }),
+          year: date.getFullYear(),
+          key: `${date.getFullYear()}-${date.getMonth() + 1}`,
+        });
+      }
+
+      // Initialize a map for results
+      const groupedRecords = lastSixMonths.reduce((acc, { key, month }) => {
+        acc[key] = { month, count: 0 };
+        return acc;
+      }, {});
+
+      // Iterate through courses and their registration records
+      courses.forEach((course) => {
+        course.registrationRecords.forEach((record) => {
+          const recordDate = new Date(record.registrationDate);
+          const recordKey = `${recordDate.getFullYear()}-${recordDate.getMonth() + 1}`;
+
+          // Increment the count if the record falls in the last six months
+          if (groupedRecords[recordKey]) {
+            groupedRecords[recordKey].count++;
+          }
+        });
+      });
+
+      // Convert groupedRecords map to an array for easy readability
+      return Object.values(groupedRecords);
+    }
+
+    const totalStudentsLast6Months = getLastSixMonthsRecords(courses).reverse();
+
+    const totalCourses = courses.length;
+    return { totalCourses, totalStudents, totalStudentsLast6Months };
   }
 }

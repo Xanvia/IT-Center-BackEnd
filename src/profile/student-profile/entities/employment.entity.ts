@@ -6,10 +6,10 @@ export class Employment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   institution: string;
 
-  @Column()
+  @Column({ nullable: true })
   designation: string;
 
   @Column({ nullable: true })

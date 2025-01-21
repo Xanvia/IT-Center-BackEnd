@@ -58,6 +58,10 @@ export class UsersService {
         image: true,
         role: true,
         studentId: true,
+        createdDate: true,
+      },
+      order: {
+        createdDate: 'DESC',
       },
     });
   }
@@ -67,11 +71,17 @@ export class UsersService {
     // get student data with limited profile data
     const student = await this.studentRepo.findOne({
       where: { id: userId },
-      relations: { studentProfile: true },
+      relations: {
+        studentProfile: {
+          education: {
+            aLevelResults: true,
+          },
+        },
+      },
     });
 
     if (!student) {
-      return new NotFoundException('user not found');
+      throw new NotFoundException('user not found');
     }
     delete student.hashedPassword;
     delete student.hashedRefreshToken;
@@ -95,6 +105,9 @@ export class UsersService {
           title: true,
         },
       },
+      order: {
+        name: 'ASC',
+      },
     });
   }
 
@@ -107,7 +120,7 @@ export class UsersService {
     });
 
     if (!staff) {
-      return new NotFoundException('user not found');
+      throw new NotFoundException('user not found');
     }
     delete staff.hashedPassword;
     delete staff.hashedRefreshToken;
@@ -353,5 +366,22 @@ export class UsersService {
   // delete an account
   async deleteAccount(userId: string): Promise<DeleteResult> {
     return await this.userRepo.delete(userId);
+  }
+
+  // statstics
+  async getStatistics() {
+    try {
+      const students = await this.studentRepo.count();
+      const staff = await this.staffRepo.count();
+      const users = await this.userRepo.count();
+
+      return {
+        students,
+        staff,
+        users,
+      };
+    } catch (error) {
+      throw new BadRequestException('Failed to get statistics', error.message);
+    }
   }
 }

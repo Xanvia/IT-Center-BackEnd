@@ -1,0 +1,89 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Update from Course Management System</title>
+  </head>
+  <body
+    style='font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4e8d4; margin: 0; padding: 0;'
+  >
+    <table
+      width='100%'
+      cellpadding='0'
+      cellspacing='0'
+      border='0'
+      style='background-color: #800000; padding: 20px;'
+    >
+      <tr>
+        <td align='center'>
+          <table
+            width='600px'
+            cellpadding='0'
+            cellspacing='0'
+            border='0'
+            style='background-color: #fff7e6; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);'
+          >
+            <!-- Header Section -->
+            <tr>
+              <td style='text-align: center; padding: 20px 0;'>
+                <h1 style='color: #800000; font-size: 24px;'>Course Registration
+                  Update</h1>
+                <p style='color: #555; font-size: 16px;'>Your current status:
+                  <strong style='color: #cc7000;'>{{status}}</strong></p>
+              </td>
+            </tr>
+            <!-- Body Section -->
+            <tr>
+              <td style='padding: 20px;'>
+                <p>Dear <strong>{{student.name}}</strong>,</p>
+                <p>We are writing to provide an update regarding your
+                  registration for the course
+                  <strong>{{course.courseName}}</strong>
+                  ({{course.courseCode}}).</p>
+
+                <div
+                  style='margin-top: 20px; padding: 15px; background-color: #ffe8cc; border-left: 5px solid #800000; border-radius: 5px;'
+                >
+                  <h3 style='color: #800000; margin: 0;'>Course Details:</h3>
+                  <ul
+                    style='list-style-type: none; padding: 0; margin: 10px 0;'
+                  >
+                    <li><strong>Instructor:</strong> {{course.instructor}}</li>
+                    <li><strong>Course Duration:</strong>
+                      {{course.startingDate}}
+                      to
+                      {{course.endingDate}}</li>
+                    <li><strong>Fees:</strong> {{course.fees}} LKR</li>
+                    <li><strong>Grade:</strong> {{result}}</li>
+                  </ul>
+                </div>
+
+                <p style='margin-top: 20px;'>Your current registration status is
+                  <strong
+                    style='color: #cc7000; text-transform: uppercase;'
+                  >{{status}}</strong>. If any action is required from your end,
+                  you will receive additional instructions.</p>
+                <p>If you have any questions or require further assistance,
+                  please do not hesitate to contact us.</p>
+              </td>
+            </tr>
+            <!-- Footer Section -->
+            <tr>
+              <td
+                style='text-align: center; padding: 20px 0; background-color: #800000; color: #fff; border-radius: 0 0 10px 10px;'
+              >
+                <p style='margin: 0;'>Best regards,</p>
+                <p style='margin: 5px 0;'>IT Center | University of Peradeniya</p>
+                <p style='margin: 5px 0;'>Email:
+                  <a
+                    href='mailto:{{student.email}}'
+                    style='color: #ffcc00; text-decoration: none;'
+                  >{{student.email}}</a></p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

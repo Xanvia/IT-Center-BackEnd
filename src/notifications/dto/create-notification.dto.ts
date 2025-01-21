@@ -13,6 +13,10 @@ export class CreateNotificationDto {
 
   @IsString()
   @IsNotEmpty()
+  subject: string;
+
+  @IsString()
+  @IsNotEmpty()
   content: string;
 
   @IsOptional()

@@ -57,6 +57,7 @@ export class ReserveRecordsController {
     return this.reserveRecordsService.findByReservationId(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -65,6 +66,7 @@ export class ReserveRecordsController {
     return this.reserveRecordsService.update(id, updateReserveRecordDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.reserveRecordsService.remove(id);

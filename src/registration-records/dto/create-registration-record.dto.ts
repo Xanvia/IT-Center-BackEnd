@@ -10,10 +10,6 @@ export class CreateRegistrationRecordDto {
   @Type(() => String)
   courseId: string;
 
-  @IsDate()
-  @Type(() => Date)
-  registrationDate: Date;
-
   @IsOptional()
   @IsEnum(Status)
   status: Status;

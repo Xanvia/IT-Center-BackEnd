@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { CourseImage } from './courseImage.entity';
 import { RegistrationRecord } from 'src/registration-records/entities/registration-record.entity';
 import { IsOptional } from 'class-validator';
 
@@ -33,12 +32,8 @@ export class Course {
   @IsOptional()
   instructor: string;
 
-  @OneToMany(() => CourseImage, (image) => image.course, {
-    cascade: true,
-    onDelete: 'CASCADE',
-    eager: true,
-  })
-  images: CourseImage[];
+  @Column('simple-array')
+  images: string[];
 
   @Column()
   studentLimit: number;
@@ -46,11 +41,11 @@ export class Course {
   @Column({ default: 0 })
   registered: number;
 
-  @Column({ type: 'timestamp' })
-  startingDate: Date;
+  @Column({ type: 'date' })
+  startingDate: string;
 
-  @Column({ type: 'timestamp' })
-  endingDate: Date;
+  @Column({ type: 'date' })
+  endingDate: string;
 
   @OneToMany(() => RegistrationRecord, (record) => record.course, {
     onUpdate: 'CASCADE',

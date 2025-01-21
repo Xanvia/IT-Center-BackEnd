@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRegistrationRecordDto } from './dto/create-registration-record.dto';
 import { UpdateRegistrationRecordDto } from './dto/update-registration-record.dto';
 import { Repository } from 'typeorm';
@@ -7,6 +7,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CoursesService } from 'src/courses/courses.service';
 import { Status } from 'enums/registration.enum';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { MailService } from 'src/emails/mail.service';
+import { Sender } from 'enums/sender.enum';
 
 @Injectable()
 export class RegistrationRecordsService {
@@ -15,28 +18,37 @@ export class RegistrationRecordsService {
     private readonly repo: Repository<RegistrationRecord>,
     private readonly studentService: UsersService,
     private readonly courseService: CoursesService,
+    private readonly notificationService: NotificationsService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createRegistrationRecordDto: CreateRegistrationRecordDto) {
-    const {
-      studentId,
-      courseId,
-      registrationDate,
-      status,
-      result,
-      paymentDate,
-    } = createRegistrationRecordDto;
-    const student = await this.studentService.findOne(studentId);
-    const course = await this.courseService.findOne(courseId);
-    const registrationRecord = this.repo.create({
-      student,
-      course,
-      registrationDate,
-      status,
-      result,
-      paymentDate,
-    });
-    return await this.repo.save(registrationRecord);
+    try {
+      const { studentId, courseId, status, result, paymentDate } =
+        createRegistrationRecordDto;
+      const student = await this.studentService.findOne(studentId);
+      const course = await this.courseService.findOne(courseId);
+      const registrationRecord = this.repo.create({
+        student,
+        course,
+        status,
+        result,
+        paymentDate,
+      });
+      const record = await this.repo.save(registrationRecord);
+
+      await this.notificationService.createForUser({
+        userId: record.student.id,
+        sender: Sender.SYSTEM,
+        subject: `Course Registration request for ${record.course.courseName}`,
+        content: `Reqest sent successfully! We will send you a confirmation email once your request has been reviewed.`,
+      });
+
+      await this.mailService.createRegistrationRecord(registrationRecord);
+      return 'Record created successfully';
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async findAll() {
@@ -47,7 +59,12 @@ export class RegistrationRecordsService {
     return await this.repo
       .createQueryBuilder('record')
       .leftJoin('record.course', 'course')
-      .addSelect(['course.id', 'course.courseName'])
+      .addSelect([
+        'course.id',
+        'course.courseName',
+        'course.courseCode',
+        'course.fees',
+      ])
       .where('record.student.id = :userId', { userId })
       .getMany();
   }
@@ -62,6 +79,7 @@ export class RegistrationRecordsService {
         'course.courseName as courseName',
         'JSON_ARRAYAGG(JSON_OBJECT(' +
           '"id", record.id, ' +
+          '"studentId", student.id, ' +
           '"name", student.name, ' +
           "'email', student.email, " +
           '"profileImage", student.image, ' +
@@ -73,16 +91,53 @@ export class RegistrationRecordsService {
       .getRawMany();
   }
 
-  findOne(id: string) {
+  async findOne(id: string) {
     return this.repo.findOne({ where: { id } });
   }
 
-  update(id: string, updateRegistrationRecordDto: UpdateRegistrationRecordDto) {
+  async update(
+    id: string,
+    updateRegistrationRecordDto: UpdateRegistrationRecordDto,
+  ) {
     try {
-      this.repo.update(id, updateRegistrationRecordDto);
+      const res = await this.repo.update(id, updateRegistrationRecordDto);
+
+      if (res.affected === 0) {
+        return 'No changes applied';
+      }
+
+      const record = await this.repo.findOne({
+        where: { id },
+        relations: ['student', 'course'],
+      });
+
+      if (!record) {
+        throw new BadRequestException('Record not found');
+      }
+
+      if (updateRegistrationRecordDto.status === Status.NOTPAID) {
+        await this.notificationService.createForUser({
+          userId: record.student.id,
+          sender: Sender.SYSTEM,
+          subject: `Course request confirmation for ${record.course.courseName}`,
+          content: `Your Request for course ${record.course.courseName} has been confirmed. You may now proceed with the payment.`,
+        });
+
+        await this.mailService.confirmRegistrationRecord(record);
+      } else {
+        await this.notificationService.createForUser({
+          userId: record.student.id,
+          sender: Sender.SYSTEM,
+          subject: `Update from Course Management System: ${record.course.courseName}`,
+          content: `Update for course ${record.course.courseName}. Please check your email or Your Enrolled-Course section for more details.`,
+        });
+
+        await this.mailService.updateRegistrationRecord(record);
+      }
+
       return 'Record updated successfully';
     } catch (err) {
-      throw new Error('Error while updating the record');
+      throw new BadRequestException('Error while updating the record');
     }
   }
 
@@ -95,16 +150,16 @@ export class RegistrationRecordsService {
       );
       return 'Records updated successfully';
     } catch (err) {
-      throw new Error('Error while updating the records');
+      throw new BadRequestException('Error while updating the records');
     }
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     try {
-      this.repo.delete(id);
+      await this.repo.delete(id);
       return 'Record deleted successfully';
     } catch (err) {
-      throw new Error('Error while deleting the record');
+      throw new BadRequestException('Error while deleting the record');
     }
   }
 }
