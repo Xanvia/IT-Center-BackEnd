@@ -7,6 +7,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { CoursesService } from 'src/courses/courses.service';
 import { Status } from 'enums/registration.enum';
+import { NotificationsService } from 'src/notifications/notifications.service';
+import { MailService } from 'src/emails/mail.service';
+import { Sender } from 'enums/sender.enum';
 
 @Injectable()
 export class RegistrationRecordsService {
@@ -15,6 +18,8 @@ export class RegistrationRecordsService {
     private readonly repo: Repository<RegistrationRecord>,
     private readonly studentService: UsersService,
     private readonly courseService: CoursesService,
+    private readonly notificationService: NotificationsService,
+    private readonly mailService: MailService,
   ) {}
 
   async create(createRegistrationRecordDto: CreateRegistrationRecordDto) {
@@ -31,6 +36,15 @@ export class RegistrationRecordsService {
         paymentDate,
       });
       const record = await this.repo.save(registrationRecord);
+
+      await this.notificationService.createForUser({
+        userId: record.student.id,
+        sender: Sender.SYSTEM,
+        subject: `Course Registration request for ${record.course.courseName}`,
+        content: `Reqest sent successfully! We will send you a confirmation email once your request has been reviewed.`,
+      });
+
+      await this.mailService.createRegistrationRecord(registrationRecord);
       return 'Record created successfully';
     } catch (error) {
       throw new BadRequestException(error);

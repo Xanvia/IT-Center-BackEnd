@@ -2,6 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ReserveRecord } from 'src/reserve-records/entities/reserve-record.entity';
+import { RegistrationRecord } from 'src/registration-records/entities/registration-record.entity';
 
 @Injectable()
 export class MailService {
@@ -28,6 +29,20 @@ export class MailService {
         to: record.user.email,
         subject: 'Your Reservation record sent successfully!',
         template: __dirname + '/template/reservationCreate',
+        context: record,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async createRegistrationRecord(record: RegistrationRecord) {
+    try {
+      await this.mailerService.sendMail({
+        to: record.student.email,
+        subject:
+          'Course Registration Request: Under Review and Awaiting Confirmation.',
+        template: __dirname + '/template/registrationCreate',
         context: record,
       });
     } catch (error) {
