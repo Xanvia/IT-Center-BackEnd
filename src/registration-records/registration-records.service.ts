@@ -103,7 +103,7 @@ export class RegistrationRecordsService {
       const res = await this.repo.update(id, updateRegistrationRecordDto);
 
       if (res.affected === 0) {
-        throw new BadRequestException('Record not updated');
+        return 'No changes applied';
       }
 
       const record = await this.repo.findOne({

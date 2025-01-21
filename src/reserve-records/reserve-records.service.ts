@@ -66,7 +66,7 @@ export class ReserveRecordsService {
         userId: userId,
         sender: Sender.SYSTEM,
         subject: `Reservation request for ${record.name}`,
-        content: `Your reservation request for ${record.name} on ${reserveRecord.startingDate.split('05:30')} has been created successfully!`,
+        content: `Your reservation request for ${record.name} on ${reserveRecord?.startingDate?.toString()?.split('T')[0]} has been created successfully!`,
       });
 
       await this.emailServices.createReservationRecord(reserveRecord);
@@ -131,22 +131,38 @@ export class ReserveRecordsService {
       id,
       updateReserveRecordDto,
     );
+    if (newRecord.affected === 0) {
+      return 'No changes applied';
+    }
     try {
       const record = await this.reserveRecordRepository.findOne({
         where: { id },
-        relations: ['user'],
+        relations: ['user', 'reservation'],
       });
-      await this.notificationService.createForUser({
-        userId: record.user.id,
-        sender: Sender.SYSTEM,
-        subject: `Reservation Event: ${record.eventName}`,
-        content: `Your reservation request for ${record.eventName} on ${record.startingDate} has been updated.`,
-      });
+
+      if (updateReserveRecordDto.status === ReservationStatus.PAYMENT) {
+        await this.notificationService.createForUser({
+          userId: record.user.id,
+          sender: Sender.SYSTEM,
+          subject: `Reservation Event: ${record.eventName}`,
+          content: `Your reservation request for ${record.eventName} on ${record.startingDate} has been Confirmed. Plase check emails or my reservation section.`,
+        });
+
+        await this.emailServices.confirmReservationRecord(record);
+      } else {
+        await this.notificationService.createForUser({
+          userId: record.user.id,
+          sender: Sender.SYSTEM,
+          subject: `Reservation Event: ${record.eventName}`,
+          content: `Your reservation request for ${record.eventName} on ${record.startingDate} has been updated. Plase check emails or my reservation section.`,
+        });
+        await this.emailServices.updateReservationRecord(record);
+      }
+
+      return newRecord;
     } catch (error) {
       console.log(error);
     }
-
-    return newRecord;
   }
 
   async remove(id: string): Promise<void> {

@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <meta charset='UTF-8' />
+    <style>
+      body { font-family: Arial, sans-serif; line-height: 1.6; color: #333;
+      max-width: 600px; margin: 0 auto; padding: 20px; background-color:
+      #f4f8f4; } .header { background-color: #1976d2; color: white; padding:
+      20px; text-align: center; border-radius: 5px; } .content { padding: 20px;
+      background-color: #ffffff; border-radius: 5px; margin-top: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); } .detail-row { margin: 10px 0;
+      padding: 10px; background-color: #f9f9f9; border-left: 3px solid #1976d2;
+      border-radius: 3px; } .label { font-weight: bold; color: #1976d2; }
+      .status { display: inline-block; padding: 5px 10px; border-radius: 3px;
+      background-color: #e3f2fd; color: #0d47a1; font-weight: bold; } .footer {
+      text-align: center; margin-top: 20px; font-size: 14px; color: #555; }
+    </style>
+  </head>
+  <body>
+    <div class='header'>
+      <h1>Reservation Record Updated</h1>
+    </div>
+
+    <div class='content'>
+      <p>Dear <strong>{{user.name}}</strong>,</p>
+      <p>We wanted to inform you that your reservation record has been updated.
+        Please review the updated details below:</p>
+
+      <div class='detail-row'>
+        <span class='label'>Reservation Name:</span>
+        {{reservation.name}}
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Event Name:</span>
+        {{eventName}}
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Description:</span>
+        {{description}}
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Starting Date:</span>
+        {{startingDate}}
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Ending Date:</span>
+        {{endingDate}}
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Time Slot:</span>
+        {{timeSlot}}
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Status:</span>
+        <span class='status'>{{status}}</span>
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Charges:</span>
+        {{charges}}
+        LKR
+      </div>
+
+      <div class='detail-row'>
+        <span class='label'>Email:</span>
+        {{user.email}}
+      </div>
+
+      <p style='margin-top: 20px;'>
+        If you have any questions regarding this update, please do not hesitate
+        to contact us. Thank you for your cooperation.
+      </p>
+    </div>
+
+    <div class='footer'>
+      <p>Thank you for choosing the IT Center!</p>
+    </div>
+  </body>
+</html>

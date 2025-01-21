@@ -36,6 +36,33 @@ export class MailService {
     }
   }
 
+  async confirmReservationRecord(record: ReserveRecord) {
+    try {
+      await this.mailerService.sendMail({
+        to: record.user.email,
+        subject:
+          'Reservation: Your Request Has Been Confirmed. Proceed with Payment',
+        template: __dirname + '/template/reservationConfirm',
+        context: record,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updateReservationRecord(record: ReserveRecord) {
+    try {
+      await this.mailerService.sendMail({
+        to: record.user.email,
+        subject: 'Reservation: Your Reservation has been updated.',
+        template: __dirname + '/template/reservationUpdate',
+        context: record,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async createRegistrationRecord(record: RegistrationRecord) {
     try {
       await this.mailerService.sendMail({
