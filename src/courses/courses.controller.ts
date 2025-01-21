@@ -31,6 +31,15 @@ export class CoursesController {
     return this.coursesService.findAll();
   }
 
+  // get stats
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/stats')
+  getStatistics() {
+    return this.coursesService.getStatistics();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.coursesService.findOne(id);

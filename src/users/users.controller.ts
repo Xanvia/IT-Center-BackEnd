@@ -215,4 +215,13 @@ export class UsersController {
   async deleteUserByAdmin(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
   }
+
+  // get stats by admin
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/stats')
+  async getStats() {
+    return this.userService.getStatistics();
+  }
 }

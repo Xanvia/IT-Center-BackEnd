@@ -30,7 +30,8 @@ export class RegistrationRecordsService {
         result,
         paymentDate,
       });
-      return await this.repo.save(registrationRecord);
+      const record = await this.repo.save(registrationRecord);
+      return 'Record created successfully';
     } catch (error) {
       throw new BadRequestException(error);
     }
