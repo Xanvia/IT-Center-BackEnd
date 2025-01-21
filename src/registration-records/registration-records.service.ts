@@ -45,7 +45,12 @@ export class RegistrationRecordsService {
     return await this.repo
       .createQueryBuilder('record')
       .leftJoin('record.course', 'course')
-      .addSelect(['course.id', 'course.courseName'])
+      .addSelect([
+        'course.id',
+        'course.courseName',
+        'course.courseCode',
+        'course.fees',
+      ])
       .where('record.student.id = :userId', { userId })
       .getMany();
   }
