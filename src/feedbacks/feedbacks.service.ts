@@ -24,6 +24,10 @@ export class FeedbacksService {
 
   // get all feedbacks
   async getAll(): Promise<Feedback[]> {
-    return await this.feedbackRepo.find();
+    return await this.feedbackRepo.find({
+      order: {
+        createdDate: 'DESC',
+      },
+    });
   }
 }

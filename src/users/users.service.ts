@@ -367,4 +367,21 @@ export class UsersService {
   async deleteAccount(userId: string): Promise<DeleteResult> {
     return await this.userRepo.delete(userId);
   }
+
+  // statstics
+  async getStatistics() {
+    try {
+      const students = await this.studentRepo.count();
+      const staff = await this.staffRepo.count();
+      const users = await this.userRepo.count();
+
+      return {
+        students,
+        staff,
+        users,
+      };
+    } catch (error) {
+      throw new BadRequestException('Failed to get statistics', error.message);
+    }
+  }
 }
