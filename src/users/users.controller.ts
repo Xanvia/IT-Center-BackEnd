@@ -72,9 +72,7 @@ export class UsersController {
   }
 
   // get all staff members including admins
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+
   @Get('/staff')
   async getStaffs() {
     return this.userService.getStaff();
