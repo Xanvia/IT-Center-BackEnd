@@ -101,7 +101,7 @@ export class ContentsController {
     if (!files) {
       throw new BadRequestException('No files uploaded');
     }
-    // get urls and return
+    // get urls and return.
     const paths = files.map((file) => file.path);
     return {
       message: 'Files uploaded successfully',
