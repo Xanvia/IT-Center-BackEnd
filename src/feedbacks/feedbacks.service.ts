@@ -32,6 +32,12 @@ export class FeedbacksService {
       throw new NotFoundException(`Feedback with id ${id} not found!`);
   }
 
+  async deleteConsultationbyID(id: string) {
+    const result = await this.consultationRepo.delete({ id: id });
+    if (result.affected === 0)
+      throw new NotFoundException(`Record with id ${id} not found!`);
+  }
+
   // get all feedbacks
   async getAll(): Promise<Feedback[]> {
     return await this.feedbackRepo.find({

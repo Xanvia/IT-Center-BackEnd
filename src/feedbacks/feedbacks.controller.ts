@@ -42,14 +42,22 @@ export class FeedbacksController {
   @Roles(ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
+  @Delete('/consultation/:id')
+  deleteConsultationbyID(@Param('id') id: string) {
+    return this.feedbackService.deleteConsultationbyID(id);
+  }
+
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   getAll(): Promise<Feedback[]> {
     return this.feedbackService.getAll();
   }
 
-  // @Roles(ADMIN)
-  // @UseGuards(RolesGuard)
-  // @UseGuards(JwtAuthGuard)
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/consultation')
   getAllConsultations(): Promise<Consultation[]> {
     return this.feedbackService.getAllConst();
