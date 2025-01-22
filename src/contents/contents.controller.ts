@@ -45,7 +45,7 @@ export class ContentsController {
     return this.contentService.findbyID(id);
   }
 
-  @Post('/log')
+  @Post('/logs')
   createLog(@Body() createcontentDto: CreateContentDto) {
     return this.contentService.createContent(createcontentDto, 'log');
   }

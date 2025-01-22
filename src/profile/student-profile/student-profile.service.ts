@@ -68,10 +68,8 @@ export class StudentProfileService {
     const { aLevelResults, ...rest } = education;
     const edu = this.educationRepository.create(rest);
     edu.aLevelResults = aLevelResults.map((al) => this.alRepo.create(al));
-    console.log(edu);
 
     studentProfile.education = await this.educationRepository.save(edu);
-    console.log(studentProfile);
     // Create Higher Education (if any)
     studentProfile.higherEdu = higherEdu.map((edu) =>
       this.higherEduRepository.create(edu),
