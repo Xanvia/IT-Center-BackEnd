@@ -45,17 +45,17 @@ export class ContentsController {
     return this.contentService.findbyID(id);
   }
 
-  @Post('log')
+  @Post('/log')
   createLog(@Body() createcontentDto: CreateContentDto) {
     return this.contentService.createContent(createcontentDto, 'log');
   }
 
-  @Post('projects')
+  @Post('/projects')
   createProject(@Body() createcontentDto: CreateContentDto) {
     return this.contentService.createContent(createcontentDto, 'project');
   }
 
-  @Post('news')
+  @Post('/news')
   createNews(@Body() createcontentDto: CreateContentDto) {
     return this.contentService.createContent(createcontentDto, 'news');
   }
@@ -75,7 +75,7 @@ export class ContentsController {
 
   // not tested
   @UseGuards(JwtAuthGuard)
-  @Post('upload-img')
+  @Post('/upload')
   @UseInterceptors(
     FilesInterceptor('content', 5, {
       storage: diskStorage({
@@ -101,7 +101,7 @@ export class ContentsController {
     if (!files) {
       throw new BadRequestException('No files uploaded');
     }
-    // get urls and return
+    // get urls and retur
     const paths = files.map((file) => file.path);
     return {
       message: 'Files uploaded successfully',

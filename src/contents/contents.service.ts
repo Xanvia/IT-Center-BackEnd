@@ -20,15 +20,27 @@ export class ContentsService {
 
   // get all content
   async findAllLogs(): Promise<Content[]> {
-    return await this.logRepo.find();
+    return await this.logRepo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   async findAllProjects(): Promise<Content[]> {
-    return await this.projectRepo.find();
+    return await this.projectRepo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   async findAllNews(): Promise<Content[]> {
-    return await this.newsRepo.find();
+    return await this.newsRepo.find({
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   // get content by id
