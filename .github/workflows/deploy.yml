@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - deployment
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Trigger server webhook
+        run: |
+          curl -X POST ${{secrets.BACKEND_URL}}/webhook \
+          -H "Content-Type: application/json" \
+          -H "X-Hub-Signature-256: $(echo -n 'payload' | openssl dgst -sha256 -hmac '${{ secrets.WEBHOOK_SECRET }}')" \
+          -d '{"ref": "refs/heads/deployment"}'
