@@ -35,6 +35,7 @@ export class PaymentService {
       },
     );
     const data = await response.json();
+    console.log('reCAPTCHA verification:', data);
 
     // Check the result
     if (!data.success) {
@@ -93,6 +94,8 @@ export class PaymentService {
 
     const paymentParser = new PaymentParser(merchant);
     const res = await paymentParser.sendTransaction(paymentRequest);
+
+    console.log('Payment initiated:', res);
 
     // Parse the response to get the session id.
     const responseParams = res.split('&');
