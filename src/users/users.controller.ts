@@ -72,9 +72,7 @@ export class UsersController {
   }
 
   // get all staff members including admins
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+
   @Get('/staff')
   async getStaffs() {
     return this.userService.getStaff();
@@ -156,7 +154,7 @@ export class UsersController {
           const uniqueSuffix =
             Date.now() + '-' + Math.round(Math.random() * 1e9);
           const ext = extname(file.originalname);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-123456789.png
+          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-12346789.png
         },
       }),
       limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
@@ -214,5 +212,14 @@ export class UsersController {
   @Delete('/:id')
   async deleteUserByAdmin(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
+  }
+
+  // get stats by admin
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Get('/stats')
+  async getStats() {
+    return this.userService.getStatistics();
   }
 }

@@ -19,7 +19,7 @@ export class Content {
   @Column({ type: 'varchar' })
   title: string;
 
-  @Column()
+  @Column({ type: 'text' })
   description: string;
 
   @Column({ type: 'date', nullable: true })

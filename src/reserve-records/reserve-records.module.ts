@@ -18,5 +18,6 @@ import { MailModule } from 'src/emails/mail.module';
   ],
   controllers: [ReserveRecordsController],
   providers: [ReserveRecordsService],
+  exports: [ReserveRecordsService],
 })
 export class ReserveRecordsModule {}
