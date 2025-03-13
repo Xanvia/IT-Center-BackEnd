@@ -17,6 +17,7 @@ import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN, STUDENT } from 'types/user.type';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
+import { BulkUpdateDto } from './dto/bulk-update.dto';
 
 @Controller('registration-records')
 export class RegistrationRecordsController {
@@ -75,9 +76,19 @@ export class RegistrationRecordsController {
   @Roles(ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
-  @Put('all')
-  updateStatus(@Body() batch: string) {
-    return this.registrationRecordsService.updateAllPendingRecords(batch);
+  @Put('all/approve')
+  approve(@Body() update: BulkUpdateDto) {
+    return this.registrationRecordsService.updateAllRecordsByStatus(update);
+  }
+
+  @Roles(ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
+  @Put('all/complete')
+  setAllCompleted(@Body() update: BulkUpdateDto) {
+    return this.registrationRecordsService.updateAllRecordsByStatusAndBatch(
+      update,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

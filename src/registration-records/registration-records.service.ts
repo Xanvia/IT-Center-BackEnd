@@ -10,6 +10,7 @@ import { Status } from 'enums/registration.enum';
 import { NotificationsService } from 'src/notifications/notifications.service';
 import { MailService } from 'src/emails/mail.service';
 import { Sender } from 'enums/sender.enum';
+import { BulkUpdateDto } from './dto/bulk-update.dto';
 
 @Injectable()
 export class RegistrationRecordsService {
@@ -84,6 +85,7 @@ export class RegistrationRecordsService {
           "'email', student.email, " +
           '"profileImage", student.image, ' +
           '"grade", record.result, ' +
+          '"batch", record.batch, ' +
           '"status", record.status' +
           ')) as students',
       ])
@@ -142,15 +144,39 @@ export class RegistrationRecordsService {
   }
 
   // update every record with status PENDING to status NOTPAID
-  async updateAllPendingRecords(batch: string) {
+  async updateAllRecordsByStatus(update: BulkUpdateDto) {
     try {
-      await this.repo.update(
-        { status: Status.PENDING },
-        { status: Status.NOTPAID, batch },
+      const { courseId, batch, status, newStatus } = update;
+
+      const result = await this.repo.update(
+        { status, course: { id: courseId } },
+        { status: newStatus, batch },
       );
-      return 'Records updated successfully';
+
+      if (result.affected === 0) {
+        return 'No records were updated';
+      }
+      return `${result.affected} records updated successfully`;
     } catch (err) {
-      throw new BadRequestException('Error while updating the records');
+      throw new BadRequestException('Error while updating records');
+    }
+  }
+
+  async updateAllRecordsByStatusAndBatch(update: BulkUpdateDto) {
+    try {
+      const { courseId, batch, status, newStatus } = update;
+
+      const result = await this.repo.update(
+        { status, course: { id: courseId }, batch },
+        { status: newStatus },
+      );
+
+      if (result.affected === 0) {
+        return 'No records were updated';
+      }
+      return `${result.affected} records updated successfully`;
+    } catch (err) {
+      throw new BadRequestException('Error while updating records');
     }
   }
 
