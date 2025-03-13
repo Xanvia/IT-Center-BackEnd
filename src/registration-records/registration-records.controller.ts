@@ -75,9 +75,9 @@ export class RegistrationRecordsController {
   @Roles(ADMIN)
   @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
-  @Put()
-  updateStatus() {
-    return this.registrationRecordsService.updateAllPendingRecords();
+  @Put('all')
+  updateStatus(@Body() batch: string) {
+    return this.registrationRecordsService.updateAllPendingRecords(batch);
   }
 
   @UseGuards(JwtAuthGuard)

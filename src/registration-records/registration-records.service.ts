@@ -142,11 +142,11 @@ export class RegistrationRecordsService {
   }
 
   // update every record with status PENDING to status NOTPAID
-  async updateAllPendingRecords() {
+  async updateAllPendingRecords(batch: string) {
     try {
       await this.repo.update(
         { status: Status.PENDING },
-        { status: Status.NOTPAID },
+        { status: Status.NOTPAID, batch },
       );
       return 'Records updated successfully';
     } catch (err) {

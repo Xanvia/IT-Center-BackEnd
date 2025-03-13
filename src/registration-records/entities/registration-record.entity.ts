@@ -38,4 +38,7 @@ export class RegistrationRecord {
 
   @Column({ type: 'date', nullable: true })
   paymentDate: Date;
+
+  @Column({ nullable: true })
+  batch: string;
 }
