@@ -13,7 +13,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: 'http://localhost:3000', // Frontend URL
+    origin: 'http://localhost:5000', // Frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
