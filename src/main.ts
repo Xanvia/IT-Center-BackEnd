@@ -22,6 +22,6 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
-  await app.listen(3001);
+  await app.listen(5100);
 }
 bootstrap();
