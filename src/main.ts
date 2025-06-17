@@ -21,9 +21,18 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  const nodeEnv = configService.get<string>('NODE_ENV');
+  const isDevelopment = nodeEnv === 'development';
+  const uploadsPath = isDevelopment
+    ? join(__dirname, '..', 'uploads')
+    : join(__dirname, '..', '..', 'uploads');
+
+  app.useStaticAssets(uploadsPath, {
     prefix: '/uploads/',
   });
+
+  console.log(`Environment: ${nodeEnv}`);
+  console.log(`Static assets serving from: ${uploadsPath}`);
 
   const port = configService.get<number>('PORT') || 5100;
   await app.listen(port);
