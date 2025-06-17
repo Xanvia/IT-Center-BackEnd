@@ -106,27 +106,27 @@ export class UsersController {
   }
 
   // convert user to staff by admin
-  @Roles(ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('/convert/staff')
   async usertoStaff(@Body() req) {
     return this.userService.updateUsertoStaff(req.requestBy);
   }
 
   // convert staff to admin by super admin
-  @Roles(S_ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(S_ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('/convert/admin')
   async stafftoAdmin(@Body() req) {
     return this.userService.updateStafftoAdmin(req.requestId);
   }
 
   // convert admin to super admin by super admin
-  @Roles(S_ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  // @Roles(S_ADMIN)
+  // @UseGuards(RolesGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('/convert/super-admin')
   async admintoSuperAdmin(@Body() req) {
     return this.userService.updateAdmintoSuperAdmin(req.requestId);
