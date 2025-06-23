@@ -103,6 +103,7 @@ export class UsersService {
           designation: true,
           extNo: true,
           title: true,
+          nominal: true,
         },
       },
       order: {
