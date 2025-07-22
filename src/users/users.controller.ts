@@ -23,6 +23,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { UploadUtils } from '../common/utils/upload.utils';
 
 @Controller('user')
 export class UsersController {
@@ -146,42 +147,38 @@ export class UsersController {
   @Post('upload-img')
   @UseInterceptors(
     FileInterceptor('user', {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
-          cb(null, 'uploads/users');
-        },
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-12346789.png
-        },
-      }),
+      storage: diskStorage(
+        UploadUtils.createUploadStorage({
+          directory: 'users',
+          fieldName: 'user',
+          maxFiles: 1,
+          maxFileSize: 5 * 1024 * 1024,
+        }),
+      ),
       limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
-      fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          cb(new BadRequestException('Only image file is allowed!'), false);
-        } else {
-          cb(null, true);
-        }
-      },
+      fileFilter: UploadUtils.createFileFilter(),
     }),
   )
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req) {
     if (!file) {
       throw new BadRequestException('No files uploaded');
     }
-    const res = await this.userService.updateProfileImage(
-      req.user.id,
-      file.path,
-    );
-    if (!res.affected) {
-      throw new BadRequestException('Failed to upload image');
+
+    try {
+      const res = await this.userService.updateProfileImage(
+        req.user.id,
+        file.path,
+      );
+      if (!res.affected) {
+        throw new BadRequestException('Failed to upload image');
+      }
+      return {
+        message: 'Files uploaded successfully',
+        path: file.path,
+      };
+    } catch (error) {
+      UploadUtils.handleUploadError(error, 'users');
     }
-    return {
-      message: 'Files uploaded successfully',
-      path: file.path,
-    };
   }
 
   // change password by user

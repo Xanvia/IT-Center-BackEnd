@@ -16,6 +16,10 @@ RUN mkdir -p uploads/contents uploads/courses uploads/reservations uploads/users
 # Ensure the uploads directory is writable
 RUN chmod -R 777 uploads
 
+# Additional directory creation for production stability
+RUN mkdir -p /app/uploads/contents /app/uploads/courses /app/uploads/reservations /app/uploads/users
+RUN chmod -R 777 /app/uploads
+
 # Set environment variables
 ENV NODE_ENV=production
 

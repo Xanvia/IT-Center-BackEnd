@@ -20,6 +20,10 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
 import { extname } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
+import { UploadErrorInterceptor } from './interceptors/upload-error.interceptor';
+import { UploadUtils } from '../common/utils/upload.utils';
 
 @Controller('contents')
 export class ContentsController {
@@ -46,26 +50,49 @@ export class ContentsController {
   }
 
   @Post('/logs')
-  createLog(@Body() createcontentDto: CreateContentDto) {
-    return this.contentService.createContent(createcontentDto, 'log');
+  async createLog(@Body() createcontentDto: CreateContentDto) {
+    try {
+      return await this.contentService.createContent(createcontentDto, 'log');
+    } catch (error) {
+      throw new BadRequestException(`Failed to create log: ${error.message}`);
+    }
   }
 
   @Post('/projects')
-  createProject(@Body() createcontentDto: CreateContentDto) {
-    return this.contentService.createContent(createcontentDto, 'project');
+  async createProject(@Body() createcontentDto: CreateContentDto) {
+    try {
+      return await this.contentService.createContent(
+        createcontentDto,
+        'project',
+      );
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to create project: ${error.message}`,
+      );
+    }
   }
 
   @Post('/news')
-  createNews(@Body() createcontentDto: CreateContentDto) {
-    return this.contentService.createContent(createcontentDto, 'news');
+  async createNews(@Body() createcontentDto: CreateContentDto) {
+    try {
+      return await this.contentService.createContent(createcontentDto, 'news');
+    } catch (error) {
+      throw new BadRequestException(`Failed to create news: ${error.message}`);
+    }
   }
 
   @Put(':id')
-  updateLogs(
+  async updateLogs(
     @Param('id') id: string,
     @Body() updateContentDto: UpdateContentDto,
   ) {
-    return this.contentService.updateContent(id, updateContentDto);
+    try {
+      return await this.contentService.updateContent(id, updateContentDto);
+    } catch (error) {
+      throw new BadRequestException(
+        `Failed to update content: ${error.message}`,
+      );
+    }
   }
 
   @Delete(':id')
@@ -78,34 +105,32 @@ export class ContentsController {
   @Post('/upload')
   @UseInterceptors(
     FilesInterceptor('content', 5, {
-      storage: diskStorage({
-        destination: './uploads/contents',
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-123456789.png
-        },
-      }),
+      storage: diskStorage(
+        UploadUtils.createUploadStorage({
+          directory: 'contents',
+          fieldName: 'content',
+          maxFiles: 5,
+          maxFileSize: 5 * 1024 * 1024,
+        }),
+      ),
       limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
-      fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          cb(new BadRequestException('Only image files are allowed!'), false);
-        } else {
-          cb(null, true);
-        }
-      },
+      fileFilter: UploadUtils.createFileFilter(),
     }),
   )
   async uploadFiles(@UploadedFiles() files: Express.Multer.File[], @Req() req) {
-    if (!files) {
+    if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }
-    // get urls and retur
-    const paths = files.map((file) => file.path);
-    return {
-      message: 'Files uploaded successfully',
-      paths: paths,
-    };
+
+    try {
+      // get urls and return
+      const paths = files.map((file) => file.path);
+      return {
+        message: 'Files uploaded successfully',
+        paths: paths,
+      };
+    } catch (error) {
+      UploadUtils.handleUploadError(error, 'contents');
+    }
   }
 }

@@ -21,6 +21,7 @@ import { extname } from 'path';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN } from 'types/user.type';
 import { RolesGuard } from 'src/auth/gaurds/roles/roles.guard';
+import { UploadUtils } from '../common/utils/upload.utils';
 
 @Controller('courses')
 export class CoursesController {
@@ -75,23 +76,16 @@ export class CoursesController {
   @Post('upload')
   @UseInterceptors(
     FilesInterceptor('course', 5, {
-      storage: diskStorage({
-        destination: './uploads/courses',
-        filename: (req, file, cb) => {
-          const uniqueSuffix =
-            Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const ext = extname(file.originalname);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`); // e.g., image-123456789.png
-        },
-      }),
+      storage: diskStorage(
+        UploadUtils.createUploadStorage({
+          directory: 'courses',
+          fieldName: 'course',
+          maxFiles: 5,
+          maxFileSize: 5 * 1024 * 1024,
+        }),
+      ),
       limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
-      fileFilter: (req, file, cb) => {
-        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-          cb(new BadRequestException('Only image files are allowed!'), false);
-        } else {
-          cb(null, true);
-        }
-      },
+      fileFilter: UploadUtils.createFileFilter(),
     }),
   )
   async uploadFiles(@UploadedFiles() files: Express.Multer.File[]) {
@@ -99,14 +93,18 @@ export class CoursesController {
       throw new BadRequestException('No files uploaded');
     }
 
-    return {
-      message: 'Files uploaded successfully',
-      files: files.map((file) => ({
-        filename: file.filename,
-        path: file.path,
-        size: file.size,
-        type: file.mimetype,
-      })),
-    };
+    try {
+      return {
+        message: 'Files uploaded successfully',
+        files: files.map((file) => ({
+          filename: file.filename,
+          path: file.path,
+          size: file.size,
+          type: file.mimetype,
+        })),
+      };
+    } catch (error) {
+      UploadUtils.handleUploadError(error, 'courses');
+    }
   }
 }

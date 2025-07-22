@@ -54,47 +54,91 @@ export class ContentsService {
 
   // create Log
   async createContent(createContentsDto: CreateContentDto, type: string) {
-    const { images, ...rest } = createContentsDto;
-    var newItem = null;
-    if (type === 'log') {
-      newItem = this.logRepo.create({ ...rest });
-    } else if (type === 'project') {
-      newItem = this.projectRepo.create({ ...rest });
-    } else if (type === 'news') {
-      newItem = this.newsRepo.create({ ...rest });
-    }
-
-    if (images && images.length) {
-      newItem.images = images.map((image) => {
-        const newImage = new ContentImage();
-        newImage.path = image;
-        return newImage;
+    try {
+      console.log(`Creating ${type} content:`, {
+        title: createContentsDto.title,
+        hasImages: !!(
+          createContentsDto.images && createContentsDto.images.length
+        ),
+        imageCount: createContentsDto.images
+          ? createContentsDto.images.length
+          : 0,
       });
-    }
 
-    return await this.contentRepo.save(newItem);
+      const { images, ...rest } = createContentsDto;
+      var newItem = null;
+      if (type === 'log') {
+        newItem = this.logRepo.create({ ...rest });
+      } else if (type === 'project') {
+        newItem = this.projectRepo.create({ ...rest });
+      } else if (type === 'news') {
+        newItem = this.newsRepo.create({ ...rest });
+      }
+
+      if (!newItem) {
+        throw new Error(`Invalid content type: ${type}`);
+      }
+
+      if (images && images.length) {
+        console.log(`Processing ${images.length} images for ${type}:`, images);
+        newItem.images = images.map((image) => {
+          const newImage = new ContentImage();
+          newImage.path = image;
+          return newImage;
+        });
+      }
+
+      const savedItem = await this.contentRepo.save(newItem);
+      console.log(
+        `Successfully created ${type} content with ID:`,
+        savedItem.id,
+      );
+      return savedItem;
+    } catch (error) {
+      console.error(`Error creating ${type} content:`, {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
+        code: error.code,
+      });
+      throw new Error(`Failed to create ${type} content: ${error.message}`);
+    }
   }
 
   // update Content
   async updateContent(id: string, updateContentDto: UpdateContentDto) {
-    const existingContent = await this.contentRepo.findOne({
-      where: { id: id },
-    });
-    if (!existingContent) {
-      throw new NotFoundException(`Content with ID '${id}' not found`);
-    }
-
-    const { images, ...rest } = updateContentDto;
-    const updatedContent = this.contentRepo.merge(existingContent, { ...rest });
-
-    if (images && images.length) {
-      updatedContent.images = images.map((image) => {
-        const newImage = new ContentImage();
-        newImage.path = image;
-        return newImage;
+    try {
+      const existingContent = await this.contentRepo.findOne({
+        where: { id: id },
+        relations: ['images'],
       });
-    }
 
-    return await this.contentRepo.save(updatedContent);
+      if (!existingContent) {
+        throw new NotFoundException(`Content with ID '${id}' not found`);
+      }
+
+      const { images, ...rest } = updateContentDto;
+      const updatedContent = this.contentRepo.merge(existingContent, {
+        ...rest,
+      });
+
+      if (images && images.length) {
+        // Remove existing images if new ones are provided
+        updatedContent.images = [];
+        updatedContent.images = images.map((image) => {
+          const newImage = new ContentImage();
+          newImage.path = image;
+          return newImage;
+        });
+      }
+
+      return await this.contentRepo.save(updatedContent);
+    } catch (error) {
+      console.error(`Error updating content with ID ${id}:`, error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new Error(`Failed to update content: ${error.message}`);
+    }
   }
 }
