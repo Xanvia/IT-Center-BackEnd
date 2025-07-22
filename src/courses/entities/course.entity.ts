@@ -13,7 +13,7 @@ export class Course {
   @Column({ unique: true })
   courseCode: string;
 
-  @Column()
+  @Column('text')
   description: string;
 
   @Column()
