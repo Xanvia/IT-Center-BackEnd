@@ -19,7 +19,8 @@ export class Course {
   @Column()
   duration: string;
 
-  @Column()
+  @Column({ default: 'Throughout the year' })
+  @IsOptional()
   registrationDeadline: string;
 
   @Column('decimal')
@@ -35,16 +36,20 @@ export class Course {
   @Column('simple-array')
   images: string[];
 
-  @Column()
+  @Column({ nullable: true })
+  @IsOptional()
   studentLimit: number;
 
   @Column({ default: 0 })
+  @IsOptional()
   registered: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
+  @IsOptional()
   startingDate: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
+  @IsOptional()
   endingDate: string;
 
   @OneToMany(() => RegistrationRecord, (record) => record.course, {

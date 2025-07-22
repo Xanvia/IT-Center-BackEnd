@@ -14,8 +14,9 @@ export class CreateCourseDto {
   @IsString()
   duration: string;
 
+  @IsOptional()
   @IsString()
-  registrationDeadline: string;
+  registrationDeadline?: string;
 
   @IsNumber()
   fees: number;
@@ -31,18 +32,21 @@ export class CreateCourseDto {
   @IsString({ each: true })
   images?: string[];
 
+  @IsOptional()
   @IsNumber()
-  studentLimit: number;
+  studentLimit?: number;
 
   @IsOptional()
   @IsNumber()
   registered?: number;
 
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
-  startingDate: string;
+  startingDate?: string;
 
+  @IsOptional()
   @Type(() => Date)
   @IsDate()
-  endingDate: string;
+  endingDate?: string;
 }
