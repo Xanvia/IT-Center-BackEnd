@@ -100,7 +100,6 @@ export class ContentsController {
     return this.contentService.deleteContentbyID(id);
   }
 
-  // not tested
   @UseGuards(JwtAuthGuard)
   @Post('/upload')
   @UseInterceptors(
