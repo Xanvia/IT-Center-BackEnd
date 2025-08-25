@@ -103,4 +103,38 @@ export class MailService {
       console.log(error);
     }
   }
+
+  async sendPasswordResetEmail(email: string, resetToken: string, userName: string) {
+    try {
+      const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/auth/reset-password?token=${resetToken}`;
+      
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Password Reset Request - IT Center',
+        template: __dirname + '/template/passwordReset',
+        context: {
+          name: userName,
+          resetUrl: resetUrl,
+          resetToken: resetToken,
+        },
+      });
+    } catch (error) {
+      console.log('Error sending password reset email:', error);
+    }
+  }
+
+  async sendPasswordResetConfirmation(email: string, userName: string) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        subject: 'Password Reset Successful - IT Center',
+        template: __dirname + '/template/passwordResetConfirmation',
+        context: {
+          name: userName,
+        },
+      });
+    } catch (error) {
+      console.log('Error sending password reset confirmation email:', error);
+    }
+  }
 }

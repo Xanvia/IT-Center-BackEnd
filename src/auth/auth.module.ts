@@ -12,10 +12,12 @@ import refreshJwtConfig from 'config/refreshJwt.config';
 import { RefreshJwtStrategy } from './strategies/refresh.strategy';
 import googleAuthConfig from 'config/googleAuth.config';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { MailModule } from 'src/emails/mail.module';
 
 @Module({
   imports: [
     UsersModule,
+    MailModule,
     PassportModule,
     JwtModule.registerAsync(jwtConfig),
     ConfigModule.forFeature(refreshJwtConfig),

@@ -183,6 +183,54 @@ export class UsersService {
     return await this.userRepo.save(user);
   }
 
+  // set reset password token
+  async setResetPasswordToken(email: string, token: string, expires: Date) {
+    return await this.userRepo.update(
+      { email },
+      { resetPasswordToken: token, resetPasswordExpires: expires }
+    );
+  }
+
+  // find user by reset token and check if it's valid
+  async findByResetToken(token: string): Promise<User | undefined> {
+    return await this.userRepo.findOne({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: new Date() as any, // This will be handled in the service
+      },
+    });
+  }
+
+  // reset password with token
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.userRepo.findOne({
+      where: { resetPasswordToken: token }
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    if (user.resetPasswordExpires && user.resetPasswordExpires < new Date()) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    user.hashedPassword = hashedPassword;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+
+    return await this.userRepo.save(user);
+  }
+
+  // clear reset password token
+  async clearResetPasswordToken(userId: string) {
+    return await this.userRepo.update(
+      { id: userId },
+      { resetPasswordToken: null, resetPasswordExpires: null }
+    );
+  }
+
   // update user profile
   async updateProfile(userId: string, updateUserDto: UpdateUserDto) {
     return await this.userRepo.update({ id: userId }, updateUserDto);

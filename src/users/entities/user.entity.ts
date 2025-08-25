@@ -34,6 +34,12 @@ export class User {
   hashedRefreshToken: string;
 
   @Column({ nullable: true })
+  resetPasswordToken: string;
+
+  @Column({ nullable: true })
+  resetPasswordExpires: Date;
+
+  @Column({ nullable: true })
   image: string;
 
   @CreateDateColumn()
