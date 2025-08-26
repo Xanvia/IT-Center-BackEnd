@@ -98,7 +98,7 @@ export class CoursesController {
         message: 'Files uploaded successfully',
         files: files.map((file) => ({
           filename: file.filename,
-          path: file.path,
+          path: UploadUtils.getRelativeUploadPath(file.path),
           size: file.size,
           type: file.mimetype,
         })),

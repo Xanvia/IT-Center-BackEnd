@@ -21,7 +21,6 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { ADMIN, S_ADMIN, STAFF, STUDENT, USER } from 'types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { UploadUtils } from '../common/utils/upload.utils';
 
@@ -165,16 +164,17 @@ export class UsersController {
     }
 
     try {
+      const relativePath = UploadUtils.getRelativeUploadPath(file.path);
       const res = await this.userService.updateProfileImage(
         req.user.id,
-        file.path,
+        relativePath,
       );
       if (!res.affected) {
         throw new BadRequestException('Failed to upload image');
       }
       return {
         message: 'Files uploaded successfully',
-        path: file.path,
+        path: relativePath,
       };
     } catch (error) {
       UploadUtils.handleUploadError(error, 'users');

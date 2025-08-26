@@ -19,11 +19,11 @@ import { UpdateContentDto } from './dto/updateContent.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth/jwt-auth.guard';
+import { UploadUtils } from '../common/utils/upload.utils';
 import { extname } from 'path';
 import * as fs from 'fs';
 import * as path from 'path';
 import { UploadErrorInterceptor } from './interceptors/upload-error.interceptor';
-import { UploadUtils } from '../common/utils/upload.utils';
 
 @Controller('contents')
 export class ContentsController {
@@ -123,7 +123,7 @@ export class ContentsController {
 
     try {
       // get urls and return
-      const paths = files.map((file) => file.path);
+      const paths = files.map((file) => UploadUtils.getRelativeUploadPath(file.path));
       return {
         message: 'Files uploaded successfully',
         paths: paths,

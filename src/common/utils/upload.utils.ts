@@ -60,6 +60,19 @@ export class UploadUtils {
     };
   }
 
+  /**
+   * Converts absolute file path to relative URL path starting with "uploads/"
+   * @param absolutePath - The absolute file system path
+   * @returns Relative URL path starting with "uploads/"
+   */
+  static getRelativeUploadPath(absolutePath: string): string {
+    const uploadsIndex = absolutePath.indexOf('uploads');
+    if (uploadsIndex === -1) {
+      throw new BadRequestException('Invalid upload path');
+    }
+    return absolutePath.substring(uploadsIndex);
+  }
+
   static handleUploadError(error: any, context: string): never {
     console.error(`Upload error in ${context}:`, {
       message: error.message,

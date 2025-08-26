@@ -9,6 +9,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './gaurds/local-auth/local-auth.guard';
 import { RefreshAuthGuard } from './gaurds/refresh-auth/refresh-auth.guard';
@@ -20,7 +21,10 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('signin')
@@ -42,8 +46,9 @@ export class AuthController {
   @Get('google/callback')
   async googleCallback(@Req() req, @Res() res) {
     const response = await this.authService.login(req.user);
+    const frontendUrl = this.configService.get<string>('CORS_ORIGIN');
     res.redirect(
-      `http://localhost:3000/auth/redirect?token=${response.refresh_token}`,
+      `${frontendUrl}/auth/redirect?token=${response.refresh_token}`,
     );
   }
 
